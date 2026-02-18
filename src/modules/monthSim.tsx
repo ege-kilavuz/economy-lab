@@ -26,8 +26,9 @@ import { PhoneFrame } from '../ui/PhoneFrame';
 import { AppIcon } from '../ui/AppIcon';
 import { CandleGame } from './candleGame';
 import { CardEscape } from './cardEscape';
+import { BudgetTetris } from './budgetTetris';
 
-type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'candle' | 'card-escape' | 'end';
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'candle' | 'card-escape' | 'budget-tetris' | 'end';
 
 function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
@@ -176,6 +177,7 @@ export function MonthSimModule() {
           <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
           <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
           <AppIcon label="Kart" color="#f97316" emoji="💳" onClick={() => setScreen('card-escape')} />
+          <AppIcon label="Bütçe" color="#34d399" emoji="🧩" onClick={() => setScreen('budget-tetris')} />
           <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
           <AppIcon
             label="Uyku"
@@ -435,6 +437,18 @@ export function MonthSimModule() {
     </>
   );
 
+  const BudgetTetrisScreen = () => (
+    <>
+      <Top title="Bütçe Tetris" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Box sx={{ mt: 2 }}>
+          <BudgetTetris />
+        </Box>
+      </Box>
+    </>
+  );
+
   return (
     <PhoneFrame>
       {screen === 'home' && <HomeScreen />}
@@ -443,6 +457,7 @@ export function MonthSimModule() {
       {screen === 'invest' && <InvestScreen />}
       {screen === 'news' && <NewsScreen />}
       {screen === 'card-escape' && <CardEscapeScreen />}
+      {screen === 'budget-tetris' && <BudgetTetrisScreen />}
       {screen === 'candle' && <CandleScreen />}
       {screen === 'end' && <EndScreen />}
     </PhoneFrame>
