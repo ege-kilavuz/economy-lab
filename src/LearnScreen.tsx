@@ -124,6 +124,15 @@ export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
   const itemIndex = React.useMemo(() => buildItemIndex(), []);
 
+  // Scroll to a focused item when we jump from quiz recommendations.
+  // Must be top-level (hooks can't be conditional).
+  React.useEffect(() => {
+    if (view.kind !== 'category') return;
+    if (!view.focusItemId) return;
+    const el = document.getElementById(`item-${view.focusItemId}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [view]);
+
   const Top = ({ title, canBack }: { title: string; canBack: boolean }) => (
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
       <Toolbar sx={{ px: 1 }}>
@@ -314,11 +323,7 @@ export function LearnScreen() {
   if (view.kind === 'category') {
     const c = view.category;
 
-    React.useEffect(() => {
-      if (!view.focusItemId) return;
-      const el = document.getElementById(`item-${view.focusItemId}`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, [c.id, view.focusItemId]);
+// (scroll-to-focus handled at top-level useEffect)
 
     return (
       <Box sx={{ pt: 1, pb: 6 }}>
