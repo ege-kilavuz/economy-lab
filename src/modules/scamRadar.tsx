@@ -1,21 +1,15 @@
 import React from 'react';
 import { Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
+import { SCAM_RADAR_POOL, type ScamScenario, type ScamChoiceId } from './pools';
+
 // Dolandırıcılık Radar (2–3 min)
 // 10 senaryo: SMS/DM/E-posta/Arama. Oyuncu en güvenli aksiyonu seçer.
 // Educational toy model. Not legal/financial advice.
 
-type ChoiceId = 'click' | 'verify' | 'ignore' | 'block';
+type ChoiceId = ScamChoiceId;
 
-type Scenario = {
-  id: string;
-  channel: 'SMS' | 'DM' | 'E-posta' | 'Arama';
-  message: string;
-  detail: string;
-  best: ChoiceId;
-  why: string;
-  rule: string;
-};
+type Scenario = ScamScenario;
 
 const CHOICES: { id: ChoiceId; label: string }[] = [
   { id: 'verify', label: 'Resmî kanaldan doğrula' },
@@ -24,98 +18,7 @@ const CHOICES: { id: ChoiceId; label: string }[] = [
   { id: 'click', label: 'Linke tıkla / devam et' },
 ];
 
-const SCENARIOS: Scenario[] = [
-  {
-    id: 'bank-sms-link',
-    channel: 'SMS',
-    message: '“Hesabınız askıya alındı. 15 dk içinde doğrulayın.”',
-    detail: 'Link: bit.ly/...  Gönderen numara garip.',
-    best: 'verify',
-    why: 'Acil baskı + kısa link = risk. Bankayı uygulamadan/çağrı merkezinden kontrol et.',
-    rule: 'Kural: Banka işleri linkten değil uygulama/resmî numaradan.',
-  },
-  {
-    id: 'insta-dm-airdrop',
-    channel: 'DM',
-    message: '“Çekiliş kazandın! Cüzdan adresini yaz, NFT gönderelim.”',
-    detail: 'Profil yeni açılmış; yorumlar kapalı.',
-    best: 'ignore',
-    why: 'Kimlik belirsiz + ödül vaadi = dolandırıcılık ihtimali yüksek.',
-    rule: 'Kural: “Ücretsiz para/ödül” vaatleri çoğunlukla tuzaktır.',
-  },
-  {
-    id: 'support-call',
-    channel: 'Arama',
-    message: '“Ben bankadan arıyorum, kart güvenliğiniz için şifre söyleyin.”',
-    detail: 'Arayan kişi acele ettiriyor.',
-    best: 'block',
-    why: 'Bankalar şifre/OTP istemez. Kapat, resmî numarayı sen ara.',
-    rule: 'Kural: Şifre/OTP isteniyorsa %99 dolandırıcı.',
-  },
-  {
-    id: 'job-offer',
-    channel: 'E-posta',
-    message: '“İşe alındınız, dosyayı açıp formu doldurun.”',
-    detail: 'Ek dosya: .zip / .exe benzeri.',
-    best: 'verify',
-    why: 'Zararlı yazılım olabilir. Şirketi ayrı kanaldan doğrula; ekleri dikkatle aç.',
-    rule: 'Kural: Beklenmeyen ek = risk.',
-  },
-  {
-    id: 'invoice',
-    channel: 'E-posta',
-    message: '“Faturanızı ödemediniz, icra başlayacak.”',
-    detail: 'Mail adresi: support@random-domain.biz',
-    best: 'ignore',
-    why: 'Korku dili + alakasız domain = spam/phishing.',
-    rule: 'Kural: Korku + alakasız domain = kırmızı bayrak.',
-  },
-  {
-    id: 'friend-hacked',
-    channel: 'DM',
-    message: 'Arkadaşın: “Acil 2.000 TL atabilir misin? IBAN yazıyorum.”',
-    detail: 'Normalde böyle konuşmaz; sesli arama yapmıyor.',
-    best: 'verify',
-    why: 'Hesap ele geçirilmiş olabilir. Para göndermeden önce sesli arayıp doğrula.',
-    rule: 'Kural: “Acil para” → ikinci kanaldan doğrula.',
-  },
-  {
-    id: 'crypto-exchange',
-    channel: 'SMS',
-    message: '“Borsa hesabınıza giriş yapıldı. Hemen doğrulayın.”',
-    detail: 'Sen bu borsayı hiç kullanmadın.',
-    best: 'ignore',
-    why: 'Kullanmıyorsan muhtemelen toplu phishing. Linke tıklama.',
-    rule: 'Kural: Kullanmadığın hizmetten gelen panik mesajını yok say.',
-  },
-  {
-    id: 'app-update',
-    channel: 'DM',
-    message: '“Telefon hızlandırıcı güncelleme APK’sı burada.”',
-    detail: 'Play Store linki yok; direkt APK indirtiyor.',
-    best: 'block',
-    why: 'Bilinmeyen APK’lar zararlı olabilir. Resmî mağazadan yükle.',
-    rule: 'Kural: APK indirten mesajlara güvenme.',
-  },
-  {
-    id: 'lottery-tax',
-    channel: 'SMS',
-    message: '“Ödül kazandınız! Vergi için küçük ödeme yapın.”',
-    detail: 'Ön ödeme istiyor.',
-    best: 'block',
-    why: 'Ön ödeme isteyen ödüller genelde dolandırıcılıktır.',
-    rule: 'Kural: Ödül için para isteniyorsa: dolandırıcılık.',
-  },
-  {
-    id: 'qr-restaurant',
-    channel: 'DM',
-    message: '“Menü için QR kod” (fotoğraf) gönderildi.',
-    detail: 'Mekânın resmî hesabı değil; rastgele biri attı.',
-    best: 'verify',
-    why: 'QR sahte siteye yönlendirebilir. Mekândan resmî menüyü iste.',
-    rule: 'Kural: QR = link. Link gibi dikkat.',
-  },
-];
+const SCENARIOS: Scenario[] = SCAM_RADAR_POOL;
 
 function shuffle<T>(arr: T[]) {
   const a = [...arr];
@@ -174,8 +77,13 @@ export function ScamRadarGame() {
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-            <Chip size="small" label={done ? 'Bitti' : `Tur ${Math.min(index + 1, order.length)}/${order.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip
+              size="small"
+              label={done ? 'Bitti' : `Tur ${Math.min(index + 1, order.length)}/${order.length}`}
+              sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }}
+            />
             <Chip size="small" label={`Seri ${streak}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Havuz ${SCENARIOS.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
           </Stack>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>

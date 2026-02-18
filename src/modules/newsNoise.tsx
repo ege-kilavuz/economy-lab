@@ -1,88 +1,17 @@
 import React from 'react';
 import { Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
+import { NEWS_NOISE_POOL, type NewsNoiseItem } from './pools';
+
 // "Haber mi Gürültü mü?" (2–3 min)
 // Purpose: teach basic media/finance literacy: source quality, incentives, confirmation, urgency traps.
 // Educational toy model. Not financial advice.
 
 type Pick = 'signal' | 'noise' | 'unsure';
 
-type Item = {
-  id: string;
-  title: string;
-  context: string;
-  correct: 'signal' | 'noise';
-  why: string;
-  rule: string; // short lesson
-};
+type Item = NewsNoiseItem;
 
-const ITEMS: Item[] = [
-  ...moreItemsSeedPack(),
-  {
-    id: 'rumor-coin',
-    title: '“X Coin yarın 10x olacakmış!”',
-    context: 'Kaynak: anonim Telegram kanalı. “Hemen gir, geç kalma” tonu.',
-    correct: 'noise',
-    why: 'Belirsiz kaynak + aşırı kesin vaat + aciliyet = manipülasyon riski. Doğrulama yok.',
-    rule: 'Kural: Kaynak + kanıt yoksa “acil” demesi daha da şüpheli.',
-  },
-  {
-    id: 'official-rate',
-    title: 'Merkez bankası faiz kararını açıkladı (resmî site).',
-    context: 'Kaynak: resmî duyuru + tutanak linki.',
-    correct: 'signal',
-    why: 'Birincil kaynak + doğrulanabilir doküman = yüksek güven.',
-    rule: 'Kural: Birincil kaynak > yorum > söylenti.',
-  },
-  {
-    id: 'sponsored',
-    title: '“Bu uygulama ile herkes zengin oluyor” reklamı.',
-    context: 'Kaynak: sponsorlu içerik. Risklerden hiç bahsetmiyor.',
-    correct: 'noise',
-    why: 'Teşvik çatışması + tek yönlü anlatım. Risk gizleme olasılığı yüksek.',
-    rule: 'Kural: Teşvikleri oku: Kim kazanıyor?',
-  },
-  {
-    id: 'earnings',
-    title: 'Şirket bilanço açıkladı: gelir/kar beklentiden farklı.',
-    context: 'Kaynak: KAP/EDGAR linkli haber + rakamlar.',
-    correct: 'signal',
-    why: 'Doğrulanabilir veri var. Yorum farklı olabilir ama veri gerçek.',
-    rule: 'Kural: Veri ayrı, yorum ayrı.',
-  },
-  {
-    id: 'friend-tip',
-    title: 'Arkadaşın: “Ben aldım, sen de al.”',
-    context: 'Gerekçe: “Herkes konuşuyor.”',
-    correct: 'noise',
-    why: 'Sosyal kanıt (FOMO) güvenilir veri değildir.',
-    rule: 'Kural: “Herkes alıyor” bir analiz değil.',
-  },
-  {
-    id: 'scam-urgency',
-    title: '“Son 10 dakika! Paranı ikiye katla” mesajı.',
-    context: 'Kaynak: DM. Link kısaltılmış. Kimlik belirsiz.',
-    correct: 'noise',
-    why: 'Acil baskı + belirsiz kimlik + link = dolandırıcılık alarmı.',
-    rule: 'Kural: Acil baskı → dur, doğrula, gerekirse hiç tıklama.',
-  },
-  {
-    id: 'inflation',
-    title: 'TÜİK enflasyon verisi açıklandı.',
-    context: 'Kaynak: resmî veri + PDF/tablo.',
-    correct: 'signal',
-    why: 'Veri doğrulanabilir. Yorumlar değişebilir.',
-    rule: 'Kural: Veri yayınlandığında “ne oldu?” nettir; “ne olacak?” değildir.',
-  },
-  {
-    id: 'chart-only',
-    title: '“Grafik böyle, kesin yükselir” (tek ekran görüntüsü).',
-    context: 'Kaynak: sosyal medya. Zaman aralığı/bağlam yok.',
-    correct: 'noise',
-    why: 'Bağlamsız tek görüntü yanıltıcı olabilir. Seçici gösterim (cherry-pick) riski.',
-    rule: 'Kural: Bağlam yoksa güven azalır.',
-  },
-];
+const ITEMS: Item[] = NEWS_NOISE_POOL;
 
 function shuffle<T>(arr: T[]) {
   const a = [...arr];
@@ -91,92 +20,6 @@ function shuffle<T>(arr: T[]) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-function moreItemsSeedPack(): Item[] {
-  // Quick expansion pack (scaffold). Add more over time to reach 200–500+.
-  return [
-    {
-      id: 'anonymous-screenshot',
-      title: '“Bak ekran görüntüsü: kesin kanıt”',
-      context: 'Kaynak: anonim hesap. Ekran görüntüsü kesilmiş/kırpılmış.',
-      correct: 'noise',
-      why: 'Kırpılmış görüntü kolayca manipüle edilir. Orijinal kaynak yok.',
-      rule: 'Kural: Ekran görüntüsü kanıt değildir; kaynağı bul.',
-    },
-    {
-      id: 'press-release',
-      title: 'Şirket basın bülteni yayınladı (kendi sitesi).',
-      context: 'Kaynak: şirket sitesi. “Başarı hikayesi” tonu.',
-      correct: 'signal',
-      why: 'Bilgi birincil kaynaktan geliyor ama pazarlama dili olabilir.',
-      rule: 'Kural: Birincil kaynak + teşvik = dikkatli yorum.',
-    },
-    {
-      id: 'whatsapp-forward',
-      title: 'WhatsApp’ta zincir mesaj: “Banka hesabınız kapanacak”.',
-      context: 'Kaynak: iletilen mesaj. Link: kısa URL.',
-      correct: 'noise',
-      why: 'Zincir mesaj + link + korku baskısı çoğunlukla dolandırıcılık.',
-      rule: 'Kural: Korku ve aciliyet → dur, resmî kanaldan doğrula.',
-    },
-    {
-      id: 'data-with-method',
-      title: 'Araştırma: “Gençlerde harcama alışkanlıkları” (metodoloji var).',
-      context: 'Kaynak: örneklem, yöntem, tarih belirtilmiş rapor.',
-      correct: 'signal',
-      why: 'Yöntem ve tarih verilirse güven artar (yine de %100 değil).',
-      rule: 'Kural: Metodoloji + tarih = kalite göstergesi.',
-    },
-    {
-      id: 'influencer-promise',
-      title: 'Influencer: “Bu stratejiyle garanti kazanırsın.”',
-      context: 'Kaynak: sponsorlu video. Risk kısmı yok.',
-      correct: 'noise',
-      why: 'Garanti vaat + teşvik çatışması + risk yok = alarm.',
-      rule: 'Kural: “Garanti” kelimesi finans içerikte kırmızı bayrak.',
-    },
-    {
-      id: 'macro-calendar',
-      title: 'Ekonomik takvimde bugün veri açıklanacak.',
-      context: 'Kaynak: takvim + saat. “Bugün açıklanacak” bilgisi.',
-      correct: 'signal',
-      why: 'Olayın kendisi doğrulanabilir; etki tahmini ayrı konu.',
-      rule: 'Kural: Olay bilgisi ≠ fiyat tahmini.',
-    },
-    {
-      id: 'commentary-only',
-      title: '“Bence kesin düşecek” yorumu (veri yok).',
-      context: 'Kaynak: yorum. Rakam, link, gerekçe yok.',
-      correct: 'noise',
-      why: 'Gerekçesiz kesinlik, bilgi değil görüş.',
-      rule: 'Kural: Görüşü veri sanma.',
-    },
-    {
-      id: 'regulatory-fine',
-      title: 'Regülatör şirkete ceza kesti (resmî açıklama).',
-      context: 'Kaynak: resmî karar metni.',
-      correct: 'signal',
-      why: 'Doğrulanabilir olay var. Etkisi tartışılabilir.',
-      rule: 'Kural: Doğrulanabilir belge = sinyal.',
-    },
-    {
-      id: 'bait-headline',
-      title: 'Tık tuzağı başlık: “Şok! Her şey değişti!”',
-      context: 'Kaynak: clickbait site. İçerik belirsiz.',
-      correct: 'noise',
-      why: 'Belirsiz başlık genelde reklam geliri için.',
-      rule: 'Kural: Başlık değil içerik + kaynak.',
-    },
-    {
-      id: 'simple-budget',
-      title: '“Aylık gelir-gider tablosu” önerisi (örnekli).',
-      context: 'Kaynak: eğitim içeriği. Basit örnekler var.',
-      correct: 'signal',
-      why: 'Eğitim/alışkanlık önerisi; doğrulanabilir ve zararsız.',
-      rule: 'Kural: Basit alışkanlıklar çoğu zaman en güçlüdür.',
-    },
-  ];
 }
 
 export function NewsNoiseGame() {
@@ -231,8 +74,13 @@ export function NewsNoiseGame() {
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-            <Chip size="small" label={done ? 'Bitti' : `Tur ${Math.min(index + 1, order.length)}/${order.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip
+              size="small"
+              label={done ? 'Bitti' : `Tur ${Math.min(index + 1, order.length)}/${order.length}`}
+              sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }}
+            />
             <Chip size="small" label={`Seri ${streak}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Havuz ${ITEMS.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
           </Stack>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
@@ -286,7 +134,8 @@ export function NewsNoiseGame() {
             {last ? (
               <Box sx={{ mt: 1 }}>
                 <Typography variant="body2" sx={{ opacity: 0.85 }}>
-                  Doğru cevap: <b>{last.item.correct === 'signal' ? 'Sinyal' : 'Gürültü'}</b> · Sen: <b>{last.pick === 'signal' ? 'Sinyal' : last.pick === 'noise' ? 'Gürültü' : 'Emin değilim'}</b>
+                  Doğru cevap: <b>{last.item.correct === 'signal' ? 'Sinyal' : 'Gürültü'}</b> · Sen:{' '}
+                  <b>{last.pick === 'signal' ? 'Sinyal' : last.pick === 'noise' ? 'Gürültü' : 'Emin değilim'}</b>
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 0.75, opacity: 0.85 }}>
                   Neden: {last.item.why}
