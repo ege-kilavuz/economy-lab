@@ -16,6 +16,16 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnItem } from './learn/content';
 
+function buildItemIndex() {
+  const map = new Map<string, { title: string; categoryTitle: string }>();
+  for (const c of LEARN_CATEGORIES) {
+    for (const it of c.items) {
+      map.set(it.id, { title: it.title, categoryTitle: c.title });
+    }
+  }
+  return map;
+}
+
 type LearnView =
   | { kind: 'list' }
   | { kind: 'category'; category: LearnCategory }
@@ -95,6 +105,7 @@ function ItemCard({ item }: { item: LearnItem }) {
 
 export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
+  const itemIndex = React.useMemo(() => buildItemIndex(), []);
 
   const Top = ({ title, canBack }: { title: string; canBack: boolean }) => (
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
@@ -132,18 +143,19 @@ export function LearnScreen() {
                 Tekrar bakmanı önerdiklerim:
               </Typography>
               <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ mt: 1 }}>
-                {view.reviewItemIds.slice(0, 12).map((id) => (
-                  <Chip
-                    key={id}
-                    size="small"
-                    label={id}
-                    sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }}
-                  />
-                ))}
+                {view.reviewItemIds.slice(0, 12).map((id) => {
+                  const meta = itemIndex.get(id);
+                  const label = meta ? meta.title : id;
+                  return (
+                    <Chip
+                      key={id}
+                      size="small"
+                      label={label}
+                      sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }}
+                    />
+                  );
+                })}
               </Stack>
-              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
-                (Bir sonraki sürümde bu chip’leri gerçek kart başlığına çevireceğim.)
-              </Typography>
             </>
           ) : (
             <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
