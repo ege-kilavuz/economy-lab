@@ -1,4 +1,4 @@
-import type { ActionId, Difficulty, GameState } from './types';
+import type { ActionId, Difficulty, GameState, HoldingId } from './types';
 import { balanceFor } from './balance';
 import { mulberry32, pickWeighted } from './rng';
 
@@ -24,15 +24,21 @@ export function newGame(difficulty: Difficulty): GameState {
     fridge: 55,
     mood: 60,
     energy: 60,
-    gold: 0,
-    stocks: 0,
+
+    holdings: { gold: 0, stock: 0, usd: 0, btc: 0, eth: 0 },
+
     rentPaid: false,
     billsPaid: { electric: false, gas: false, internet: false, dues: false },
     difficulty,
     seed,
     log: [`Oyun başladı (${difficulty}). Maaş yattı: ${b.startingCash.toLocaleString()} TL`],
+
     goldPrice: 2200,
     stockIndex: 100,
+    usdTry: 33.5,
+    btcTry: 2200000,
+    ethTry: 120000,
+
     policyRate: 45,
   };
 }
@@ -51,7 +57,11 @@ export function canAfford(s: GameState, amount: number) {
   return s.cash >= amount;
 }
 
-export function applyAction(s0: GameState, action: ActionId, opts?: { useCard?: boolean; amount?: number }) {
+export function applyAction(
+  s0: GameState,
+  action: ActionId,
+  opts?: { useCard?: boolean; amount?: number; asset?: HoldingId }
+) {
   const b = balanceFor(s0.difficulty);
   let s = s0;
   const useCard = !!opts?.useCard;
@@ -105,35 +115,58 @@ export function applyAction(s0: GameState, action: ActionId, opts?: { useCard?: 
       s = { ...s, billsPaid: { ...s.billsPaid, internet: true } };
       return logPush(s, `İnternet ödendi: ${b.internet.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
     }
-    case 'buyGold': {
-      const grams = opts?.amount ?? 1;
-      const cost = tl(grams * s.goldPrice);
-      if (s.cash < cost) return logPush(s, 'Altın almak için yeterli nakit yok.');
-      s = { ...s, cash: s.cash - cost, gold: s.gold + grams };
-      return logPush(s, `Altın alındı: ${grams}g (-${cost.toLocaleString()} TL)`);
+    case 'buyAsset': {
+      const asset = opts?.asset;
+      const amount = opts?.amount ?? 1;
+      if (!asset) return logPush(s, 'Asset seçilmedi.');
+      if (amount <= 0) return s;
+
+      const priceTL =
+        asset === 'gold'
+          ? s.goldPrice
+          : asset === 'stock'
+            ? tl(s.stockIndex * 20)
+            : asset === 'usd'
+              ? s.usdTry
+              : asset === 'btc'
+                ? s.btcTry
+                : s.ethTry;
+
+      const cost = tl(amount * priceTL);
+      if (s.cash < cost) return logPush(s, 'Alım için yeterli nakit yok.');
+
+      s = {
+        ...s,
+        cash: s.cash - cost,
+        holdings: { ...s.holdings, [asset]: s.holdings[asset] + amount },
+      };
+      return logPush(s, `Alım: ${asset} +${amount} ( -${cost.toLocaleString()} TL )`);
     }
-    case 'sellGold': {
-      const grams = opts?.amount ?? 1;
-      if (s.gold < grams) return logPush(s, 'Satacak altın yok.');
-      const gain = tl(grams * s.goldPrice);
-      s = { ...s, cash: s.cash + gain, gold: s.gold - grams };
-      return logPush(s, `Altın satıldı: ${grams}g (+${gain.toLocaleString()} TL)`);
-    }
-    case 'buyStocks': {
-      const units = opts?.amount ?? 1;
-      const price = tl(s.stockIndex * 20);
-      const cost = tl(units * price);
-      if (s.cash < cost) return logPush(s, 'Hisse almak için yeterli nakit yok.');
-      s = { ...s, cash: s.cash - cost, stocks: s.stocks + units };
-      return logPush(s, `Hisse alındı: ${units}u (-${cost.toLocaleString()} TL)`);
-    }
-    case 'sellStocks': {
-      const units = opts?.amount ?? 1;
-      if (s.stocks < units) return logPush(s, 'Satacak hisse yok.');
-      const price = tl(s.stockIndex * 20);
-      const gain = tl(units * price);
-      s = { ...s, cash: s.cash + gain, stocks: s.stocks - units };
-      return logPush(s, `Hisse satıldı: ${units}u (+${gain.toLocaleString()} TL)`);
+    case 'sellAsset': {
+      const asset = opts?.asset;
+      const amount = opts?.amount ?? 1;
+      if (!asset) return logPush(s, 'Asset seçilmedi.');
+      if (amount <= 0) return s;
+      if (s.holdings[asset] < amount) return logPush(s, 'Satacak varlık yok.');
+
+      const priceTL =
+        asset === 'gold'
+          ? s.goldPrice
+          : asset === 'stock'
+            ? tl(s.stockIndex * 20)
+            : asset === 'usd'
+              ? s.usdTry
+              : asset === 'btc'
+                ? s.btcTry
+                : s.ethTry;
+
+      const gain = tl(amount * priceTL);
+      s = {
+        ...s,
+        cash: s.cash + gain,
+        holdings: { ...s.holdings, [asset]: s.holdings[asset] - amount },
+      };
+      return logPush(s, `Satış: ${asset} -${amount} ( +${gain.toLocaleString()} TL )`);
     }
     case 'payCardMin': {
       const minPay = tl(Math.max(200, s.cardDebt * 0.1));
@@ -196,7 +229,16 @@ function updateMarkets(s: GameState) {
   const goldPrice = Math.max(500, s.goldPrice * (1 + goldShock + 0.002 * rateTight));
   const stockIndex = Math.max(20, s.stockIndex * (1 + stockShock - 0.004 * rateTight));
 
-  return { ...s, goldPrice, stockIndex, policyRate };
+  // FX/crypto (toy)
+  const fxShock = (rng() - 0.5) * 2 * (b.volatility.gold * 1.2);
+  const usdTry = Math.max(5, s.usdTry * (1 + fxShock + 0.001 * rateTight));
+
+  const btcShock = (rng() - 0.5) * 2 * (b.volatility.stocks * 1.6);
+  const ethShock = (rng() - 0.5) * 2 * (b.volatility.stocks * 1.4);
+  const btcTry = Math.max(50000, s.btcTry * (1 + btcShock));
+  const ethTry = Math.max(2000, s.ethTry * (1 + ethShock));
+
+  return { ...s, goldPrice, stockIndex, usdTry, btcTry, ethTry, policyRate };
 }
 
 function maybeGuestEvent(s: GameState) {
@@ -290,8 +332,14 @@ export function scoreEndOfMonth(s: GameState) {
   score -= Math.round(clamp(s.cardDebt / 1000, 0, 80));
 
   // assets
-  score += Math.round(clamp((s.gold * s.goldPrice) / 2000, 0, 20));
-  score += Math.round(clamp((s.stocks * s.stockIndex * 20) / 2000, 0, 20));
+  const assetTL =
+    s.holdings.gold * s.goldPrice +
+    s.holdings.stock * (s.stockIndex * 20) +
+    s.holdings.usd * s.usdTry +
+    s.holdings.btc * s.btcTry +
+    s.holdings.eth * s.ethTry;
+
+  score += Math.round(clamp(assetTL / 2000, 0, 40));
 
   // cash buffer
   score += Math.round(clamp(s.cash / 1000, 0, 25));

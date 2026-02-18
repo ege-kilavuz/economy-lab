@@ -1,25 +1,33 @@
 import React from 'react';
 import {
+  AppBar,
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   Chip,
   Divider,
   FormControl,
   FormControlLabel,
+  IconButton,
   Radio,
   RadioGroup,
   Stack,
   Switch,
+  Toolbar,
   Typography,
 } from '@mui/material';
-import type { Difficulty } from '../game/types';
+import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
+
+import type { Difficulty, HoldingId } from '../game/types';
 import { applyAction, newGame, nextDay, scoreEndOfMonth } from '../game/engine';
 import { balanceFor } from '../game/balance';
+import { PhoneFrame } from '../ui/PhoneFrame';
+import { AppIcon } from '../ui/AppIcon';
 
-function money(n: number) {
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'end';
+
+function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
 }
 
@@ -29,22 +37,52 @@ function diffLabel(d: Difficulty) {
   return 'Zor';
 }
 
+function holdingLabel(h: HoldingId) {
+  switch (h) {
+    case 'gold':
+      return 'Altın (g)';
+    case 'usd':
+      return 'Dolar ($)';
+    case 'btc':
+      return 'BTC';
+    case 'eth':
+      return 'ETH';
+    case 'stock':
+      return 'Hisse (u)';
+  }
+}
+
+function holdingPriceTL(game: any, h: HoldingId) {
+  switch (h) {
+    case 'gold':
+      return game.goldPrice;
+    case 'usd':
+      return game.usdTry;
+    case 'btc':
+      return game.btcTry;
+    case 'eth':
+      return game.ethTry;
+    case 'stock':
+      return Math.round(game.stockIndex * 20);
+  }
+}
+
 export function MonthSimModule() {
   const [difficulty, setDifficulty] = React.useState<Difficulty>('easy');
   const [useCard, setUseCard] = React.useState(false);
+  const [screen, setScreen] = React.useState<Screen>('home');
   const [game, setGame] = React.useState(() => newGame('easy'));
 
   React.useEffect(() => {
     setGame(newGame(difficulty));
+    setScreen('home');
   }, [difficulty]);
 
   const b = balanceFor(game.difficulty);
   const finished = game.day > 30;
 
-  const endScore = scoreEndOfMonth(game);
-
-  function act(action: Parameters<typeof applyAction>[1], amount?: number) {
-    setGame((g) => applyAction(g, action, { useCard, amount }));
+  function act(action: Parameters<typeof applyAction>[1], opts?: { amount?: number; asset?: HoldingId }) {
+    setGame((g) => applyAction(g, action, { useCard, amount: opts?.amount, asset: opts?.asset }));
   }
 
   function advanceDay() {
@@ -54,185 +92,307 @@ export function MonthSimModule() {
     });
   }
 
-  return (
-    <Stack spacing={2}>
-      <Card sx={{ borderRadius: 4 }}>
-        <CardContent>
-          <Typography variant="h5" fontWeight={900}>
-            1 Ay Ekonomi Hayatı (Prototype)
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
-            Ayın 1’inde maaş yatar. Her gün hızlı kararlar ver: kira/faturalar, market, eğlence, tasarruf, altın/borsa ve kredi kartı.
-          </Typography>
+  React.useEffect(() => {
+    if (finished) setScreen('end');
+  }, [finished]);
 
-          <Divider sx={{ my: 1.5 }} />
+  const endScore = scoreEndOfMonth(game);
 
-          <Stack spacing={1}>
-            <FormControl>
-              <Typography fontWeight={800} sx={{ mb: 0.5 }}>
-                Zorluk
-              </Typography>
-              <RadioGroup
-                row
-                value={difficulty}
-                onChange={(_, v) => setDifficulty(v as Difficulty)}
-              >
-                <FormControlLabel value="easy" control={<Radio />} label="Kolay" />
-                <FormControlLabel value="normal" control={<Radio />} label="Normal" />
-                <FormControlLabel value="hard" control={<Radio />} label="Zor" />
-              </RadioGroup>
-            </FormControl>
+  const Top = ({ title }: { title: string }) => (
+    <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
+      <Toolbar sx={{ px: 1 }}>
+        {screen !== 'home' && screen !== 'end' ? (
+          <IconButton onClick={() => setScreen('home')} sx={{ color: 'white' }}>
+            <ArrowBackRounded />
+          </IconButton>
+        ) : (
+          <Box sx={{ width: 44 }} />
+        )}
+        <Typography variant="subtitle1" sx={{ fontWeight: 900, flex: 1, textAlign: 'center' }}>
+          {title}
+        </Typography>
+        <Box sx={{ width: 44 }} />
+      </Toolbar>
+    </AppBar>
+  );
 
-            <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-              <Chip label={`Mod: ${diffLabel(game.difficulty)}`} />
-              <Chip label={`Gün: ${Math.min(game.day, 30)}/30`} color="primary" />
-            </Stack>
+  const StatChips = () => (
+    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+      <Chip size="small" label={`Gün ${Math.min(game.day, 30)}/30`} color="primary" />
+      <Chip size="small" label={`Nakit: ${moneyTL(game.cash)}`} />
+      <Chip
+        size="small"
+        label={`Kart: ${moneyTL(game.cardDebt)}`}
+        color={game.cardDebt > 0 ? 'warning' : 'default'}
+        variant={game.cardDebt > 0 ? 'filled' : 'outlined'}
+      />
+      <Chip size="small" label={`Dolap: ${game.fridge}%`} />
+      <Chip size="small" label={`Moral: ${game.mood}%`} />
+    </Stack>
+  );
 
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              <Chip label={`Nakit: ${money(game.cash)}`} />
-              <Chip label={`Kart borcu: ${money(game.cardDebt)}`} color={game.cardDebt > 0 ? 'warning' : 'default'} />
-              <Chip label={`Dolap: ${game.fridge}%`} />
-              <Chip label={`Moral: ${game.mood}%`} />
-              <Chip label={`Enerji: ${game.energy}%`} />
-            </Stack>
+  const HomeScreen = () => (
+    <>
+      <Top title="Telefon" />
+      <Box sx={{ pt: 1 }}>
+        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)' }}>
+          Mod: <b>{diffLabel(game.difficulty)}</b> · Faiz: <b>{game.policyRate.toFixed(1)}%</b>
+        </Typography>
+        <Box sx={{ mt: 1 }}>
+          <StatChips />
+        </Box>
 
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              <Chip label={`Altın: ${game.gold}g (≈ ${money(game.gold * game.goldPrice)})`} />
-              <Chip label={`Borsa: ${game.stocks}u (endeks ${game.stockIndex.toFixed(1)})`} />
-              <Chip label={`Faiz: ${game.policyRate.toFixed(1)}%`} />
-            </Stack>
-
-            <FormControlLabel
-              control={<Switch checked={useCard} onChange={(_, v) => setUseCard(v)} />}
-              label={useCard ? 'Ödemelerde kredi kartı kullan (riskli)' : 'Ödemelerde nakit kullan'}
-            />
-          </Stack>
-        </CardContent>
-        <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button variant="contained" onClick={advanceDay} disabled={finished}>
-            Günü Bitir
-          </Button>
-          <Button variant="outlined" onClick={() => setGame(newGame(difficulty))}>
-            Yeniden Başlat
-          </Button>
-        </CardActions>
-      </Card>
-
-      {!finished ? (
-        <Stack spacing={2}>
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Zorunlular</Typography>
-              <Typography variant="caption" sx={{ opacity: 0.75 }}>
-                (Kurgusal) Kira {money(b.rent)} · Aidat {money(b.dues)} · Elektrik {money(b.electric)} · Doğalgaz {money(b.gas)} · İnternet {money(b.internet)}
-              </Typography>
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-                <Button size="small" variant="contained" onClick={() => act('payRent')}>Kira öde</Button>
-                <Button size="small" variant="outlined" onClick={() => act('payDues')}>Aidat öde</Button>
-                <Button size="small" variant="outlined" onClick={() => act('payElectric')}>Elektrik öde</Button>
-                <Button size="small" variant="outlined" onClick={() => act('payGas')}>Doğalgaz öde</Button>
-                <Button size="small" variant="outlined" onClick={() => act('payInternet')}>İnternet öde</Button>
-              </Stack>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Günlük kararlar</Typography>
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-                <Button variant="contained" onClick={() => act('grocery')}>Market</Button>
-                <Button variant="outlined" onClick={() => act('cinema')}>Sinema</Button>
-                <Button variant="text" onClick={() => act('lightsOff')}>Işıkları kapat</Button>
-              </Stack>
-              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.75 }}>
-                Dolap her gün azalır. Dolap biterse moral/enerji düşer (ve bazen kart borcu artar).
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Piyasa</Typography>
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-                <Button size="small" variant="outlined" onClick={() => act('buyGold', 1)}>Altın al (1g)</Button>
-                <Button size="small" variant="outlined" onClick={() => act('sellGold', 1)}>Altın sat (1g)</Button>
-                <Button size="small" variant="outlined" onClick={() => act('buyStocks', 1)}>Hisse al (1u)</Button>
-                <Button size="small" variant="outlined" onClick={() => act('sellStocks', 1)}>Hisse sat (1u)</Button>
-              </Stack>
-              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.75 }}>
-                Kolay’da daha stabil; Zor’da daha volatil. Faiz değişimi borsayı baskılayabilir (oyuncak model).
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Kredi Kartı</Typography>
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-                <Button size="small" variant="outlined" onClick={() => act('payCardMin')}>Asgari öde</Button>
-                <Button size="small" variant="outlined" onClick={() => act('payCardAll')}>Kapat</Button>
-              </Stack>
-              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.75 }}>
-                Ay sonunda kart borcuna faiz işler. Geciken kira/faturalar ceza doğurabilir.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Günlük Haberler</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-                Bu prototipte haberler log’a düşer ve piyasa oynaklığını temsil eder.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          <Card sx={{ borderRadius: 4 }}>
-            <CardContent>
-              <Typography fontWeight={900}>Günlük akış (log)</Typography>
-              <Box sx={{ mt: 1 }}>
-                {game.log.slice(0, 12).map((l, i) => (
-                  <Typography key={i} variant="body2" sx={{ opacity: 0.85 }}>
-                    • {l}
-                  </Typography>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Stack>
-      ) : (
-        <Card sx={{ borderRadius: 4 }}>
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
           <CardContent>
-            <Typography variant="h6" fontWeight={900}>Ay Sonu Sonuç</Typography>
-            <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
-              Skor: <b>{endScore}</b>
+            <Typography fontWeight={900}>Bugün</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+              Dolap her gün azalır. Kira/faturaları geciktirme. İstersen kart kullan ama ay sonunda faiz var.
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.85 }}>
-              Nakit: <b>{money(game.cash)}</b> · Kart borcu: <b>{money(game.cardDebt)}</b>
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
-              Altın değeri: <b>{money(game.gold * game.goldPrice)}</b> · Hisse değeri: <b>{money(game.stocks * game.stockIndex * 20)}</b>
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
-              Kira: <b>{game.rentPaid ? 'ödendi' : 'ödenmedi'}</b> · Faturalar: <b>{Object.values(game.billsPaid).filter(Boolean).length}/4</b>
-            </Typography>
-
-            <Divider sx={{ my: 1.5 }} />
-
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              {endScore >= 70
-                ? 'Dengeyi kurdun: temel ihtiyaçlar + borç kontrolü + birikim.'
-                : endScore >= 40
-                  ? 'Kıl payı: bazı alanlarda açık var. Kart borcuna ve dolap planına dikkat.'
-                  : 'Zorlu ay: borç/ödeme planı bozuldu. Önce zorunlular, sonra küçük eğlence.'}
-            </Typography>
-
-            <Typography variant="caption" sx={{ display: 'block', mt: 1.5, opacity: 0.7 }}>
-              Not: Bu bir prototiptir; rakamlar temsilîdir.
-            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
+              <Button variant="contained" onClick={advanceDay} disabled={finished}>
+                Günü Bitir
+              </Button>
+              <Button variant="outlined" onClick={() => setGame(newGame(difficulty))}>
+                Sıfırla
+              </Button>
+            </Stack>
+            <FormControlLabel
+              sx={{ mt: 1 }}
+              control={<Switch checked={useCard} onChange={(_, v) => setUseCard(v)} />}
+              label={useCard ? 'Kart modu açık' : 'Nakit modu'}
+            />
           </CardContent>
         </Card>
-      )}
-    </Stack>
+
+        <Typography sx={{ mt: 2, fontWeight: 900, color: 'rgba(255,255,255,0.9)' }}>Uygulamalar</Typography>
+        <Stack direction="row" flexWrap="wrap" useFlexGap sx={{ mt: 1, gap: 1 }}>
+          <AppIcon label="Banka" color="#1d4ed8" emoji="🏦" onClick={() => setScreen('bank')} />
+          <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
+          <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
+          <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
+        </Stack>
+
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Zorluk</Typography>
+            <FormControl sx={{ mt: 1 }}>
+              <RadioGroup row value={difficulty} onChange={(_, v) => setDifficulty(v as Difficulty)}>
+                <FormControlLabel value="easy" control={<Radio sx={{ color: 'white' }} />} label={<Typography color="rgba(255,255,255,0.85)">Kolay</Typography>} />
+                <FormControlLabel value="normal" control={<Radio sx={{ color: 'white' }} />} label={<Typography color="rgba(255,255,255,0.85)">Normal</Typography>} />
+                <FormControlLabel value="hard" control={<Radio sx={{ color: 'white' }} />} label={<Typography color="rgba(255,255,255,0.85)">Zor</Typography>} />
+              </RadioGroup>
+            </FormControl>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  );
+
+  const BankScreen = () => (
+    <>
+      <Top title="Banka" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Zorunlu Ödemeler</Typography>
+            <Typography variant="caption" sx={{ opacity: 0.75 }}>
+              Kira {moneyTL(b.rent)} · Aidat {moneyTL(b.dues)} · Elektrik {moneyTL(b.electric)} · Doğalgaz {moneyTL(b.gas)} · İnternet {moneyTL(b.internet)}
+            </Typography>
+            <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Button size="small" variant="contained" onClick={() => act('payRent')}>Kira</Button>
+              <Button size="small" variant="outlined" onClick={() => act('payDues')}>Aidat</Button>
+              <Button size="small" variant="outlined" onClick={() => act('payElectric')}>Elektrik</Button>
+              <Button size="small" variant="outlined" onClick={() => act('payGas')}>Doğalgaz</Button>
+              <Button size="small" variant="outlined" onClick={() => act('payInternet')}>İnternet</Button>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Kredi Kartı</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+              Ay sonunda faiz işler. Asgari ödeme borcu azaltır ama maliyetli olabilir.
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+              <Button size="small" variant="outlined" onClick={() => act('payCardMin')}>Asgari Öde</Button>
+              <Button size="small" variant="outlined" onClick={() => act('payCardAll')}>Kapat</Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  );
+
+  const MarketScreen = () => (
+    <>
+      <Top title="Market" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Alışveriş</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+              Dolabı doldurmak günlük performansını etkiler.
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+              <Button variant="contained" onClick={() => act('grocery')}>Market Yap</Button>
+              <Button variant="outlined" onClick={() => act('cinema')}>Sinema</Button>
+              <Button variant="text" onClick={() => act('lightsOff')}>Işıkları kapat</Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  );
+
+  const AssetRow = ({ asset }: { asset: HoldingId }) => {
+    const price = holdingPriceTL(game, asset);
+    const owned = game.holdings[asset];
+    const value = owned * price;
+
+    return (
+      <Card
+        sx={{
+          borderRadius: 4,
+          bgcolor: 'rgba(255,255,255,0.06)',
+          color: 'white',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <CardContent>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <Typography fontWeight={900}>{holdingLabel(asset)}</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.75 }}>
+                Fiyat: {moneyTL(price)} · Eldeki: {owned} · Değer: {moneyTL(value)}
+              </Typography>
+            </Box>
+            <Chip size="small" label={asset.toUpperCase()} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+          </Stack>
+          <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
+            <Button size="small" variant="outlined" onClick={() => act('buyAsset', { amount: 1, asset })}>
+              Al (+1)
+            </Button>
+            <Button size="small" variant="outlined" onClick={() => act('sellAsset', { amount: 1, asset })}>
+              Sat (-1)
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const InvestScreen = () => (
+    <>
+      <Top title="Yatırım" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Typography variant="body2" sx={{ mt: 1, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
+          Kolay: daha stabil · Zor: daha volatil. (Kurgusal fiyatlar)
+        </Typography>
+
+        <Stack spacing={1.5} sx={{ mt: 2 }}>
+          <AssetRow asset="usd" />
+          <AssetRow asset="gold" />
+          <AssetRow asset="btc" />
+          <AssetRow asset="eth" />
+          <AssetRow asset="stock" />
+        </Stack>
+      </Box>
+    </>
+  );
+
+  const NewsScreen = () => (
+    <>
+      <Top title="Haber" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Akış</Typography>
+            <Typography variant="caption" sx={{ opacity: 0.75 }}>
+              Haberler ve olaylar burada görünür. Piyasalar gün sonunda güncellenir.
+            </Typography>
+            <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+            <Box>
+              {game.log.slice(0, 18).map((l: string, i: number) => (
+                <Typography key={i} variant="body2" sx={{ opacity: 0.85 }}>
+                  • {l}
+                </Typography>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  );
+
+  const EndScreen = () => {
+    const assetTL =
+      game.holdings.gold * game.goldPrice +
+      game.holdings.usd * game.usdTry +
+      game.holdings.btc * game.btcTry +
+      game.holdings.eth * game.ethTry +
+      game.holdings.stock * (game.stockIndex * 20);
+
+    return (
+      <>
+        <Top title="Ay Sonu" />
+        <Box sx={{ pt: 1 }}>
+          <Card sx={{ borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={950}>
+                Sonuç
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.75, opacity: 0.9 }}>
+                Skor: <b>{endScore}</b>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Nakit: <b>{moneyTL(game.cash)}</b> · Kart borcu: <b>{moneyTL(game.cardDebt)}</b>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Varlıklar (≈): <b>{moneyTL(assetTL)}</b>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Kira: <b>{game.rentPaid ? 'ödendi' : 'ödenmedi'}</b> · Faturalar: <b>{Object.values(game.billsPaid).filter(Boolean).length}/4</b>
+              </Typography>
+
+              <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+              <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                {endScore >= 70
+                  ? 'Dengeyi kurdun: ihtiyaçlar + borç kontrolü + birikim.'
+                  : endScore >= 40
+                    ? 'Kıl payı: bazı alanlarda açık var. Kart borcuna ve dolap planına dikkat.'
+                    : 'Zorlu ay: borç/ödeme planı bozuldu. Önce zorunlular, sonra küçük eğlence.'}
+              </Typography>
+
+              <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                <Button variant="contained" onClick={() => setGame(newGame(difficulty))}>
+                  Tekrar Oyna
+                </Button>
+                <Button variant="outlined" onClick={() => setScreen('home')}>
+                  Telefona dön
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+      </>
+    );
+  };
+
+  return (
+    <PhoneFrame>
+      {screen === 'home' && <HomeScreen />}
+      {screen === 'bank' && <BankScreen />}
+      {screen === 'market' && <MarketScreen />}
+      {screen === 'invest' && <InvestScreen />}
+      {screen === 'news' && <NewsScreen />}
+      {screen === 'end' && <EndScreen />}
+    </PhoneFrame>
   );
 }
