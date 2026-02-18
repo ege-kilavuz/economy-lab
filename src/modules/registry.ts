@@ -19,4 +19,10 @@ export const MODULES: ModuleMeta[] = [
     description: 'Faiz kararının enflasyon, büyüme ve işsizlik üzerindeki trade-off etkileri (basitleştirilmiş).',
     minutes: 8,
   },
+  {
+    id: 'life-sim',
+    title: 'İlk Maaş Simülasyonu',
+    description: 'Asgari ücretle 12 ay: gider, borç, acil fon ve yatırım dengesini kur. Skorla.',
+    minutes: 10,
+  },
 ];

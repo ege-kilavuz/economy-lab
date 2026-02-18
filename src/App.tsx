@@ -5,6 +5,7 @@ import type { ModuleId } from './modules/types';
 import { InflationModule } from './modules/inflation';
 import { InterestModule } from './modules/interest';
 import { CentralBankModule } from './modules/centralBank';
+import { LifeSimModule } from './modules/lifeSim';
 
 function ModuleView({ id }: { id: ModuleId }) {
   switch (id) {
@@ -14,6 +15,8 @@ function ModuleView({ id }: { id: ModuleId }) {
       return <InterestModule />;
     case 'central-bank':
       return <CentralBankModule />;
+    case 'life-sim':
+      return <LifeSimModule />;
     default:
       return null;
   }
