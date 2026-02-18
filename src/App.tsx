@@ -26,8 +26,8 @@ export default function App() {
   return (
     <>
       <CssBaseline />
-      <PhoneFrame>
-        <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: '#0b1220', color: 'white' }}>
+        <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'rgba(11,18,32,0.92)', color: 'white' }}>
           <Toolbar sx={{ px: 1.5 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 950, flex: 1, textAlign: 'center' }}>
               Finans & Ekonomi (Prototype) · {title}
@@ -36,8 +36,14 @@ export default function App() {
         </AppBar>
 
         <Box sx={{ py: 1.5 }}>
-          <Container maxWidth="md" sx={{ px: 0 }}>
-            {tab === 'learn' ? <LearnScreen /> : <MonthSimModule />}
+          <Container maxWidth="md" sx={{ px: 1.5 }}>
+            {tab === 'learn' ? (
+              <LearnScreen />
+            ) : (
+              <PhoneFrame>
+                <MonthSimModule />
+              </PhoneFrame>
+            )}
           </Container>
         </Box>
 
@@ -59,7 +65,7 @@ export default function App() {
             <BottomNavigationAction value="play" label="Oyna" icon={<SportsEsportsRounded />} />
           </BottomNavigation>
         </Box>
-      </PhoneFrame>
+      </Box>
     </>
   );
 }

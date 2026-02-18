@@ -16,7 +16,10 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnItem } from './learn/content';
 
-type LearnView = { kind: 'list' } | { kind: 'category'; category: LearnCategory };
+type LearnView =
+  | { kind: 'list' }
+  | { kind: 'category'; category: LearnCategory }
+  | { kind: 'quiz'; category: LearnCategory; index: number; selected?: number; correct?: number; total: number };
 
 function GlassCard({ children }: { children: React.ReactNode }) {
   return (
@@ -103,6 +106,85 @@ export function LearnScreen() {
     </AppBar>
   );
 
+  if (view.kind === 'quiz') {
+    const c = view.category;
+    const q = c.quiz[view.index];
+
+    if (!q) {
+      return (
+        <Box sx={{ pt: 1 }}>
+          <Top title={`✅ Test bitti · ${c.title}`} canBack />
+          <Typography variant="body2" sx={{ mt: 1, opacity: 0.85, color: 'rgba(255,255,255,0.85)' }}>
+            Skor: <b>{view.correct}</b> / <b>{view.total}</b>
+          </Typography>
+          <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
+            İpucu: Eksik kaldığın terimlere geri dönüp tekrar dene.
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Box sx={{ pt: 1 }}>
+        <Top title={`🧪 Test · ${c.title}`} canBack />
+        <Typography variant="body2" sx={{ mt: 1, opacity: 0.75, color: 'rgba(255,255,255,0.75)' }}>
+          Soru {view.index + 1} / {view.total}
+        </Typography>
+
+        <GlassCard>
+          <CardContent>
+            <Typography fontWeight={950}>{q.q}</Typography>
+            <Stack spacing={1} sx={{ mt: 1.5 }}>
+              {q.choices.map((ch, i) => {
+                const picked = view.selected === i;
+                return (
+                  <GlassCard key={i}>
+                    <CardContent
+                      onClick={() =>
+                        setView((v) =>
+                          v.kind === 'quiz' && v.selected === undefined
+                            ? { ...v, selected: i }
+                            : v
+                        )
+                      }
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <Typography variant="body2" sx={{ opacity: picked ? 1 : 0.85 }}>
+                        {picked ? '✅ ' : ''}{ch}
+                      </Typography>
+                    </CardContent>
+                  </GlassCard>
+                );
+              })}
+            </Stack>
+
+            {view.selected !== undefined ? (
+              <>
+                <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                  {view.selected === q.correctIndex ? 'Doğru.' : 'Yanlış.'} {q.explain}
+                </Typography>
+                <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
+                  <Chip
+                    size="small"
+                    label={view.selected === q.correctIndex ? '✅ +1' : '❌ 0'}
+                    sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }}
+                  />
+                  <Chip size="small" label="Devam" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }}
+                    onClick={() => {
+                      const inc = view.selected === q.correctIndex ? 1 : 0;
+                      setView({ kind: 'quiz', category: c, index: view.index + 1, correct: (view.correct ?? 0) + inc, total: view.total });
+                    }}
+                  />
+                </Stack>
+              </>
+            ) : null}
+          </CardContent>
+        </GlassCard>
+      </Box>
+    );
+  }
+
   if (view.kind === 'category') {
     const c = view.category;
     return (
@@ -117,6 +199,25 @@ export function LearnScreen() {
             <ItemCard key={it.id} item={it} />
           ))}
         </Stack>
+
+        <Box sx={{ mt: 2.5 }}>
+          <GlassCard>
+            <CardContent
+              onClick={() => setView({ kind: 'quiz', category: c, index: 0, correct: 0, total: c.quiz.length })}
+              sx={{ cursor: 'pointer' }}
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography fontWeight={950}>🧪 Bu kategoriyi test et</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+                    {c.quiz.length} soru · Öğrendiklerini pekiştir
+                  </Typography>
+                </Box>
+                <Chip size="small" label="BAŞLA" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
+              </Stack>
+            </CardContent>
+          </GlassCard>
+        </Box>
       </Box>
     );
   }
