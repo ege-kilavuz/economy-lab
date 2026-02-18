@@ -1,50 +1,65 @@
 import React from 'react';
-import { AppBar, Box, Container, CssBaseline, Toolbar, Typography } from '@mui/material';
-import { MODULES } from './modules/registry';
-import type { ModuleId } from './modules/types';
+import {
+  AppBar,
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  Container,
+  CssBaseline,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import SchoolRounded from '@mui/icons-material/SchoolRounded';
+import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
+
+import { PhoneFrame } from './ui/PhoneFrame';
+import { LearnScreen } from './LearnScreen';
 import { MonthSimModule } from './modules/monthSim';
 
-function ModuleView({ id }: { id: ModuleId }) {
-  switch (id) {
-    case 'month-sim':
-      return <MonthSimModule />;
-    default:
-      return null;
-  }
-}
+type RootTab = 'learn' | 'play';
 
 export default function App() {
-  const [tab] = React.useState<ModuleId>('month-sim');
+  const [tab, setTab] = React.useState<RootTab>('learn');
 
-  const m = MODULES[0];
+  const title = tab === 'learn' ? 'Öğren' : 'Oyun';
 
   return (
     <>
       <CssBaseline />
-      <AppBar position="sticky" elevation={0}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ fontWeight: 900 }}>
-            {m?.title} (Mobile Prototype)
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <PhoneFrame>
+        <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
+          <Toolbar sx={{ px: 1.5 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 950, flex: 1, textAlign: 'center' }}>
+              Finans & Ekonomi (Prototype) · {title}
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-      <Box sx={{ py: 2 }}>
-        <Container maxWidth="md">
-          <Box sx={{ mb: 2, opacity: 0.85 }}>
-            <Typography variant="body2">{m?.description}</Typography>
-          </Box>
-          <ModuleView id={tab} />
-        </Container>
-      </Box>
+        <Box sx={{ py: 1.5 }}>
+          <Container maxWidth="md" sx={{ px: 0 }}>
+            {tab === 'learn' ? <LearnScreen /> : <MonthSimModule />}
+          </Container>
+        </Box>
 
-      <Box sx={{ py: 3 }}>
-        <Container maxWidth="md">
-          <Typography variant="caption" sx={{ opacity: 0.75 }}>
-            Not: Bu bir prototiptir. Rakamlar/etkiler temsilîdir.
-          </Typography>
-        </Container>
-      </Box>
+        <Box
+          sx={{
+            position: 'sticky',
+            bottom: 0,
+            bgcolor: 'rgba(15,23,42,0.92)',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          <BottomNavigation
+            showLabels
+            value={tab}
+            onChange={(_, v) => setTab(v)}
+            sx={{ bgcolor: 'transparent', '& .MuiBottomNavigationAction-label': { color: 'rgba(255,255,255,0.8)' } }}
+          >
+            <BottomNavigationAction value="learn" label="Öğren" icon={<SchoolRounded />} />
+            <BottomNavigationAction value="play" label="Oyna" icon={<SportsEsportsRounded />} />
+          </BottomNavigation>
+        </Box>
+      </PhoneFrame>
     </>
   );
 }

@@ -25,7 +25,7 @@ import { balanceFor } from '../game/balance';
 import { PhoneFrame } from '../ui/PhoneFrame';
 import { AppIcon } from '../ui/AppIcon';
 
-type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'sleep' | 'end';
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'end';
 
 function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
@@ -173,7 +173,15 @@ export function MonthSimModule() {
           <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
           <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
           <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
-          <AppIcon label="Uyku" color="#0ea5e9" emoji="🌙" onClick={() => setScreen('sleep')} />
+          <AppIcon
+            label="Uyku"
+            color="#0ea5e9"
+            emoji="🌙"
+            onClick={() => {
+              // Direct day advance (no extra menu)
+              advanceDay();
+            }}
+          />
         </Stack>
 
         <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -400,31 +408,6 @@ export function MonthSimModule() {
     );
   };
 
-  const SleepScreen = () => (
-    <>
-      <Top title="Uyku" />
-      <Box sx={{ pt: 1 }}>
-        <StatChips />
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <CardContent>
-            <Typography fontWeight={900}>Günü Bitir</Typography>
-            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-              Gün sonunda: dolap azalır, piyasa güncellenir, olay/haber gelebilir. Günlük görev kontrol edilir.
-            </Typography>
-            <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
-              <Button variant="contained" onClick={advanceDay} disabled={finished}>
-                Uykuya geç (günü bitir)
-              </Button>
-              <Button variant="outlined" onClick={() => setScreen('home')}>
-                Vazgeç
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Box>
-    </>
-  );
-
   return (
     <PhoneFrame>
       {screen === 'home' && <HomeScreen />}
@@ -432,7 +415,6 @@ export function MonthSimModule() {
       {screen === 'market' && <MarketScreen />}
       {screen === 'invest' && <InvestScreen />}
       {screen === 'news' && <NewsScreen />}
-      {screen === 'sleep' && <SleepScreen />}
       {screen === 'end' && <EndScreen />}
     </PhoneFrame>
   );
