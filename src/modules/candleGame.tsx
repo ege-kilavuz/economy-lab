@@ -2,7 +2,8 @@ import React from 'react';
 import { Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
 // Simple, educational mini-game.
-// Player sees a random candle and picks what it most resembles.
+// Player sees a random candle WITH CONTEXT and picks what it most resembles.
+// We add a simple trend + level context to teach "shape alone is not enough".
 
 type Candle = {
   open: number;
@@ -12,6 +13,11 @@ type Candle = {
 };
 
 type Label = 'Doji' | 'Hammer' | 'Long Upper Wick' | 'Long Lower Wick' | 'Big Body';
+
+type Context = {
+  trend: 'up' | 'down' | 'sideways';
+  level: 'support' | 'resistance' | 'none';
+};
 
 function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));
@@ -28,7 +34,15 @@ function rng(seed: number) {
   };
 }
 
-function genCandle(r: () => number): { candle: Candle; answer: Label; hint: string } {
+function genContext(r: () => number): Context {
+  const trend = r() < 0.4 ? 'down' : r() < 0.75 ? 'up' : 'sideways';
+  const level = r() < 0.33 ? 'support' : r() < 0.66 ? 'resistance' : 'none';
+  return { trend, level };
+}
+
+function genCandle(r: () => number): { candle: Candle; answer: Label; hint: string; context: Context; bestPractice: string } {
+  const context = genContext(r);
+
   // Build candle in 0..100 space
   const base = 40 + r() * 20;
 
@@ -45,6 +59,8 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
       candle: { open, close, high, low },
       answer: 'Doji',
       hint: 'Açılış ve kapanış çok yakınsa kararsızlık olabilir.',
+      context,
+      bestPractice: 'Doji tek başına sinyal değildir. Sonraki mumla teyit ara ve trend/level ile birlikte düşün.',
     };
   }
   if (kindPick < 0.44) {
@@ -59,6 +75,11 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
       candle: { open, close, high, low },
       answer: 'Hammer',
       hint: 'Alt fitil uzun, gövde küçük: düşüş sonrası tepki ihtimali konuşulur (teyit şart).',
+      context,
+      bestPractice:
+        context.trend === 'down' && context.level === 'support'
+          ? 'Bu bağlamda daha anlamlı: düşüş trendi + destek. Yine de teyit (sonraki mum) ara.'
+          : 'Hammer görmek yetmez: düşüş trendi ve destek bölgesi yoksa anlamı zayıflar. Teyit ara.',
     };
   }
   if (kindPick < 0.62) {
@@ -73,6 +94,11 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
       candle: { open, close, high, low },
       answer: 'Long Upper Wick',
       hint: 'Uzun üst fitil: yukarı denendi ama reddedilmiş olabilir.',
+      context,
+      bestPractice:
+        context.level === 'resistance'
+          ? 'Dirençte uzun üst fitil daha anlamlı olabilir. Yine de tek mumla karar verme.'
+          : 'Üst fitil tek başına yeterli değil: seviye (direnç) ve teyit aramak gerekir.',
     };
   }
   if (kindPick < 0.80) {
@@ -87,6 +113,11 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
       candle: { open, close, high, low },
       answer: 'Long Lower Wick',
       hint: 'Uzun alt fitil: aşağı denendi ama alım gelmiş olabilir.',
+      context,
+      bestPractice:
+        context.level === 'support'
+          ? 'Destekte uzun alt fitil daha anlamlı olabilir. Teyit aramak şart.'
+          : 'Alt fitil tek başına yeterli değil: destek seviyesi + teyit aramak gerekir.',
     };
   }
 
@@ -101,6 +132,9 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
     candle: { open, close, high, low },
     answer: 'Big Body',
     hint: 'Uzun gövde: güçlü hareket. Bağlam (trend/haber) önemli.',
+    context,
+    bestPractice:
+      'Uzun gövde güç demek olabilir ama hangi yönde ve hangi seviyede olduğun önemli. Riskini küçük tut.',
   };
 }
 
@@ -143,7 +177,7 @@ export function CandleGame() {
   const [picked, setPicked] = React.useState<Label | null>(null);
 
   const r = React.useMemo(() => rng(seed + round * 997), [seed, round]);
-  const { candle, answer, hint } = React.useMemo(() => genCandle(r), [r]);
+  const { candle, answer, hint, context, bestPractice } = React.useMemo(() => genCandle(r), [r]);
 
   const done = round > 10;
 
@@ -182,7 +216,12 @@ export function CandleGame() {
           <CardContent>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Typography fontWeight={900}>Tur {round}/10</Typography>
-              <Chip size="small" label="Seç" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+              <Chip size="small" label="Bağlam" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+            </Stack>
+
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
+              <Chip size="small" label={`Trend: ${context.trend === 'up' ? 'Yukarı' : context.trend === 'down' ? 'Aşağı' : 'Yatay'}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+              <Chip size="small" label={`Seviye: ${context.level === 'support' ? 'Destek' : context.level === 'resistance' ? 'Direnç' : 'Yok'}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             </Stack>
 
             <Box sx={{ mt: 1 }}>
@@ -213,6 +252,9 @@ export function CandleGame() {
               <Box sx={{ mt: 1.5 }}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
                   {picked === answer ? 'Doğru.' : `Yanlış. Doğru cevap: ${answer}.`} {hint}
+                </Typography>
+                <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.75 }}>
+                  İyi pratik: {bestPractice}
                 </Typography>
                 <Button
                   sx={{ mt: 1.25 }}
