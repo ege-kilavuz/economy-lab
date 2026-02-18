@@ -17,18 +17,22 @@ import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnItem } from './learn/content';
 
 function buildItemIndex() {
-  const map = new Map<string, { title: string; categoryTitle: string }>();
+  const map = new Map<string, { title: string; categoryId: string; categoryTitle: string }>();
   for (const c of LEARN_CATEGORIES) {
     for (const it of c.items) {
-      map.set(it.id, { title: it.title, categoryTitle: c.title });
+      map.set(it.id, { title: it.title, categoryId: c.id, categoryTitle: c.title });
     }
   }
   return map;
 }
 
+function categoryById(id: string) {
+  return LEARN_CATEGORIES.find((c) => c.id === id);
+}
+
 type LearnView =
   | { kind: 'list' }
-  | { kind: 'category'; category: LearnCategory }
+  | { kind: 'category'; category: LearnCategory; focusItemId?: string }
   | {
       kind: 'quiz';
       category: LearnCategory;
@@ -54,10 +58,21 @@ function GlassCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ItemCard({ item }: { item: LearnItem }) {
+function ItemCard({ item, highlight }: { item: LearnItem; highlight?: boolean }) {
   return (
     <GlassCard>
-      <CardContent>
+      <CardContent
+        id={`item-${item.id}`}
+        sx={
+          highlight
+            ? {
+                outline: '2px solid rgba(96,165,250,0.55)',
+                outlineOffset: '2px',
+                borderRadius: 3,
+              }
+            : undefined
+        }
+      >
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography fontWeight={950}>{item.title}</Typography>
           <Chip size="small" label="TERİM" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
@@ -151,7 +166,11 @@ export function LearnScreen() {
                       key={id}
                       size="small"
                       label={label}
-                      sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }}
+                      onClick={() => {
+                        const cat = meta ? categoryById(meta.categoryId) : undefined;
+                        if (cat) setView({ kind: 'category', category: cat, focusItemId: id });
+                      }}
+                      sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', cursor: meta ? 'pointer' : 'default' }}
                     />
                   );
                 })}
@@ -252,8 +271,15 @@ export function LearnScreen() {
 
   if (view.kind === 'category') {
     const c = view.category;
+
+    React.useEffect(() => {
+      if (!view.focusItemId) return;
+      const el = document.getElementById(`item-${view.focusItemId}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [c.id, view.focusItemId]);
+
     return (
-      <Box sx={{ pt: 1 }}>
+      <Box sx={{ pt: 1, pb: 6 }}>
         <Top title={`${c.icon} ${c.title}`} canBack />
         <Typography variant="body2" sx={{ mt: 1, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
           {c.subtitle}
@@ -261,7 +287,7 @@ export function LearnScreen() {
 
         <Stack spacing={1.5} sx={{ mt: 2 }}>
           {c.items.map((it) => (
-            <ItemCard key={it.id} item={it} />
+            <ItemCard key={it.id} item={it} highlight={it.id === view.focusItemId} />
           ))}
         </Stack>
 
