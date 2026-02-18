@@ -41,6 +41,8 @@ type LearnView =
       correct?: number;
       total: number;
       reviewItemIds?: string[];
+      questionOrder: number[];
+      mode?: 'full' | 'wrong-only';
     };
 
 function GlassCard({ children }: { children: React.ReactNode }) {
@@ -142,7 +144,8 @@ export function LearnScreen() {
 
   if (view.kind === 'quiz') {
     const c = view.category;
-    const q = c.quiz[view.index];
+    const qi = view.questionOrder[view.index];
+    const q = c.quiz[qi];
 
     if (!q) {
       return (
@@ -175,6 +178,43 @@ export function LearnScreen() {
                   );
                 })}
               </Stack>
+
+              <Box sx={{ mt: 2 }}>
+                <GlassCard>
+                  <CardContent
+                    onClick={() => {
+                      const wrongIds = new Set(view.reviewItemIds ?? []);
+                      const order = c.quiz
+                        .map((qq, idx) => ({ idx, related: qq.relatedItemIds ?? [] }))
+                        .filter((x) => x.related.some((rid) => wrongIds.has(rid)))
+                        .map((x) => x.idx);
+
+                      const fallback = order.length ? order : c.quiz.map((_, i) => i);
+                      setView({
+                        kind: 'quiz',
+                        category: c,
+                        index: 0,
+                        correct: 0,
+                        total: fallback.length,
+                        reviewItemIds: [],
+                        questionOrder: fallback,
+                        mode: 'wrong-only',
+                      });
+                    }}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Box>
+                        <Typography fontWeight={950}>🔁 Yanlışlardan tekrar test</Typography>
+                        <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+                          Sadece yanlış yaptığın konular (hızlı tekrar)
+                        </Typography>
+                      </Box>
+                      <Chip size="small" label="BAŞLA" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
+                    </Stack>
+                  </CardContent>
+                </GlassCard>
+              </Box>
             </>
           ) : (
             <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
@@ -257,6 +297,8 @@ export function LearnScreen() {
                         correct: (view.correct ?? 0) + inc,
                         total: view.total,
                         reviewItemIds: merged,
+                        questionOrder: view.questionOrder,
+                        mode: view.mode,
                       });
                     }}
                   />
@@ -302,6 +344,8 @@ export function LearnScreen() {
                   correct: 0,
                   total: c.quiz.length,
                   reviewItemIds: [],
+                  questionOrder: c.quiz.map((_, i) => i),
+                  mode: 'full',
                 })
               }
               sx={{ cursor: 'pointer' }}
