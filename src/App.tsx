@@ -35,7 +35,7 @@ export default function App() {
           </Toolbar>
         </AppBar>
 
-        <Box sx={{ py: 1.5 }}>
+        <Box sx={{ py: 1.5, pb: 10 }}>
           <Container maxWidth="md" sx={{ px: 1.5 }}>
             {tab === 'learn' ? (
               <LearnScreen />

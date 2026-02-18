@@ -125,7 +125,7 @@ export function LearnScreen() {
     }
 
     return (
-      <Box sx={{ pt: 1 }}>
+      <Box sx={{ pt: 1, pb: 6 }}>
         <Top title={`🧪 Test · ${c.title}`} canBack />
         <Typography variant="body2" sx={{ mt: 1, opacity: 0.75, color: 'rgba(255,255,255,0.75)' }}>
           Soru {view.index + 1} / {view.total}
@@ -133,13 +133,17 @@ export function LearnScreen() {
 
         <GlassCard>
           <CardContent>
-            <Typography fontWeight={950}>{q.q}</Typography>
-            <Stack spacing={1} sx={{ mt: 1.5 }}>
+            <Typography fontWeight={950} sx={{ fontSize: 18 }}>
+              {q.q}
+            </Typography>
+            <Stack spacing={1.25} sx={{ mt: 1.75 }}>
               {q.choices.map((ch, i) => {
                 const picked = view.selected === i;
+                const locked = view.selected !== undefined;
                 return (
-                  <GlassCard key={i}>
-                    <CardContent
+                  <Box key={i}>
+                    <Box
+                      component="button"
                       onClick={() =>
                         setView((v) =>
                           v.kind === 'quiz' && v.selected === undefined
@@ -147,13 +151,22 @@ export function LearnScreen() {
                             : v
                         )
                       }
-                      sx={{ cursor: 'pointer' }}
+                      disabled={locked}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        borderRadius: 16,
+                        padding: '14px 14px',
+                        border: '1px solid rgba(255,255,255,0.14)',
+                        background: picked ? 'rgba(96,165,250,0.22)' : 'rgba(255,255,255,0.06)',
+                        color: 'white',
+                        fontSize: 15,
+                        cursor: locked ? 'default' : 'pointer',
+                      }}
                     >
-                      <Typography variant="body2" sx={{ opacity: picked ? 1 : 0.85 }}>
-                        {picked ? '✅ ' : ''}{ch}
-                      </Typography>
-                    </CardContent>
-                  </GlassCard>
+                      {picked ? '✅ ' : ''}{ch}
+                    </Box>
+                  </Box>
                 );
               })}
             </Stack>
