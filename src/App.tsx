@@ -12,7 +12,7 @@ import {
 import SchoolRounded from '@mui/icons-material/SchoolRounded';
 import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 
-import { PhoneFrame } from './ui/PhoneFrame';
+// PhoneFrame is used only inside the game module
 import { LearnScreen } from './LearnScreen';
 import { MonthSimModule } from './modules/monthSim';
 
@@ -37,13 +37,7 @@ export default function App() {
 
         <Box sx={{ py: 1.5, pb: 10 }}>
           <Container maxWidth="md" sx={{ px: 1.5 }}>
-            {tab === 'learn' ? (
-              <LearnScreen />
-            ) : (
-              <PhoneFrame>
-                <MonthSimModule />
-              </PhoneFrame>
-            )}
+            {tab === 'learn' ? <LearnScreen /> : <MonthSimModule />}
           </Container>
         </Box>
 

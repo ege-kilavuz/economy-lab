@@ -24,8 +24,9 @@ import { applyAction, newGame, nextDay, scoreEndOfMonth } from '../game/engine';
 import { balanceFor } from '../game/balance';
 import { PhoneFrame } from '../ui/PhoneFrame';
 import { AppIcon } from '../ui/AppIcon';
+import { CandleGame } from './candleGame';
 
-type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'end';
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'candle' | 'end';
 
 function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
@@ -173,12 +174,12 @@ export function MonthSimModule() {
           <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
           <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
           <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
+          <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
           <AppIcon
             label="Uyku"
             color="#0ea5e9"
             emoji="🌙"
             onClick={() => {
-              // Direct day advance (no extra menu)
               advanceDay();
             }}
           />
@@ -408,6 +409,18 @@ export function MonthSimModule() {
     );
   };
 
+  const CandleScreen = () => (
+    <>
+      <Top title="Mum Oyunu" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Box sx={{ mt: 2 }}>
+          <CandleGame />
+        </Box>
+      </Box>
+    </>
+  );
+
   return (
     <PhoneFrame>
       {screen === 'home' && <HomeScreen />}
@@ -415,6 +428,7 @@ export function MonthSimModule() {
       {screen === 'market' && <MarketScreen />}
       {screen === 'invest' && <InvestScreen />}
       {screen === 'news' && <NewsScreen />}
+      {screen === 'candle' && <CandleScreen />}
       {screen === 'end' && <EndScreen />}
     </PhoneFrame>
   );
