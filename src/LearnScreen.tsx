@@ -19,7 +19,15 @@ import type { LearnCategory, LearnItem } from './learn/content';
 type LearnView =
   | { kind: 'list' }
   | { kind: 'category'; category: LearnCategory }
-  | { kind: 'quiz'; category: LearnCategory; index: number; selected?: number; correct?: number; total: number };
+  | {
+      kind: 'quiz';
+      category: LearnCategory;
+      index: number;
+      selected?: number;
+      correct?: number;
+      total: number;
+      reviewItemIds?: string[];
+    };
 
 function GlassCard({ children }: { children: React.ReactNode }) {
   return (
@@ -112,14 +120,36 @@ export function LearnScreen() {
 
     if (!q) {
       return (
-        <Box sx={{ pt: 1 }}>
+        <Box sx={{ pt: 1, pb: 6 }}>
           <Top title={`✅ Test bitti · ${c.title}`} canBack />
           <Typography variant="body2" sx={{ mt: 1, opacity: 0.85, color: 'rgba(255,255,255,0.85)' }}>
             Skor: <b>{view.correct}</b> / <b>{view.total}</b>
           </Typography>
-          <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
-            İpucu: Eksik kaldığın terimlere geri dönüp tekrar dene.
-          </Typography>
+
+          {view.reviewItemIds?.length ? (
+            <>
+              <Typography variant="body2" sx={{ mt: 1.25, opacity: 0.85 }}>
+                Tekrar bakmanı önerdiklerim:
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ mt: 1 }}>
+                {view.reviewItemIds.slice(0, 12).map((id) => (
+                  <Chip
+                    key={id}
+                    size="small"
+                    label={id}
+                    sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }}
+                  />
+                ))}
+              </Stack>
+              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
+                (Bir sonraki sürümde bu chip’leri gerçek kart başlığına çevireceğim.)
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
+              İpucu: Eksik kaldığın terimlere geri dönüp tekrar dene.
+            </Typography>
+          )}
         </Box>
       );
     }
@@ -185,8 +215,18 @@ export function LearnScreen() {
                   />
                   <Chip size="small" label="Devam" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }}
                     onClick={() => {
-                      const inc = view.selected === q.correctIndex ? 1 : 0;
-                      setView({ kind: 'quiz', category: c, index: view.index + 1, correct: (view.correct ?? 0) + inc, total: view.total });
+                      const ok = view.selected === q.correctIndex;
+                      const inc = ok ? 1 : 0;
+                      const related = !ok ? (q.relatedItemIds ?? []) : [];
+                      const merged = Array.from(new Set([...(view.reviewItemIds ?? []), ...related]));
+                      setView({
+                        kind: 'quiz',
+                        category: c,
+                        index: view.index + 1,
+                        correct: (view.correct ?? 0) + inc,
+                        total: view.total,
+                        reviewItemIds: merged,
+                      });
                     }}
                   />
                 </Stack>
@@ -216,7 +256,16 @@ export function LearnScreen() {
         <Box sx={{ mt: 2.5 }}>
           <GlassCard>
             <CardContent
-              onClick={() => setView({ kind: 'quiz', category: c, index: 0, correct: 0, total: c.quiz.length })}
+              onClick={() =>
+                setView({
+                  kind: 'quiz',
+                  category: c,
+                  index: 0,
+                  correct: 0,
+                  total: c.quiz.length,
+                  reviewItemIds: [],
+                })
+              }
               sx={{ cursor: 'pointer' }}
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center">

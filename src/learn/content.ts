@@ -15,6 +15,7 @@ export type LearnQuestion = {
   choices: string[];
   correctIndex: number;
   explain: string;
+  relatedItemIds?: string[];
 };
 
 export type LearnCategory = {
@@ -127,6 +128,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Alım gücü artar', 'Alım gücü düşer', 'Hiç değişmez', 'Kart borcu kapanır'],
         correctIndex: 1,
         explain: 'Fiyatlar artarken gelir aynı kalırsa aynı sepeti almak zorlaşır → alım gücü düşer.',
+        relatedItemIds: ['inflation'],
       },
       {
         id: 'q2',
@@ -134,6 +136,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['İkisi aynı şey', 'Nominal rakam, reel satın alma gücü', 'Reel sadece borç için', 'Nominal sadece yatırım için'],
         correctIndex: 1,
         explain: 'Nominal: TL rakamı. Reel: o parayla ne alabildiğin.',
+        relatedItemIds: ['nominal-real'],
       },
       {
         id: 'q3',
@@ -141,6 +144,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Sadece anapara büyür', 'Faizin faizi oluşur', 'Faiz hiç işlemez', 'Hep zarar'],
         correctIndex: 1,
         explain: 'Kazanç anaparaya eklenir ve sonraki dönemde onun da getirisi olur.',
+        relatedItemIds: ['interest', 'compound'],
       },
       {
         id: 'q4',
@@ -148,6 +152,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Fiyatın sabit kalması', 'Fiyatın hızlı/büyük dalgalanması', 'Vergi oranı', 'Maaş günü'],
         correctIndex: 1,
         explain: 'Volatilite, iniş-çıkışın şiddeti/sıklığıdır.',
+        relatedItemIds: ['risk'],
       },
       {
         id: 'q5',
@@ -155,6 +160,15 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Satmak zorlaşır', 'Paraya çevirmek kolaylaşır', 'Faiz düşer', 'Enflasyon biter'],
         correctIndex: 1,
         explain: 'Likidite, paraya hızlı ve az kayıpla dönebilmedir.',
+        relatedItemIds: ['liquidity'],
+      },
+      {
+        id: 'q6',
+        q: 'Çeşitlendirme neden yapılır?',
+        choices: ['Kesin kazanç için', 'Tek kötü olay tüm planı bozmasın diye', 'Faizi sıfırlamak için', 'Enflasyonu bitirmek için'],
+        correctIndex: 1,
+        explain: 'Amaç garanti kazanç değil; riski tek noktadan yaymaktır.',
+        relatedItemIds: ['diversification'],
       },
     ],
   },
@@ -242,6 +256,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Önce eğlence', 'Önce zorunlular, sonra hedefler, en son keyif', 'Plan yapma', 'Tüm para kripto'],
         correctIndex: 1,
         explain: 'Zorunlular aksarsa domino etkisi yapar. Önce onları garantiye almak en güvenlisi.',
+        relatedItemIds: ['needs-wants', 'cashflow'],
       },
       {
         id: 'q2',
@@ -249,6 +264,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Hızlı zengin olmak', 'Sürprizde borca girmemek', 'Vergiyi sıfırlamak', 'Herkesin bilmesi'],
         correctIndex: 1,
         explain: 'Acil fon, şoklarda kredi kartına/borca yüklenmeyi azaltır.',
+        relatedItemIds: ['emergency'],
       },
       {
         id: 'q3',
@@ -256,6 +272,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['İstekler', 'İhtiyaçlar', 'Birikim/borç kapama', 'Vergi'],
         correctIndex: 2,
         explain: 'Birikim ve borç azaltma için bir pay ayırma fikridir.',
+        relatedItemIds: ['50-30-20'],
       },
       {
         id: 'q4',
@@ -263,6 +280,23 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Çünkü daha çok harcarsın', 'Çünkü nereye gittiğini görürsün', 'Çünkü faiz düşer', 'Çünkü enflasyon biter'],
         correctIndex: 1,
         explain: 'Paranın nereye gittiğini görürsen düzeltmek kolaylaşır.',
+        relatedItemIds: ['tracking'],
+      },
+      {
+        id: 'q5',
+        q: '“İhtiyaç” örneği hangisi?',
+        choices: ['Kira', 'Yeni oyun almak', 'Sinemaya gitmek', 'Markalı tişört'],
+        correctIndex: 0,
+        explain: 'Kira, yaşam için zorunlu giderlere örnektir.',
+        relatedItemIds: ['needs-wants'],
+      },
+      {
+        id: 'q6',
+        q: 'Aboneliklerle ilgili en doğru yaklaşım hangisi?',
+        choices: ['Hepsini açık tut', 'Kullanmadıklarını kapat', 'Abonelikler bedava', 'Abonelikler bütçeyi etkilemez'],
+        correctIndex: 1,
+        explain: 'Küçük ödemeler birikir; kullanmadığın abonelikleri kapatmak hızlı tasarruftur.',
+        relatedItemIds: ['subscriptions'],
       },
     ],
   },
@@ -331,6 +365,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Borcu bitirir', 'Borcu uzatır, faiz doğurur', 'Faizi sıfırlar', 'Geliri artırır'],
         correctIndex: 1,
         explain: 'Kalan borca faiz işler; toplam maliyet büyüyebilir.',
+        relatedItemIds: ['minpay'],
       },
       {
         id: 'q2',
@@ -338,6 +373,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Toplam geri ödeme', 'Toplam geri ödeme düşer', 'Faiz işlemez', 'Borç silinir'],
         correctIndex: 0,
         explain: 'Daha uzun süre faiz ödendiği için toplam ödeme çoğu zaman artar.',
+        relatedItemIds: ['apr'],
       },
       {
         id: 'q3',
@@ -345,6 +381,31 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         choices: ['Çünkü para artar', 'Çünkü acil durumda hareket alanın kalmaz', 'Çünkü enflasyon düşer', 'Çünkü kira azalır'],
         correctIndex: 1,
         explain: 'Limit doluysa beklenmedik giderde seçenek azalır.',
+        relatedItemIds: ['limit'],
+      },
+      {
+        id: 'q4',
+        q: 'Kart borcu varken en riskli davranış hangisi?',
+        choices: ['Gereksiz harcamayı kısmak', 'Sürekli yeni harcamayı karta yazmak', 'Düzenli ödeme yapmak', 'Giderleri not almak'],
+        correctIndex: 1,
+        explain: 'Yeni harcama eklendikçe borç büyür ve faiz maliyeti artar.',
+        relatedItemIds: ['minpay', 'late'],
+      },
+      {
+        id: 'q5',
+        q: 'Ödeme gecikirse en olası sonuç nedir?',
+        choices: ['Borç azalır', 'Ceza/ek maliyet ve stres artar', 'Faiz sıfırlanır', 'Kira otomatik ödenir'],
+        correctIndex: 1,
+        explain: 'Gecikme genelde ceza/faiz ve ek baskı doğurur.',
+        relatedItemIds: ['late'],
+      },
+      {
+        id: 'q6',
+        q: 'Borcu azaltmada “en basit” mantık hangisi?',
+        choices: ['Hiç bakmamak', 'Her ay düzenli biraz azaltmak', 'Sürekli asgari ödemek', 'Daha çok borç almak'],
+        correctIndex: 1,
+        explain: 'Düzenli azaltma borç döngüsünü kırmaya yardım eder.',
+        relatedItemIds: ['debt-snowball'],
       },
     ],
   },
