@@ -12,7 +12,14 @@ type Candle = {
   low: number;
 };
 
-type Label = 'Doji' | 'Hammer' | 'Long Upper Wick' | 'Long Lower Wick' | 'Big Body';
+type Label =
+  | 'Doji'
+  | 'Hammer'
+  | 'Shooting Star'
+  | 'Long Upper Wick'
+  | 'Long Lower Wick'
+  | 'Big Body'
+  | 'Marubozu';
 
 type Context = {
   trend: 'up' | 'down' | 'sideways';
@@ -82,7 +89,26 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
           : 'Hammer görmek yetmez: düşüş trendi ve destek bölgesi yoksa anlamı zayıflar. Teyit ara.',
     };
   }
-  if (kindPick < 0.62) {
+  if (kindPick < 0.60) {
+    // Shooting star (small body near low, long upper wick)
+    const bodyBottom = base - 6 - r() * 4;
+    const body = 3 + r() * 5;
+    const open = bodyBottom;
+    const close = bodyBottom + body;
+    const high = close + 28 + r() * 18;
+    const low = bodyBottom - 4 - r() * 6;
+    return {
+      candle: { open, close, high, low },
+      answer: 'Shooting Star',
+      hint: 'Küçük gövde + uzun üst fitil: yukarı itildi ama tutunamamış olabilir (teyit şart).',
+      context,
+      bestPractice:
+        context.trend === 'up' && context.level === 'resistance'
+          ? 'Bu bağlamda daha anlamlı: yükseliş + direnç. Yine de ertesi mumla teyit ara.'
+          : 'Shooting Star tek mumla karar verdirmez: trend/direnç + teyit aramak gerekir.',
+    };
+  }
+  if (kindPick < 0.74) {
     // Long upper wick
     const bodyBottom = base - 2 - r() * 4;
     const body = 6 + r() * 8;
@@ -101,7 +127,7 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
           : 'Üst fitil tek başına yeterli değil: seviye (direnç) ve teyit aramak gerekir.',
     };
   }
-  if (kindPick < 0.80) {
+  if (kindPick < 0.86) {
     // Long lower wick
     const bodyTop = base + 2 + r() * 4;
     const body = 6 + r() * 8;
@@ -118,6 +144,23 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
         context.level === 'support'
           ? 'Destekte uzun alt fitil daha anlamlı olabilir. Teyit aramak şart.'
           : 'Alt fitil tek başına yeterli değil: destek seviyesi + teyit aramak gerekir.',
+    };
+  }
+  if (kindPick < 0.93) {
+    // Marubozu (almost no wicks)
+    const mid = base;
+    const body = 30 + r() * 14;
+    const open = mid - body / 2;
+    const close = mid + body / 2;
+    const high = close + 0.5 + r() * 2;
+    const low = open - 0.5 - r() * 2;
+    return {
+      candle: { open, close, high, low },
+      answer: 'Marubozu',
+      hint: 'Fitilsiz gibi: çok güçlü tek yön hareket. (Ama haber/bağlam önemli.)',
+      context,
+      bestPractice:
+        'Güçlü mumlar “kesin” demek değildir. Risk yönetimi ve bağlam şart; aşırı heyecan FOMO yapabilir.',
     };
   }
 
@@ -168,7 +211,7 @@ function CandleSvg({ candle }: { candle: Candle }) {
   );
 }
 
-const CHOICES: Label[] = ['Doji', 'Hammer', 'Long Upper Wick', 'Long Lower Wick', 'Big Body'];
+const CHOICES: Label[] = ['Doji', 'Hammer', 'Shooting Star', 'Long Upper Wick', 'Long Lower Wick', 'Marubozu', 'Big Body'];
 
 export function CandleGame() {
   const [seed] = React.useState(() => Math.floor(Date.now() % 1000000));

@@ -17,6 +17,7 @@ type Item = {
 };
 
 const ITEMS: Item[] = [
+  ...moreItemsSeedPack(),
   {
     id: 'rumor-coin',
     title: '“X Coin yarın 10x olacakmış!”',
@@ -92,10 +93,96 @@ function shuffle<T>(arr: T[]) {
   return a;
 }
 
+function moreItemsSeedPack(): Item[] {
+  // Quick expansion pack (scaffold). Add more over time to reach 200–500+.
+  return [
+    {
+      id: 'anonymous-screenshot',
+      title: '“Bak ekran görüntüsü: kesin kanıt”',
+      context: 'Kaynak: anonim hesap. Ekran görüntüsü kesilmiş/kırpılmış.',
+      correct: 'noise',
+      why: 'Kırpılmış görüntü kolayca manipüle edilir. Orijinal kaynak yok.',
+      rule: 'Kural: Ekran görüntüsü kanıt değildir; kaynağı bul.',
+    },
+    {
+      id: 'press-release',
+      title: 'Şirket basın bülteni yayınladı (kendi sitesi).',
+      context: 'Kaynak: şirket sitesi. “Başarı hikayesi” tonu.',
+      correct: 'signal',
+      why: 'Bilgi birincil kaynaktan geliyor ama pazarlama dili olabilir.',
+      rule: 'Kural: Birincil kaynak + teşvik = dikkatli yorum.',
+    },
+    {
+      id: 'whatsapp-forward',
+      title: 'WhatsApp’ta zincir mesaj: “Banka hesabınız kapanacak”.',
+      context: 'Kaynak: iletilen mesaj. Link: kısa URL.',
+      correct: 'noise',
+      why: 'Zincir mesaj + link + korku baskısı çoğunlukla dolandırıcılık.',
+      rule: 'Kural: Korku ve aciliyet → dur, resmî kanaldan doğrula.',
+    },
+    {
+      id: 'data-with-method',
+      title: 'Araştırma: “Gençlerde harcama alışkanlıkları” (metodoloji var).',
+      context: 'Kaynak: örneklem, yöntem, tarih belirtilmiş rapor.',
+      correct: 'signal',
+      why: 'Yöntem ve tarih verilirse güven artar (yine de %100 değil).',
+      rule: 'Kural: Metodoloji + tarih = kalite göstergesi.',
+    },
+    {
+      id: 'influencer-promise',
+      title: 'Influencer: “Bu stratejiyle garanti kazanırsın.”',
+      context: 'Kaynak: sponsorlu video. Risk kısmı yok.',
+      correct: 'noise',
+      why: 'Garanti vaat + teşvik çatışması + risk yok = alarm.',
+      rule: 'Kural: “Garanti” kelimesi finans içerikte kırmızı bayrak.',
+    },
+    {
+      id: 'macro-calendar',
+      title: 'Ekonomik takvimde bugün veri açıklanacak.',
+      context: 'Kaynak: takvim + saat. “Bugün açıklanacak” bilgisi.',
+      correct: 'signal',
+      why: 'Olayın kendisi doğrulanabilir; etki tahmini ayrı konu.',
+      rule: 'Kural: Olay bilgisi ≠ fiyat tahmini.',
+    },
+    {
+      id: 'commentary-only',
+      title: '“Bence kesin düşecek” yorumu (veri yok).',
+      context: 'Kaynak: yorum. Rakam, link, gerekçe yok.',
+      correct: 'noise',
+      why: 'Gerekçesiz kesinlik, bilgi değil görüş.',
+      rule: 'Kural: Görüşü veri sanma.',
+    },
+    {
+      id: 'regulatory-fine',
+      title: 'Regülatör şirkete ceza kesti (resmî açıklama).',
+      context: 'Kaynak: resmî karar metni.',
+      correct: 'signal',
+      why: 'Doğrulanabilir olay var. Etkisi tartışılabilir.',
+      rule: 'Kural: Doğrulanabilir belge = sinyal.',
+    },
+    {
+      id: 'bait-headline',
+      title: 'Tık tuzağı başlık: “Şok! Her şey değişti!”',
+      context: 'Kaynak: clickbait site. İçerik belirsiz.',
+      correct: 'noise',
+      why: 'Belirsiz başlık genelde reklam geliri için.',
+      rule: 'Kural: Başlık değil içerik + kaynak.',
+    },
+    {
+      id: 'simple-budget',
+      title: '“Aylık gelir-gider tablosu” önerisi (örnekli).',
+      context: 'Kaynak: eğitim içeriği. Basit örnekler var.',
+      correct: 'signal',
+      why: 'Eğitim/alışkanlık önerisi; doğrulanabilir ve zararsız.',
+      rule: 'Kural: Basit alışkanlıklar çoğu zaman en güçlüdür.',
+    },
+  ];
+}
+
 export function NewsNoiseGame() {
   const [started, setStarted] = React.useState(false);
   const [index, setIndex] = React.useState(0);
-  const [order, setOrder] = React.useState<Item[]>(() => shuffle(ITEMS).slice(0, 8));
+  const [order, setOrder] = React.useState<Item[]>(() => shuffle(ITEMS).slice(0, 10));
   const [score, setScore] = React.useState(0);
   const [streak, setStreak] = React.useState(0);
   const [last, setLast] = React.useState<{ pick: Pick; ok: boolean; item: Item } | null>(null);
@@ -106,7 +193,7 @@ export function NewsNoiseGame() {
   function reset() {
     setStarted(false);
     setIndex(0);
-    setOrder(shuffle(ITEMS).slice(0, 8));
+    setOrder(shuffle(ITEMS).slice(0, 10));
     setScore(0);
     setStreak(0);
     setLast(null);
@@ -140,7 +227,7 @@ export function NewsNoiseGame() {
             <Chip size="small" label={`Skor ${score}`} sx={{ bgcolor: 'rgba(34,197,94,0.18)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            8 tur. Amaç: “Kaynak + kanıt + teşvik” filtrelerini refleks yapmak.
+            10 tur. Amaç: “Kaynak + kanıt + teşvik” filtrelerini refleks yapmak.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>

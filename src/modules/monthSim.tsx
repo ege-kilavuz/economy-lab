@@ -28,8 +28,9 @@ import { CandleGame } from './candleGame';
 import { CardEscape } from './cardEscape';
 import { BudgetTetris } from './budgetTetris';
 import { NewsNoiseGame } from './newsNoise';
+import { ScamRadarGame } from './scamRadar';
 
-type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'candle' | 'card-escape' | 'budget-tetris' | 'news-noise' | 'end';
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'candle' | 'card-escape' | 'budget-tetris' | 'news-noise' | 'scam-radar' | 'end';
 
 function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
@@ -179,7 +180,8 @@ export function MonthSimModule() {
           <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
           <AppIcon label="Kart" color="#f97316" emoji="💳" onClick={() => setScreen('card-escape')} />
           <AppIcon label="Bütçe" color="#34d399" emoji="🧩" onClick={() => setScreen('budget-tetris')} />
-          <AppIcon label="Haber" color="#a78bfa" emoji="📰" onClick={() => setScreen('news-noise')} />
+          <AppIcon label="Gürültü" color="#a78bfa" emoji="📰" onClick={() => setScreen('news-noise')} />
+          <AppIcon label="Radar" color="#ef4444" emoji="🛡️" onClick={() => setScreen('scam-radar')} />
           <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
           <AppIcon
             label="Uyku"
@@ -463,6 +465,18 @@ export function MonthSimModule() {
     </>
   );
 
+  const ScamRadarScreen = () => (
+    <>
+      <Top title="Dolandırıcılık Radar" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Box sx={{ mt: 2 }}>
+          <ScamRadarGame />
+        </Box>
+      </Box>
+    </>
+  );
+
   return (
     <PhoneFrame>
       {screen === 'home' && <HomeScreen />}
@@ -473,6 +487,7 @@ export function MonthSimModule() {
       {screen === 'card-escape' && <CardEscapeScreen />}
       {screen === 'budget-tetris' && <BudgetTetrisScreen />}
       {screen === 'news-noise' && <NewsNoiseScreen />}
+      {screen === 'scam-radar' && <ScamRadarScreen />}
       {screen === 'candle' && <CandleScreen />}
       {screen === 'end' && <EndScreen />}
     </PhoneFrame>

@@ -35,16 +35,17 @@ function uid() {
   return Math.random().toString(16).slice(2);
 }
 
-function newBlock(): Block {
+function newBlock(level: number = 1): Block {
   const amounts = [250, 500, 750, 1000, 1250, 1500];
   const amount = amounts[Math.floor(Math.random() * amounts.length)]!;
+  const speedMult = 1 + (level - 1) * 0.18;
   return {
     id: uid(),
     amount,
     x: 0.1 + Math.random() * 0.8,
     y: 0,
-    // Slower by default; game is short.
-    vy: 0.006 + Math.random() * 0.004,
+    // Slower by default; ramps with level.
+    vy: (0.006 + Math.random() * 0.004) * speedMult,
   };
 }
 
@@ -89,7 +90,15 @@ export function BudgetTetris() {
     },
   ]);
 
-  const [block, setBlock] = React.useState<Block>(() => newBlock());
+  const [level, setLevel] = React.useState(1);
+  const [milestone, setMilestone] = React.useState<{ needs6000: boolean; needs8000: boolean; emergency2000: boolean; goal2500: boolean }>({
+    needs6000: false,
+    needs8000: false,
+    emergency2000: false,
+    goal2500: false,
+  });
+
+  const [block, setBlock] = React.useState<Block>(() => newBlock(1));
   const [dragX, setDragX] = React.useState<number | null>(null);
   const [cooldownMs, setCooldownMs] = React.useState(0);
   const [dropped, setDropped] = React.useState(0);
@@ -104,7 +113,9 @@ export function BudgetTetris() {
     setScore(0);
     setTip('İpucu: Önce Zorunlular dolsun. Sonra acil fon ve hedef.');
     setBuckets((bs) => bs.map((b) => ({ ...b, saved: 0 })));
-    setBlock(newBlock());
+    setLevel(1);
+    setMilestone({ needs6000: false, needs8000: false, emergency2000: false, goal2500: false });
+    setBlock(newBlock(1));
     setDragX(null);
     setCooldownMs(0);
     setDropped(0);
@@ -144,7 +155,7 @@ export function BudgetTetris() {
           setScore((sc) => sc - 3);
           setTip('Kaçırdın: Para boşa gitti. Küçük kaçışlar ay sonunda büyür.');
           setCooldownMs(250);
-          return newBlock();
+          return newBlock(level);
         }
         return { ...b, y };
       });
@@ -188,8 +199,47 @@ export function BudgetTetris() {
     if (id === 'needs') setTip('Zorunlular: önce bunlar. Domino etkisini engeller.');
     if (id === 'goal') setTip('Hedef: motivasyon. Küçük ama düzenli ilerleme daha sürdürülebilir.');
 
-    setCooldownMs(250);
-    setBlock(newBlock());
+    // level progression (roughly: every 6 drops)
+    const nextLevel = 1 + Math.floor((dropped + 1) / 6);
+    if (nextLevel !== level) {
+      setLevel(nextLevel);
+      setTip(`Seviye ${nextLevel}! Hız biraz arttı. Önce zorunlular, sonra acil fon.`);
+    }
+
+    // milestone bonuses (simple & motivating)
+    const nextBuckets = buckets.map((b) => (b.id === id ? { ...b, saved: b.saved + block.amount } : b));
+    const needsSaved = nextBuckets.find((b) => b.id === 'needs')?.saved ?? 0;
+    const emergencySaved = nextBuckets.find((b) => b.id === 'emergency')?.saved ?? 0;
+    const goalSaved = nextBuckets.find((b) => b.id === 'goal')?.saved ?? 0;
+
+    setMilestone((m) => {
+      let bonus = 0;
+      const m2 = { ...m };
+      if (!m2.needs6000 && needsSaved >= 6000) {
+        m2.needs6000 = true;
+        bonus += 6;
+      }
+      if (!m2.needs8000 && needsSaved >= 8000) {
+        m2.needs8000 = true;
+        bonus += 8;
+      }
+      if (!m2.emergency2000 && emergencySaved >= 2000) {
+        m2.emergency2000 = true;
+        bonus += 6;
+      }
+      if (!m2.goal2500 && goalSaved >= 2500) {
+        m2.goal2500 = true;
+        bonus += 5;
+      }
+      if (bonus > 0) {
+        setScore((sc) => sc + bonus);
+        setTip(`Bonus +${bonus}: hedef milestone! (Zorunlular/Acil Fon/Hedef)`);
+      }
+      return m2;
+    });
+
+    setCooldownMs(240);
+    setBlock(newBlock(nextLevel));
   }
 
   function onPointerDown(e: React.PointerEvent) {
@@ -227,6 +277,12 @@ export function BudgetTetris() {
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
             <Chip size="small" label={`Süre: ${Math.max(0, timeLeft)}s`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Toplam: ${money(totalSaved)}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Seviye: ${level}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip
+              size="small"
+              label={`Bonus: ${Object.values(milestone).filter(Boolean).length}/4`}
+              sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }}
+            />
             <Chip size="small" label={`Bırakılan: ${dropped}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Kaçan: ${missed}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Seri: ${streak}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
