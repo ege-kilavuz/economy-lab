@@ -18,6 +18,10 @@ export type GameState = {
   seed: number;
   log: string[];
 
+  // daily gamification
+  points: number;
+  quest: { title: string; hint: string; done: boolean };
+
   // market prices
   goldPrice: number; // TL per gram
   stockIndex: number; // arbitrary index

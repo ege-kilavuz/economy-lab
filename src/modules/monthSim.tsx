@@ -25,7 +25,7 @@ import { balanceFor } from '../game/balance';
 import { PhoneFrame } from '../ui/PhoneFrame';
 import { AppIcon } from '../ui/AppIcon';
 
-type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'end';
+type Screen = 'home' | 'bank' | 'market' | 'invest' | 'news' | 'sleep' | 'end';
 
 function moneyTL(n: number) {
   return `${Math.round(n).toLocaleString()} TL`;
@@ -136,7 +136,7 @@ export function MonthSimModule() {
       <Top title="Telefon" />
       <Box sx={{ pt: 1 }}>
         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)' }}>
-          Mod: <b>{diffLabel(game.difficulty)}</b> · Faiz: <b>{game.policyRate.toFixed(1)}%</b>
+          Mod: <b>{diffLabel(game.difficulty)}</b> · Faiz: <b>{game.policyRate.toFixed(1)}%</b> · Puan: <b>{game.points}</b>
         </Typography>
         <Box sx={{ mt: 1 }}>
           <StatChips />
@@ -144,23 +144,26 @@ export function MonthSimModule() {
 
         <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
           <CardContent>
-            <Typography fontWeight={900}>Bugün</Typography>
-            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-              Dolap her gün azalır. Kira/faturaları geciktirme. İstersen kart kullan ama ay sonunda faiz var.
+            <Typography fontWeight={900}>Günlük Görev</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+              {game.quest.title}
             </Typography>
+            <Typography variant="caption" sx={{ opacity: 0.75 }}>
+              İpucu: {game.quest.hint} {game.quest.done ? '✅ (+10)' : ''}
+            </Typography>
+
+            <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+
+            <FormControlLabel
+              control={<Switch checked={useCard} onChange={(_, v) => setUseCard(v)} />}
+              label={useCard ? 'Kart modu açık' : 'Nakit modu'}
+            />
+
             <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
-              <Button variant="contained" onClick={advanceDay} disabled={finished}>
-                Günü Bitir
-              </Button>
               <Button variant="outlined" onClick={() => setGame(newGame(difficulty))}>
                 Sıfırla
               </Button>
             </Stack>
-            <FormControlLabel
-              sx={{ mt: 1 }}
-              control={<Switch checked={useCard} onChange={(_, v) => setUseCard(v)} />}
-              label={useCard ? 'Kart modu açık' : 'Nakit modu'}
-            />
           </CardContent>
         </Card>
 
@@ -170,6 +173,7 @@ export function MonthSimModule() {
           <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
           <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
           <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
+          <AppIcon label="Uyku" color="#0ea5e9" emoji="🌙" onClick={() => setScreen('sleep')} />
         </Stack>
 
         <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -250,6 +254,7 @@ export function MonthSimModule() {
   );
 
   const AssetRow = ({ asset }: { asset: HoldingId }) => {
+    const [amt, setAmt] = React.useState(1);
     const price = holdingPriceTL(game, asset);
     const owned = game.holdings[asset];
     const value = owned * price;
@@ -273,12 +278,22 @@ export function MonthSimModule() {
             </Box>
             <Chip size="small" label={asset.toUpperCase()} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
           </Stack>
+
+          <Stack direction="row" spacing={1} sx={{ mt: 1.25 }} alignItems="center" flexWrap="wrap" useFlexGap>
+            <Chip size="small" label={`Miktar: ${amt}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Button size="small" variant="outlined" onClick={() => setAmt((a) => Math.max(1, a - 1))}>-</Button>
+            <Button size="small" variant="outlined" onClick={() => setAmt((a) => Math.min(50, a + 1))}>+</Button>
+            <Button size="small" variant="text" onClick={() => setAmt(1)}>1</Button>
+            <Button size="small" variant="text" onClick={() => setAmt(5)}>5</Button>
+            <Button size="small" variant="text" onClick={() => setAmt(10)}>10</Button>
+          </Stack>
+
           <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
-            <Button size="small" variant="outlined" onClick={() => act('buyAsset', { amount: 1, asset })}>
-              Al (+1)
+            <Button size="small" variant="contained" onClick={() => act('buyAsset', { amount: amt, asset })}>
+              Al
             </Button>
-            <Button size="small" variant="outlined" onClick={() => act('sellAsset', { amount: 1, asset })}>
-              Sat (-1)
+            <Button size="small" variant="outlined" onClick={() => act('sellAsset', { amount: amt, asset })}>
+              Sat
             </Button>
           </Stack>
         </CardContent>
@@ -385,6 +400,31 @@ export function MonthSimModule() {
     );
   };
 
+  const SleepScreen = () => (
+    <>
+      <Top title="Uyku" />
+      <Box sx={{ pt: 1 }}>
+        <StatChips />
+        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <CardContent>
+            <Typography fontWeight={900}>Günü Bitir</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+              Gün sonunda: dolap azalır, piyasa güncellenir, olay/haber gelebilir. Günlük görev kontrol edilir.
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
+              <Button variant="contained" onClick={advanceDay} disabled={finished}>
+                Uykuya geç (günü bitir)
+              </Button>
+              <Button variant="outlined" onClick={() => setScreen('home')}>
+                Vazgeç
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  );
+
   return (
     <PhoneFrame>
       {screen === 'home' && <HomeScreen />}
@@ -392,6 +432,7 @@ export function MonthSimModule() {
       {screen === 'market' && <MarketScreen />}
       {screen === 'invest' && <InvestScreen />}
       {screen === 'news' && <NewsScreen />}
+      {screen === 'sleep' && <SleepScreen />}
       {screen === 'end' && <EndScreen />}
     </PhoneFrame>
   );
