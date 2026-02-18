@@ -43,13 +43,14 @@ function newBlock(): Block {
     amount,
     x: 0.1 + Math.random() * 0.8,
     y: 0,
-    vy: 0.012 + Math.random() * 0.01,
+    // Slower by default; game is short.
+    vy: 0.006 + Math.random() * 0.004,
   };
 }
 
 export function BudgetTetris() {
   const [running, setRunning] = React.useState(false);
-  const [timeLeft, setTimeLeft] = React.useState(75); // seconds
+  const [timeLeft, setTimeLeft] = React.useState(45); // seconds
   const [score, setScore] = React.useState(0);
   const [tip, setTip] = React.useState('İpucu: Önce Zorunlular dolsun. Sonra acil fon ve hedef.');
 
@@ -90,17 +91,25 @@ export function BudgetTetris() {
 
   const [block, setBlock] = React.useState<Block>(() => newBlock());
   const [dragX, setDragX] = React.useState<number | null>(null);
+  const [cooldownMs, setCooldownMs] = React.useState(0);
+  const [dropped, setDropped] = React.useState(0);
+  const [missed, setMissed] = React.useState(0);
+  const [streak, setStreak] = React.useState(0);
 
   const done = timeLeft <= 0;
 
   function reset() {
     setRunning(false);
-    setTimeLeft(75);
+    setTimeLeft(45);
     setScore(0);
     setTip('İpucu: Önce Zorunlular dolsun. Sonra acil fon ve hedef.');
     setBuckets((bs) => bs.map((b) => ({ ...b, saved: 0 })));
     setBlock(newBlock());
     setDragX(null);
+    setCooldownMs(0);
+    setDropped(0);
+    setMissed(0);
+    setStreak(0);
   }
 
   // countdown
@@ -111,24 +120,37 @@ export function BudgetTetris() {
     return () => clearInterval(t);
   }, [running, done]);
 
+  // cooldown tick
+  React.useEffect(() => {
+    if (!running) return;
+    if (done) return;
+    if (cooldownMs <= 0) return;
+    const t = setInterval(() => setCooldownMs((ms) => Math.max(0, ms - 50)), 50);
+    return () => clearInterval(t);
+  }, [running, done, cooldownMs]);
+
   // falling loop
   React.useEffect(() => {
     if (!running) return;
     if (done) return;
+    if (cooldownMs > 0) return;
     const t = setInterval(() => {
       setBlock((b) => {
         const y = b.y + b.vy;
         if (y >= 1) {
           // missed
+          setMissed((m) => m + 1);
+          setStreak(0);
           setScore((sc) => sc - 3);
           setTip('Kaçırdın: Para boşa gitti. Küçük kaçışlar ay sonunda büyür.');
+          setCooldownMs(250);
           return newBlock();
         }
         return { ...b, y };
       });
     }, 50);
     return () => clearInterval(t);
-  }, [running, done]);
+  }, [running, done, cooldownMs]);
 
   function bucketFromX(x01: number): BucketId {
     if (x01 < 0.25) return 'needs';
@@ -140,23 +162,25 @@ export function BudgetTetris() {
   function drop() {
     const id = bucketFromX(block.x);
 
+    setDropped((d) => d + 1);
     setBuckets((bs) =>
       bs.map((b) => (b.id === id ? { ...b, saved: b.saved + block.amount } : b))
     );
 
-    setScore((sc) => {
-      const needs = buckets.find((b) => b.id === 'needs')?.saved ?? 0;
-      const needsAfter = id === 'needs' ? needs + block.amount : needs;
+    // scoring rules (based on current bucket state)
+    const needs = buckets.find((b) => b.id === 'needs')?.saved ?? 0;
+    const needsAfter = id === 'needs' ? needs + block.amount : needs;
 
-      // scoring rules
-      let add = 0;
-      if (id === 'needs') add += 5;
-      if (id === 'emergency') add += needsAfter >= 6000 ? 4 : -1;
-      if (id === 'goal') add += needsAfter >= 7000 ? 3 : -1;
-      if (id === 'wants') add += needsAfter >= 8000 ? 1 : -3;
+    let add = 0;
+    if (id === 'needs') add += 5;
+    if (id === 'emergency') add += needsAfter >= 6000 ? 4 : -1;
+    if (id === 'goal') add += needsAfter >= 7000 ? 3 : -1;
+    if (id === 'wants') add += needsAfter >= 8000 ? 1 : -3;
 
-      return sc + add;
-    });
+    setScore((sc) => sc + add);
+
+    if (add > 0) setStreak((s) => s + 1);
+    else setStreak(0);
 
     // teach hints
     if (id === 'wants') setTip('İstekler iyi ama önce zorunlular. Yoksa kart/borç riski artar.');
@@ -164,6 +188,7 @@ export function BudgetTetris() {
     if (id === 'needs') setTip('Zorunlular: önce bunlar. Domino etkisini engeller.');
     if (id === 'goal') setTip('Hedef: motivasyon. Küçük ama düzenli ilerleme daha sürdürülebilir.');
 
+    setCooldownMs(250);
     setBlock(newBlock());
   }
 
@@ -196,12 +221,15 @@ export function BudgetTetris() {
             <Chip size="small" label={`Skor ${score}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            75 saniye. Parayı doğru kutuya bırak.
+            45 saniye. Parayı doğru kutuya bırak. (Biraz daha yavaş ve daha az yoğun)
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
             <Chip size="small" label={`Süre: ${Math.max(0, timeLeft)}s`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Toplam: ${money(totalSaved)}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Bırakılan: ${dropped}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Kaçan: ${missed}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={`Seri: ${streak}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
           </Stack>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
@@ -292,9 +320,20 @@ export function BudgetTetris() {
           </Typography>
 
           {done ? (
-            <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
-              Süre bitti. İpucu: Zorunlular dolmadan istekleri büyütmek kart/borç riskini artırır.
-            </Typography>
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="caption" sx={{ display: 'block', opacity: 0.7 }}>
+                Süre bitti. Özet:
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
+                Zorunlular: {money(buckets.find((b) => b.id === 'needs')?.saved ?? 0)} ·
+                Acil fon: {money(buckets.find((b) => b.id === 'emergency')?.saved ?? 0)} ·
+                Hedef: {money(buckets.find((b) => b.id === 'goal')?.saved ?? 0)} ·
+                İstek: {money(buckets.find((b) => b.id === 'wants')?.saved ?? 0)}
+              </Typography>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.7 }}>
+                Ders: Zorunlular dolmadan istekleri büyütmek kart/borç riskini artırır. Acil fon “kötü gün sigortasıdır”.
+              </Typography>
+            </Box>
           ) : null}
         </CardContent>
       </Card>
