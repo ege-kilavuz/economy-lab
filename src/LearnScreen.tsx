@@ -323,22 +323,55 @@ export function LearnScreen() {
   if (view.kind === 'category') {
     const c = view.category;
 
-// (scroll-to-focus handled at top-level useEffect)
-
     return (
       <Box sx={{ pt: 1, pb: 6 }}>
         <Top title={`${c.icon} ${c.title}`} canBack />
-        <Typography variant="body2" sx={{ mt: 1, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
+        <Typography variant="body2" sx={{ mt: 1, mb: 2, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
           {c.subtitle}
         </Typography>
 
-        <Stack spacing={1.5} sx={{ mt: 2 }}>
+        <Stack spacing={2}>
           {c.items.map((it) => (
-            <ItemCard key={it.id} item={it} highlight={it.id === view.focusItemId} />
+            <Box key={it.id} id={`item-${it.id}`}>
+              <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900, ml: 1 }}>
+                {it.title}
+              </Typography>
+              <Stack spacing={1.5} sx={{ mt: 0.5 }}>
+                {it.body.map((p, i) => (
+                  <GlassCard key={`${it.id}-body-${i}`}>
+                    <CardContent sx={{ py: 1.5 }}>
+                      <Typography variant="body2" sx={{ opacity: 0.9, lineHeight: 1.6 }}>
+                        {p}
+                      </Typography>
+                    </CardContent>
+                  </GlassCard>
+                ))}
+                {it.tips?.map((t, i) => (
+                  <Card
+                    key={`${it.id}-tip-${i}`}
+                    sx={{
+                      borderRadius: 4,
+                      bgcolor: 'rgba(96,165,250,0.12)',
+                      color: 'white',
+                      border: '1px solid rgba(96,165,250,0.2)',
+                    }}
+                  >
+                    <CardContent sx={{ py: 1.25 }}>
+                      <Typography variant="caption" sx={{ display: 'block', fontWeight: 900, mb: 0.5, color: '#60a5fa' }}>
+                        💡 Taktik / İpucu
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        {t}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            </Box>
           ))}
         </Stack>
 
-        <Box sx={{ mt: 2.5 }}>
+        <Box sx={{ mt: 4 }}>
           <GlassCard>
             <CardContent
               onClick={() =>
