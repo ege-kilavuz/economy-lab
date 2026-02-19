@@ -333,7 +333,7 @@ export function LearnScreen() {
         <Stack spacing={2}>
           {c.items.map((it) => (
             <Box key={it.id} id={`item-${it.id}`}>
-              <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900, ml: 1 }}>
+              <Typography sx={{ color: 'white', fontWeight: 950, ml: 1, fontSize: '1.25rem', mb: 1, textTransform: 'uppercase', letterSpacing: 1 }}>
                 {it.title}
               </Typography>
               <Stack spacing={1.5} sx={{ mt: 0.5 }}>
