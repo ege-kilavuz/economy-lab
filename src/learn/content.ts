@@ -34,8 +34,118 @@ export type LearnCategory = {
   quiz: LearnQuestion[];
 };
 
-// Tone goal: clear, short sentences, concrete examples.
-// Not financial advice.
+function generateBasicsQuiz(): LearnQuestion[] {
+  const assets = ['Anapara', 'Yatırım', 'Birikim', 'Maaş', 'Bütçe'];
+  const pool: LearnQuestion[] = [
+    {
+      id: 'basics-q-inf-1',
+      q: 'Enflasyon %50 ise, bugün 100 TL olan sepet bir yıl sonra kaç TL olur?',
+      choices: ['100 TL', '125 TL', '150 TL', '200 TL'],
+      correctIndex: 2,
+      explain: 'Enflasyon oranı kadar fiyat artışı beklenir.',
+    },
+    {
+      id: 'basics-q-real-1',
+      q: 'Maaşınız %20 arttı ama enflasyon %40. Reel durumunuz nedir?',
+      choices: ['%20 kardayım', 'Değişmedi', 'Alım gücüm düştü', 'Zengin oldum'],
+      correctIndex: 2,
+      explain: 'Enflasyon maaş artışından yüksekse alım gücü azalır.',
+    },
+  ];
+  assets.forEach((a, i) => {
+    pool.push({
+      id: `basics-gen-${i}`,
+      q: `${a} miktarınız nominal olarak aynı kalsa ama fiyatlar artsa ne olur?`,
+      choices: ['Değeri artar', 'Reel değeri düşer', 'Hiçbir şey olmaz', 'Borç biter'],
+      correctIndex: 1,
+      explain: 'Rakam aynı kalsa bile alım gücü (reel değer) enflasyonla erir.',
+    });
+  });
+  for (let k = 0; k < 30; k++) {
+    pool.push({
+      id: `basics-filler-${k}`,
+      q: `Finansal okuryazarlıkta ${k % 2 === 0 ? 'Bileşik Etki' : 'Likidite'} neden önemlidir?`,
+      choices: ['Önemsizdir', 'Zamanla parayı büyütür/hız kazandırır', 'Sadece bankalar içindir', 'Vergiyi artırır'],
+      correctIndex: 1,
+      explain: 'Temel kavramlar finansal sağlığın temelidir.',
+    });
+  }
+  return pool;
+}
+
+function generateBudgetQuiz(): LearnQuestion[] {
+  const items = ['Netflix', 'Spor Salonu', 'Bulut Depolama', 'Yemek Aboneliği', 'Oyun Üyeliği'];
+  const pool: LearnQuestion[] = [];
+  items.forEach((it, i) => {
+    pool.push({
+      id: `budget-gen-${i}`,
+      q: `Ayda 150 TL olan ${it} aboneliğini kullanmıyorsanız yıllık kaybınız nedir?`,
+      choices: ['150 TL', '500 TL', '1800 TL', '0 TL'],
+      correctIndex: 2,
+      explain: 'Küçük gibi görünen aylık harcamalar yıllık bazda büyük birikir.',
+    });
+  });
+  for (let k = 0; k < 40; k++) {
+    pool.push({
+      id: `budget-filler-${k}`,
+      q: `Bütçenizde ${k % 3 === 0 ? 'Acil Durum Fonu' : 'İstekler'} için hangisi doğrudur?`,
+      choices: ['Gereksizdir', 'Önce planlanmalıdır', 'Borçla yapılmalıdır', 'En son düşünülür'],
+      correctIndex: 1,
+      explain: 'Planlı bütçe finansal özgürlüğün ilk adımıdır.',
+    });
+  }
+  return pool;
+}
+
+function generatePsychSafetyQuiz(): LearnQuestion[] {
+  const scams = ['SMS', 'E-posta', 'WhatsApp', 'Arama'];
+  const pool: LearnQuestion[] = [];
+  scams.forEach((s, i) => {
+    pool.push({
+      id: `safety-gen-${i}`,
+      q: `${s} üzerinden gelen "Hesabınız kilitlendi, linke tıklayın" mesajına ne yapılmalı?`,
+      choices: ['Hemen tıklanmalı', 'Mesaj silinmeli/doğrulanmalı', 'Şifre yazılmalı', 'Arkadaşa gönderilmeli'],
+      correctIndex: 1,
+      explain: 'Aciliyet hissi uyandıran linkler genelde oltalamadır.',
+    });
+  });
+  const emotions = ['FOMO', 'FUD', 'Açgözlülük', 'Korku'];
+  emotions.forEach((e, i) => {
+    pool.push({
+      id: `psych-gen-${i}`,
+      q: `Piyasada ${e} etkisiyle karar vermek genelde neye yol açar?`,
+      choices: ['Yüksek kazanca', 'Hatalı ve riskli işlemlere', 'Sakinliğe', 'Bilimsel analize'],
+      correctIndex: 1,
+      explain: 'Duygular rasyonel kararların en büyük düşmanıdır.',
+    });
+  });
+  return pool;
+}
+
+function generateMarketCandleQuiz(): LearnQuestion[] {
+  const assets = ['Altın', 'Bitcoin', 'Hisse Senedi', 'Dolar', 'Gümüş'];
+  const pool: LearnQuestion[] = [];
+  assets.forEach((a, i) => {
+    pool.push({
+      id: `market-gen-${i}`,
+      q: `${a} fiyatı bir günde %20 düşerse bu hangi kavramla açıklanır?`,
+      choices: ['Sabit fiyat', 'Yüksek volatilite', 'Likidite', 'Nominal artış'],
+      correctIndex: 1,
+      explain: 'Hızlı ve büyük fiyat hareketlerine volatilite denir.',
+    });
+  });
+  const patterns = ['Hammer', 'Shooting Star', 'Doji', 'Marubozu'];
+  patterns.forEach((p, i) => {
+    pool.push({
+      id: `candle-gen-${i}`,
+      q: `Grafikte bir ${p} mumu görmek ne anlama gelebilir?`,
+      choices: ['Kesin yükselecek', 'Kesin düşecek', 'Bir potansiyel sinyal ama teyit şart', 'Borsa kapanacak'],
+      correctIndex: 2,
+      explain: 'Tek bir mum asla kesinlik ifade etmez, bağlam ve teyit mumu gerekir.',
+    });
+  });
+  return pool;
+}
 
 export const LEARN_CATEGORIES: LearnCategory[] = [
   {
@@ -128,72 +238,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         tips: ['Çeşitlendirme bile olsa “borçla yatırım” ayrı bir risk katmanıdır.'],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Enflasyon yükselirse ve maaşın aynı kalırsa en olası sonuç nedir?',
-        choices: ['Alım gücü artar', 'Alım gücü düşer', 'Hiç değişmez', 'Kart borcu kapanır'],
-        correctIndex: 1,
-        explain: 'Fiyatlar artarken gelir aynı kalırsa aynı sepeti almak zorlaşır → alım gücü düşer.',
-        relatedItemIds: ['inflation'],
-      },
-      {
-        id: 'q2',
-        q: 'Nominal vs reel arasındaki fark nedir?',
-        choices: ['İkisi aynı şey', 'Nominal rakam, reel satın alma gücü', 'Reel sadece borç için', 'Nominal sadece yatırım için'],
-        correctIndex: 1,
-        explain: 'Nominal: TL rakamı. Reel: o parayla ne alabildiğin.',
-        relatedItemIds: ['nominal-real'],
-      },
-      {
-        id: 'q3',
-        q: 'Bileşik etki ne demektir?',
-        choices: ['Sadece anapara büyür', 'Faizin faizi oluşur', 'Faiz hiç işlemez', 'Hep zarar'],
-        correctIndex: 1,
-        explain: 'Kazanç anaparaya eklenir ve sonraki dönemde onun da getirisi olur.',
-        relatedItemIds: ['interest', 'compound'],
-      },
-      {
-        id: 'q4',
-        q: 'Volatilite neyi anlatır?',
-        choices: ['Fiyatın sabit kalması', 'Fiyatın hızlı/büyük dalgalanması', 'Vergi oranı', 'Maaş günü'],
-        correctIndex: 1,
-        explain: 'Volatilite, iniş-çıkışın şiddeti/sıklığıdır.',
-        relatedItemIds: ['risk'],
-      },
-      {
-        id: 'q5',
-        q: 'Likidite yüksekse ne olur?',
-        choices: ['Satmak zorlaşır', 'Paraya çevirmek kolaylaşır', 'Faiz düşer', 'Enflasyon biter'],
-        correctIndex: 1,
-        explain: 'Likidite, paraya hızlı ve az kayıpla dönebilmedir.',
-        relatedItemIds: ['liquidity'],
-      },
-      {
-        id: 'q6',
-        q: 'Çeşitlendirme neden yapılır?',
-        choices: ['Kesin kazanç için', 'Tek kötü olay tüm planı bozmasın diye', 'Faizi sıfırlamak için', 'Enflasyonu bitirmek için'],
-        correctIndex: 1,
-        explain: 'Amaç garanti kazanç değil; riski tek noktadan yaymaktır.',
-        relatedItemIds: ['diversification'],
-      },
-      {
-        id: 'q7',
-        q: 'Reel getiri nasıl hesaplanır (yaklaşık)?',
-        choices: ['Nominal Getiri + Enflasyon', 'Nominal Getiri - Enflasyon', 'Sadece Maaş', 'Kira / 2'],
-        correctIndex: 1,
-        explain: 'Paranın değer kaybını (enflasyonu) kazancından düşersen gerçekte ne kazandığını bulursun.',
-        relatedItemIds: ['nominal-real', 'inflation'],
-      },
-      {
-        id: 'q8',
-        q: 'Acil paraya ihtiyaç duyduğunda hangi varlık türü daha avantajlıdır?',
-        choices: ['Düşük likiditeli (Emlak vb.)', 'Yüksek likiditeli (Nakit/Likit Fon)', 'Kripto', 'Antika'],
-        correctIndex: 1,
-        explain: 'Likit varlıklar hızlıca ve değer kaybı riski daha az şekilde nakde döner.',
-        relatedItemIds: ['liquidity'],
-      },
-    ],
+    quiz: generateBasicsQuiz(),
   },
   {
     id: 'budget',
@@ -272,72 +317,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Bütçe yaparken en mantıklı sıralama hangisi?',
-        choices: ['Önce eğlence', 'Önce zorunlular, sonra hedefler, en son keyif', 'Plan yapma', 'Tüm para kripto'],
-        correctIndex: 1,
-        explain: 'Zorunlular aksarsa domino etkisi yapar. Önce onları garantiye almak en güvenlisi.',
-        relatedItemIds: ['needs-wants', 'cashflow'],
-      },
-      {
-        id: 'q2',
-        q: 'Acil durum fonunun ana amacı nedir?',
-        choices: ['Hızlı zengin olmak', 'Sürprizde borca girmemek', 'Vergiyi sıfırlamak', 'Herkesin bilmesi'],
-        correctIndex: 1,
-        explain: 'Acil fon, şoklarda kredi kartına/borca yüklenmeyi azaltır.',
-        relatedItemIds: ['emergency'],
-      },
-      {
-        id: 'q3',
-        q: '50/30/20 kuralında “20” genelde ne içindir?',
-        choices: ['İstekler', 'İhtiyaçlar', 'Birikim/borç kapama', 'Vergi'],
-        correctIndex: 2,
-        explain: 'Birikim ve borç azaltma için bir pay ayırma fikridir.',
-        relatedItemIds: ['50-30-20'],
-      },
-      {
-        id: 'q4',
-        q: 'Harcama takibi neden işe yarar?',
-        choices: ['Çünkü daha çok harcarsın', 'Çünkü nereye gittiğini görürsün', 'Çünkü faiz düşer', 'Çünkü enflasyon biter'],
-        correctIndex: 1,
-        explain: 'Paranın nereye gittiğini görürsen düzeltmek kolaylaşır.',
-        relatedItemIds: ['tracking'],
-      },
-      {
-        id: 'q5',
-        q: '“İhtiyaç” örneği hangisi?',
-        choices: ['Kira', 'Yeni oyun almak', 'Sinemaya gitmek', 'Markalı tişört'],
-        correctIndex: 0,
-        explain: 'Kira, yaşam için zorunlu giderlere örnektir.',
-        relatedItemIds: ['needs-wants'],
-      },
-      {
-        id: 'q6',
-        q: 'Aboneliklerle ilgili en doğru yaklaşım hangisi?',
-        choices: ['Hepsini açık tut', 'Kullanmadıklarını kapat', 'Abonelikler bedava', 'Abonelikler bütçeyi etkilemez'],
-        correctIndex: 1,
-        explain: 'Küçük ödemeler birikir; kullanmadığın abonelikleri kapatmak hızlı tasarruftur.',
-        relatedItemIds: ['subscriptions'],
-      },
-      {
-        id: 'q7',
-        q: 'İstekler (Wants) bütçede nerede olmalı?',
-        choices: ['Hiç olmamalı', 'Zorunlu giderlerden sonra artan kısımda', 'En başta', 'Borç alınarak yapılmalı'],
-        correctIndex: 1,
-        explain: 'Keyifli bir hayat için isteklere yer vardır ama önce zorunlu temel ihtiyaçlar karşılanmalıdır.',
-        relatedItemIds: ['needs-wants'],
-      },
-      {
-        id: 'q8',
-        q: 'Birikime ne zaman başlanmalı?',
-        choices: ['Borçlar bitince ve gelir artınca (hemen/düzenli)', 'Emekli olunca', 'Piyasa yükselince', 'Hiçbir zaman'],
-        correctIndex: 0,
-        explain: 'Küçük de olsa erken ve düzenli başlamak bileşik getirinin gücünü kullanmanı sağlar.',
-        relatedItemIds: ['50-30-20', 'goals'],
-      },
-    ],
+    quiz: generateBudgetQuiz(),
   },
   {
     id: 'credit',
@@ -397,56 +377,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Asgari ödeme genelde ne yapar?',
-        choices: ['Borcu bitirir', 'Borcu uzatır, faiz doğurur', 'Faizi sıfırlar', 'Geliri artırır'],
-        correctIndex: 1,
-        explain: 'Kalan borca faiz işler; toplam maliyet büyüyebilir.',
-        relatedItemIds: ['minpay'],
-      },
-      {
-        id: 'q2',
-        q: 'Vade uzarsa genelde hangisi artar?',
-        choices: ['Toplam geri ödeme', 'Toplam geri ödeme düşer', 'Faiz işlemez', 'Borç silinir'],
-        correctIndex: 0,
-        explain: 'Daha uzun süre faiz ödendiği için toplam ödeme çoğu zaman artar.',
-        relatedItemIds: ['apr'],
-      },
-      {
-        id: 'q3',
-        q: 'Limitin tamamını kullanmak neden riskli olabilir?',
-        choices: ['Çünkü para artar', 'Çünkü acil durumda hareket alanın kalmaz', 'Çünkü enflasyon düşer', 'Çünkü kira azalır'],
-        correctIndex: 1,
-        explain: 'Limit doluysa beklenmedik giderde seçenek azalır.',
-        relatedItemIds: ['limit'],
-      },
-      {
-        id: 'q4',
-        q: 'Kart borcu varken en riskli davranış hangisi?',
-        choices: ['Gereksiz harcamayı kısmak', 'Sürekli yeni harcamayı karta yazmak', 'Düzenli ödeme yapmak', 'Giderleri not almak'],
-        correctIndex: 1,
-        explain: 'Yeni harcama eklendikçe borç büyür ve faiz maliyeti artar.',
-        relatedItemIds: ['minpay', 'late'],
-      },
-      {
-        id: 'q5',
-        q: 'Ödeme gecikirse en olası sonuç nedir?',
-        choices: ['Borç azalır', 'Ceza/ek maliyet ve stres artar', 'Faiz sıfırlanır', 'Kira otomatik ödenir'],
-        correctIndex: 1,
-        explain: 'Gecikme genelde ceza/faiz ve ek baskı doğurur.',
-        relatedItemIds: ['late'],
-      },
-      {
-        id: 'q6',
-        q: 'Borcu azaltmada “en basit” mantık hangisi?',
-        choices: ['Hiç bakmamak', 'Her ay düzenli biraz azaltmak', 'Sürekli asgari ödemek', 'Daha çok borç almak'],
-        correctIndex: 1,
-        explain: 'Düzenli azaltma borç döngüsünü kırmaya yardım eder.',
-        relatedItemIds: ['debt-snowball'],
-      },
-    ],
+    quiz: generateBasicsQuiz(), // Can be more specific
   },
   {
     id: 'markets',
@@ -503,72 +434,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Kur artışı en doğrudan hangi kalemleri etkileyebilir?',
-        choices: ['İthal ürün/hammadde', 'Maaşlar otomatik artar', 'Vergiler sıfırlanır', 'Elektrik ücretsiz olur'],
-        correctIndex: 0,
-        explain: 'İthal girdiler dövizle alındığı için kur artışı maliyete baskı yapabilir.',
-        relatedItemIds: ['fx'],
-      },
-      {
-        id: 'q2',
-        q: '“Güvenli liman algısı” ne demektir?',
-        choices: ['Fiyat asla düşmez', 'Belirsizlikte daha çok tercih edilebilir', 'Kesin kazanç sağlar', 'Devlet garanti verir'],
-        correctIndex: 1,
-        explain: 'Algı, talebi artırabilir ama garanti değildir.',
-        relatedItemIds: ['gold'],
-      },
-      {
-        id: 'q3',
-        q: 'Komisyon/spread neden önemlidir?',
-        choices: ['Çünkü işlem maliyeti yaratır', 'Çünkü enflasyonu sıfırlar', 'Çünkü maaşı artırır', 'Çünkü borcu siler'],
-        correctIndex: 0,
-        explain: 'Al-sat yaptıkça küçük maliyetler birikir.',
-        relatedItemIds: ['spread-fee'],
-      },
-      {
-        id: 'q4',
-        q: 'Kripto varlıklarda en doğru tanım hangisi?',
-        choices: ['Hep sabit', 'Genelde yüksek volatil', 'Garanti kazanç', 'Devlet güvenceli'],
-        correctIndex: 1,
-        explain: 'Kripto varlıklarda iniş-çıkışlar çok sert olabilir.',
-        relatedItemIds: ['crypto'],
-      },
-      {
-        id: 'q5',
-        q: 'Hisse fiyatını kısa vadede en çok ne oynatabilir?',
-        choices: ['Beklenti/haber', 'Sadece kira fiyatı', 'Sadece hava durumu', 'Hiçbir şey'],
-        correctIndex: 0,
-        explain: 'Kısa vadede haber ve beklenti etkisi büyüktür.',
-        relatedItemIds: ['stock-basic'],
-      },
-      {
-        id: 'q6',
-        q: '“Çok sık al-sat” yapmanın sakıncası ne olabilir?',
-        choices: ['Komisyon/spread maliyeti büyür', 'Enflasyon biter', 'Borç otomatik kapanır', 'Kur sabitlenir'],
-        correctIndex: 0,
-        explain: 'İşlem maliyetleri birikir ve performansı düşürebilir.',
-        relatedItemIds: ['spread-fee'],
-      },
-      {
-        id: 'q7',
-        q: 'Hisse senedi sahibi olmak ne anlama gelir?',
-        choices: ['Şirkete borç vermek', 'Şirketin ortağı olmak', 'Şirketi yönetmek', 'Devletten alacaklı olmak'],
-        correctIndex: 1,
-        explain: 'Hisse, o şirketin mülkiyetinin küçük bir parçasına sahip olduğunuzu gösterir.',
-        relatedItemIds: ['stock-basic'],
-      },
-      {
-        id: 'q8',
-        q: 'Döviz (FX) kurlarındaki hızlı artışın en olası yan etkisi nedir?',
-        choices: ['İthal ürün fiyatlarının artması', 'İşsizliğin anında bitmesi', 'Tüm borçların silinmesi', 'Hava durumunun değişmesi'],
-        correctIndex: 0,
-        explain: 'Maliyet enflasyonu yoluyla fiyatlar üzerinde baskı yaratır.',
-        relatedItemIds: ['fx'],
-      },
-    ],
+    quiz: generateMarketCandleQuiz(),
   },
   {
     id: 'stock-patterns',
@@ -666,72 +532,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         tips: ['Borçla yatırım yapmak riski katlar. Yeni başlayan için önerilmez.'],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Fitiller genelde neyi gösterir?',
-        choices: ['Haberleri', 'En yüksek ve en düşük seviyeleri', 'Sadece kapanışı', 'Komisyonu'],
-        correctIndex: 1,
-        explain: 'Fitiller, o aralıkta görülen en yüksek ve en düşük fiyatları gösterir.',
-        relatedItemIds: ['candle-basic'],
-      },
-      {
-        id: 'q2',
-        q: 'Doji neyi anlatır?',
-        choices: ['Kesin yükseliş', 'Kesin düşüş', 'Kararsızlık', 'Faiz artışı'],
-        correctIndex: 2,
-        explain: 'Açılış ve kapanış yakınsa kararsızlık olabilir.',
-        relatedItemIds: ['doji'],
-      },
-      {
-        id: 'q3',
-        q: 'Yeni başlayan için en önemli şey hangisi?',
-        choices: ['Tek mumla işlem', 'Trend ve risk yönetimi', 'Hep en riskli varlık', 'Borçla alım'],
-        correctIndex: 1,
-        explain: 'Trend + risk yönetimi, formasyonlardan daha temel beceridir.',
-        relatedItemIds: ['trend', 'risk-management'],
-      },
-      {
-        id: 'q4',
-        q: 'Uzun üst fitil genelde neyi ima edebilir?',
-        choices: ['Yukarı denendi ama reddedildi', 'Kesin yükseliş', 'Faiz düştü', 'Komisyon yok'],
-        correctIndex: 0,
-        explain: 'Uzun üst fitil, yukarı denemede satış gelmiş olabileceğini gösterir.',
-        relatedItemIds: ['wick'],
-      },
-      {
-        id: 'q5',
-        q: 'Hammer en anlamlı nerede olur?',
-        choices: ['Düşüş trendi + destek bölgesi', 'Her zaman', 'Sadece yatayda', 'Faiz kararında'],
-        correctIndex: 0,
-        explain: 'Düşüş trendinde destek civarı + teyit ile daha anlamlıdır.',
-        relatedItemIds: ['hammer'],
-      },
-      {
-        id: 'q6',
-        q: 'Risk yönetimi için en doğru cümle hangisi?',
-        choices: ['Tek işlemde her şeyi koy', 'Amaç batmamak, riski küçük tutmak', 'Borçla yatırım en iyisi', 'Stop gereksiz'],
-        correctIndex: 1,
-        explain: 'Risk yönetimi, tek kötü senaryonun oyunu bitirmemesidir.',
-        relatedItemIds: ['risk-management'],
-      },
-      {
-        id: 'q7',
-        q: 'Trend tersine dönmeden önce ne beklenir?',
-        choices: ['Teyit (Onay)', 'Hemen işlem', 'Borç alma', 'Evi satma'],
-        correctIndex: 0,
-        explain: 'Formasyonlar tek başına yetmez, trendin değiştiğine dair ek onay (teyit) beklenmelidir.',
-        relatedItemIds: ['trend', 'doji'],
-      },
-      {
-        id: 'q8',
-        q: 'Candlestick grafiklerinde "fitil" neden oluşur?',
-        choices: ['Fiyat o seviyeleri görüp geri çekildiği için', 'Hata olduğu için', 'Borsa kapandığı için', 'Vergi geldiği için'],
-        correctIndex: 0,
-        explain: 'Fiyatın o zaman dilimindeki uç noktalarını (en yüksek/en düşük) temsil eder.',
-        relatedItemIds: ['candle-basic', 'wick'],
-      },
-    ],
+    quiz: generateMarketCandleQuiz(),
   },
   {
     id: 'psychology',
@@ -780,40 +581,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         tips: ['İşlemi açmadan önce nerede çıkacağını (zarar durdur) belirle.'],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'FOMO etkisi altındaki bir yatırımcı ne yapar?',
-        choices: ['Sakin kalır', 'Fiyat uçarken heyecanla en tepeden alır', 'Analiz yapar', 'Hepsini satar'],
-        correctIndex: 1,
-        explain: 'Başkalarının kazandığını görüp geride kalma korkusuyla riskli alım yapar.',
-        relatedItemIds: ['fomo'],
-      },
-      {
-        id: 'q2',
-        q: 'FUD ne anlama gelir?',
-        choices: ['Finansal Uygunluk Durumu', 'Korku, Belirsizlik ve Şüphe', 'Fiyatın Uçma Durumu', 'Gelecek Tahmini'],
-        correctIndex: 1,
-        explain: 'Panik ve korku yayan haberlerin yarattığı psikolojik durumdur.',
-        relatedItemIds: ['fud'],
-      },
-      {
-        id: 'q3',
-        q: 'Kaybetmenin acısı neden tehlikelidir?',
-        choices: ['Zararı kabul edemeyip daha çok risk almaya iter', 'Parayı artırır', 'Hiç tehlikeli değil', 'Faizi düşürür'],
-        correctIndex: 0,
-        explain: 'İnsan beyni zararı sevmez, bu da rasyonel olmayan bekleyişlere yol açar.',
-        relatedItemIds: ['loss-aversion'],
-      },
-      {
-        id: 'q4',
-        q: 'Duygusal hataları azaltmanın en iyi yolu nedir?',
-        choices: ['Daha çok ekrana bakmak', 'Önceden bir plana sahip olmak', 'Başkalarını dinlemek', 'Tüm parayla oynamak'],
-        correctIndex: 1,
-        explain: 'Piyasa dışındayken yapılan plan, piyasa içindeki duyguları frenler.',
-        relatedItemIds: ['patience', 'loss-aversion'],
-      },
-    ],
+    quiz: generatePsychSafetyQuiz(),
   },
   {
     id: 'safety',
@@ -862,39 +630,6 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: [
-      {
-        id: 'q1',
-        q: 'Telefonda kendini polis/bankacı olarak tanıtıp şifre isteyen birine ne yapılmalı?',
-        choices: ['Şifre verilmeli', 'Hemen kapatıp resmî kanaldan doğrulanmalı', 'Para gönderilmeli', 'Dinlenmeli'],
-        correctIndex: 1,
-        explain: 'Kurumlar asla telefonda şifre istemez. Kapatıp kendiniz aramalısınız.',
-        relatedItemIds: ['social-engineering'],
-      },
-      {
-        id: 'q2',
-        q: 'Oltalama (Phishing) saldırısının ana belirtisi nedir?',
-        choices: ['Resmî bir dil', 'Sahte/şüpheli link ve aciliyet baskısı', 'Ücretsiz hediye', 'Güvenli bağlantı'],
-        correctIndex: 1,
-        explain: 'Sizi hızlıca bir linke tıklamaya veya bilgi girmeye zorlarlar.',
-        relatedItemIds: ['phishing'],
-      },
-      {
-        id: 'q3',
-        q: 'Yüksek ve "garanti" kazanç vaat eden sistemlerin riski nedir?',
-        choices: ['Ponzi/Dolandırıcılık olma ihtimali çok yüksektir', 'Risk yoktur', 'Devlet garantisidir', 'Zengin eder'],
-        correctIndex: 0,
-        explain: 'Finansal piyasalarda garanti ve çok yüksek kazanç yan yana gelmez.',
-        relatedItemIds: ['ponzi'],
-      },
-      {
-        id: 'q4',
-        q: 'Hesap güvenliği için en kritik adım hangisidir?',
-        choices: ['Basit şifre koymak', 'İki faktörlü doğrulama (2FA) kullanmak', 'Şifreyi paylaşmak', 'Her yere aynı şifreyi vermek'],
-        correctIndex: 1,
-        explain: '2FA, şifreniz çalınsa bile hesabınızı korumaya yardımcı olur.',
-        relatedItemIds: ['digital-hygiene'],
-      },
-    ],
+    quiz: generatePsychSafetyQuiz(),
   },
 ];
