@@ -36,194 +36,89 @@ export type LearnCategory = {
   quiz: LearnQuestion[];
 };
 
-// --- MASSIVE RANDOMIZED QUIZ GENERATORS ---
-
-function generateBasicsQuiz(): LearnQuestion[] {
-  const pool: LearnQuestion[] = [];
-  const assets = ['Ekmek', 'Hamburger', 'Telefon', 'İnternet Paketi', 'Konser Bileti', 'Spor Ayakkabı', 'Kahve'];
-  const amounts = [100, 200, 500, 1000, 5000];
-
-  // Template 1: Inflation calculation
-  assets.forEach(a => {
-    amounts.forEach(amt => {
-      const inf = 20 + Math.floor(Math.random() * 80);
-      const res = Math.round(amt * (1 + inf/100));
-      pool.push({
-        id: `b-inf-${a}-${amt}-${inf}`,
-        q: `Bugün ${amt} TL olan bir ${a}, yıllık %${inf} enflasyon sonrası yaklaşık kaç TL olur?`,
-        choices: [`${amt} TL`, `${res} TL`, `${amt * 2} TL`, `${Math.round(amt * 0.8)} TL`],
-        correctIndex: 1,
-        explain: `Enflasyon oranı (%${inf}) fiyatın üzerine eklenir. Paran eridi bro.`,
-      });
-    });
-  });
-
-  // Template 2: Real vs Nominal
-  pool.push({
-    id: 'b-rn-1',
-    q: 'Maaşın %50 arttı ama hayat %100 pahalandı. Durum nedir?',
-    choices: ['Zenginsin', 'Aynı kaldın', 'Reel olarak fakirleştin', 'Banka sana ödül verir'],
-    correctIndex: 2,
-    explain: 'Giderlerin gelirinden daha hızlı artıyorsa "alım gücün" düşmüş demektir.',
-  });
-
-  // Template 3: Liquidity
-  const highLikit = ['Nakit', 'Banka Hesabı', 'Altın'];
-  const lowLikit = ['Ev', 'Arsa', 'Antika Araba', 'Koleksiyon Kartı'];
-  highLikit.forEach(h => {
-    lowLikit.forEach(l => {
-      pool.push({
-        id: `b-liq-${h}-${l}`,
-        q: `Acil bir ödeme yapman gerekiyor. Elinde ${h} ve ${l} var. Hangisini kullanmak daha mantıklıdır?`,
-        choices: [l, h, 'İkisini de bekletirim', 'Kredi çekerim'],
-        correctIndex: 1,
-        explain: `${h} likiditesi yüksek olduğu için hemen harcanabilir. ${l}'i satmak haftalar sürebilir.`,
-      });
-    });
-  });
-
-  return pool;
+// --- SHUFFLE HELPER ---
+function shuffleChoices(q: LearnQuestion): LearnQuestion {
+  const choicesWithMeta = q.choices.map((c, i) => ({ text: c, isCorrect: i === q.correctIndex }));
+  for (let i = choicesWithMeta.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choicesWithMeta[i], choicesWithMeta[j]] = [choicesWithMeta[j], choicesWithMeta[i]];
+  }
+  return {
+    ...q,
+    choices: choicesWithMeta.map(c => c.text),
+    correctIndex: choicesWithMeta.findIndex(c => c.isCorrect),
+  };
 }
 
-function generateInvestingQuiz(): LearnQuestion[] {
-  const pool: LearnQuestion[] = [];
-  const assets = ['Bitcoin', 'Apple Hissesi', 'Altın Fonu', 'Gümüş', 'Ereğli Hissesi', 'Ethereum'];
+// --- VERBAL QUIZ GENERATORS (EXTENDED) ---
 
-  // Template 1: DCA strategy
-  assets.forEach(a => {
-    pool.push({
-      id: `inv-dca-${a}`,
-      q: `${a} yatırımında "Kademeli Alım" (DCA) yapmak neden duygularını korur?`,
-      choices: [
-        'En tepeden almanı sağladığı için',
-        'Fiyat ne olursa olsun disiplinli alım yaparak ortalamayı dengelediği için',
-        'Tek seferde zengin ettiği için',
-        'Banka komisyon almadığı için'
-      ],
-      correctIndex: 1,
-      explain: 'DCA sayesinde "eyvah düştü" yerine "ucuza aldım" dersin. Disiplin = Kar.',
-    });
-  });
-
-  // Template 2: Diversification
-  pool.push({
-    id: 'inv-div-1',
-    q: 'Bütün paranı tek bir Altcoin’e yatırmak neden risklidir?',
-    choices: [
-      'Banka izin vermez',
-      'O proje batarsa bütün sermayeni kaybedersin',
-      'Çok fazla kar edersin',
-      'Vergisi çok olur'
-    ],
-    correctIndex: 1,
-    explain: 'Risk yönetimi için yumurtaları farklı sepetlere (hisse, altın, fon) dağıtmalısın.',
-  });
-
-  return pool;
+function generateBasicsQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'b1', q: 'Enflasyonun temel etkisi nedir?', choices: ['Paranın değer kazanması', 'Satın alma gücünün azalması', 'Banka kredilerinin bitmesi', 'İşsizliğin sıfırlanması'], correctIndex: 1, explain: 'Enflasyon varken aynı parayla daha az mal alırsın.' },
+    { id: 'b2', q: 'Fırsat maliyeti neyi ifade eder?', choices: ['Ürünün etiket fiyatını', 'Seçim yaparken vazgeçilen alternatifin değerini', 'Kargo ücretini', 'Banka masrafını'], correctIndex: 1, explain: 'Her tercih bir vazgeçiştir.' },
+    { id: 'b3', q: 'Bileşik getirinin en güçlü olduğu durum hangisidir?', choices: ['Kısa vadeli yatırımlar', 'Uzun vadeli ve disiplinli yatırımlar', 'Sadece çok büyük paralar', 'Sadece altın yatırımı'], correctIndex: 1, explain: 'Zaman arttıkça kar topu etkisi devleşir.' },
+    { id: 'b4', q: 'Likit bir varlık ne anlama gelir?', choices: ['Rengi su gibi olan', 'Hızlıca ve değer kaybı az şekilde nakde dönebilen', 'Çok pahalı olan', 'Sadece bankada duran'], correctIndex: 1, explain: 'Nakit en likit varlıktır.' },
+    { id: 'b5', q: 'Nominal gelir artışı enflasyondan düşükse ne olur?', choices: ['Zenginleşirsin', 'Reel olarak fakirleşirsin', 'Durumun değişmez', 'Tasarruf artar'], correctIndex: 1, explain: 'Giderlerin gelirinden hızlı artıyordur.' },
+    { id: 'b6', q: 'Finansal okuryazarlık neden önemlidir?', choices: ['Matematik çözmek için', 'Daha bilinçli harcama ve yatırım kararları almak için', 'Sadece bankacı olmak için', 'Zengin görünmek için'], correctIndex: 1, explain: 'Bilgi paradan daha değerlidir.' },
+    { id: 'b7', q: 'Hangi yatırım türü enflasyona karşı koruma sağlayabilir?', choices: ['Yastık altı TL', 'Varlık değerini koruyan hisse veya emtialar', 'Eski kıyafetler', 'Gömülü para'], correctIndex: 1, explain: 'Değer üreten varlıklar enflasyonu yenebilir.' },
+    { id: 'b8', q: 'Faiz oranları artarsa borçlanma maliyeti ne olur?', choices: ['Düşer', 'Artar', 'Aynı kalır', 'Sıfırlanır'], correctIndex: 1, explain: 'Kredi çekmek daha pahalı hale gelir.' },
+    { id: 'b9', q: 'Acil durum fonu neden ayrı tutulmalıdır?', choices: ['Yatırım yapmak için', 'Zor zamanlarda borca girmeden hayatta kalmak için', 'Hediye almak için', 'Banka istediği için'], correctIndex: 1, explain: 'Zor günlerin kalkanıdır.' },
+    { id: 'b10', q: 'Yatırımda "Disiplin" ne demektir?', choices: ['Çok ders çalışmak', 'Piyasa dalgalanmalarına rağmen plana sadık kalmak', 'Hiç para harcamamak', 'Her gün borsa izlemek'], correctIndex: 1, explain: 'Duygulara yenik düşmemek başarının anahtarıdır.' },
+  ];
+  return pool.map(shuffleChoices);
 }
 
 function generateStockPatternsQuiz(): LearnQuestion[] {
-  const pool: LearnQuestion[] = [];
-  const patterns = [
-    { n: 'Hammer (Çekiç)', s: 'Düşüş trendinin sonunda, destekte', m: 'Fiyatın aşağıyı denediğini ama alıcıların sert tepki verdiğini' },
-    { n: 'Shooting Star', s: 'Yükseliş trendinin sonunda, dirençte', m: 'Fiyatın yukarıyı denediğini ama satıcıların baskın geldiğini' },
-    { n: 'Marubozu', s: 'Herhangi bir yerdeki çok güçlü bir mumda', m: 'O yöndeki hareketin çok kararlı ve güçlü olduğunu' },
-    { n: 'Doji', s: 'Kararsızlık anlarında', m: 'Alıcı ve satıcıların yenişemediğini, trendin dönebileceğini' },
+  const pool: LearnQuestion[] = [
+    { id: 's1', q: 'Grafikte "Fitil" (İğne) neyi temsil eder?', choices: ['Hata oluştuğunu', 'Fiyatın o seviyeleri gördüğünü ama orada tutunamadığını', 'Piyasanın kapandığını', 'Vergi oranını'], correctIndex: 1, explain: 'Fitil, reddedilmiş fiyat bölgelerini gösterir.' },
+    { id: 's2', q: 'Doji mumu gördüğünüzde en doğru yaklaşım nedir?', choices: ['Hemen her şeyi satın', 'Kararsızlık olduğu için sonraki mumun teyidini beklemek', 'Bütün parayı yatırmak', 'Haberlere bakmamak'], correctIndex: 1, explain: 'Doji bir bekleyiş ve kararsızlık mumudur.' },
+    { id: 's3', q: 'Marubozu mumu ne anlatır?', choices: ['Piyasanın çok kararsız olduğunu', 'Trendin o yönde çok güçlü ve kararlı olduğunu', 'Hacmin düştüğünü', 'Borsada tatil olduğunu'], correctIndex: 1, explain: 'Fitilsiz gövde tam hakimiyet demektir.' },
+    { id: 's4', q: 'Hammer (Çekiç) mumu neden altına uzun bir iğne bırakır?', choices: ['Fiyatın yanlış girilmesi yüzünden', 'Satış baskısının geldiği ama alıcıların fiyatı yukarı çektiği için', 'Zenginler öyle istediği için', 'İşlem hacmi düşük olduğu için'], correctIndex: 1, explain: 'Alttan gelen sert alım tepkisini gösterir.' },
+    { id: 's5', q: 'Teknik analizde "Trend" ne demektir?', choices: ['Moda olan hisseler', 'Fiyatın genel gidiş yönü', 'Hisse senedi sayısı', 'Şirket adı'], correctIndex: 1, explain: 'Fiyatın genel eğilimidir.' },
+    { id: 's6', q: 'Shooting Star mumu nerede tehlike işareti olabilir?', choices: ['Düşüşün en dibinde', 'Yükseliş trendinin sonunda veya bir dirençte', 'Yatay piyasada', 'Hafta başında'], correctIndex: 1, explain: 'Yukarıdaki satış baskısını ve dönüş ihtimalini gösterir.' },
+    { id: 's7', q: 'Yeşil bir mumun gövdesi neyi gösterir?', choices: ['Dolar kurunu', 'Kapanış fiyatının açılıştan daha yüksek olduğunu', 'Şirketin karını', 'Zarar edildiğini'], correctIndex: 1, explain: 'Yeşil mum yükselişi temsil eder.' },
+    { id: 's8', q: 'Gravestone Doji piyasaya nasıl bir mesaj verir?', choices: ['Her şey harika', 'Yukarı denemelerin reddedildiği ve ayıların güçlendiği', 'Yeni bir rekor geleceği', 'Piyasanın çok neşeli olduğu'], correctIndex: 1, explain: 'Üst fitil uzun, kapanış dipteyse zayıflık işaretidir.' },
+    { id: 's9', q: 'Mum grafiklerini neden kullanırız?', choices: ['Rengarenk olduğu için', 'Fiyat hareketlerini ve piyasa psikolojisini hızlıca okumak için', 'Matematik sorusu çözmek için', 'Daha pahalı olduğu için'], correctIndex: 1, explain: 'Piyasa aksiyonunu özetler.' },
+    { id: 's10', q: 'Bir mumu "doğru" yorumlamak için hangisi şarttır?', choices: ['Rengine bakmak', 'Bağlam (önceki mumlar ve seviyeler) ile birlikte değerlendirmek', 'Hemen işlem açmak', 'Arkadaşına sormak'], correctIndex: 1, explain: 'Tek mum her zaman eksik bilgi verir.' },
   ];
+  return pool.map(shuffleChoices);
+}
 
-  patterns.forEach(p => {
-    pool.push({
-      id: `sp-q-${p.n.replace(/\s+/g, '')}`,
-      q: `Grafikte bir ${p.n} mumu gördün. Bu mum genelde neyi anlatır?`,
-      choices: [
-        'Borsanın kapandığını',
-        'Piyasanın o yönde kararlı olduğunu/kararsız olduğunu (Mum tipine göre)',
-        p.m,
-        'Haberin yalan olduğunu'
-      ],
-      correctIndex: 2,
-      explain: `${p.n} mumu ${p.s} görülürse anlamlıdır.`,
-    });
-  });
-
-  // Variations with context
-  pool.push({
-    id: 'sp-ctx-1',
-    q: 'Trend aşağı yönlüyken "Gravestone Doji" (Mezar Taşı) görmek ne anlama gelebilir?',
-    choices: ['Yükseliş başlıyor', 'Düşüşün devam etme ihtimali yüksek, yukarı denemeler reddedildi', 'Her şeyi sat', 'Altın al'],
-    correctIndex: 1,
-    explain: 'Gravestone Doji, yukarı itişin satıcılar tarafından ezildiğini gösterir.',
-  });
-
-  return pool;
+function generateInvestingQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'i1', q: 'DCA (Kademeli Alım) stratejisinin ana avantajı nedir?', choices: ['En düşükten alma garantisi', 'Stresi azaltıp ortalama maliyeti piyasa koşullarına göre iyileştirmek', 'Anında zengin etmek', 'Hiç zarar etmemek'], correctIndex: 1, explain: 'Disiplin, duygusal hataları önler.' },
+    { id: 'i2', q: 'Portföy çeşitlendirmesi neden önerilir?', choices: ['Çok fazla hisse sahibi olmak için', 'Tek bir varlıktaki riskin tüm parayı batırmasını önlemek için', 'Hepsini takip etmek kolay olduğu için', 'Banka istediği için'], correctIndex: 1, explain: 'Riski yaymak ana stratejidir.' },
+    { id: 'i3', q: 'Hisse senedi yatırımcısı aslında kime güvenmiş olur?', choices: ['Borsa binasına', 'Şirketin yönetimine ve gelecekteki kar üretme potansiyeline', 'Sadece şansına', 'Arkadaşına'], correctIndex: 1, explain: 'Şirkete ortak oluyorsun.' },
+    { id: 'i4', q: 'Risk ve getiri arasındaki ilişki genelde nasıldır?', choices: ['Ters orantılı', 'Doğru orantılı (Risk arttıkça potansiyel getiri artar ama kayıp riski de büyür)', 'Hiçbir ilişki yoktur', 'Her zaman sabittir'], correctIndex: 1, explain: 'Yüksek kazanç yüksek risk getirir.' },
+    { id: 'i5', q: 'Sabırlı bir yatırımcı ne yapmalıdır?', choices: ['Her gün al-sat yapmalı', 'Planına sadık kalıp uzun vadeli hedeflerine odaklanmalı', 'Tüm parasını tek seferde kullanmalı', 'Sürekli haberleri beklemeli'], correctIndex: 1, explain: 'Vade yatırımın en büyük dostudur.' },
+  ];
+  return pool.map(shuffleChoices);
 }
 
 function generateCreditQuiz(): LearnQuestion[] {
-  const pool: LearnQuestion[] = [];
-  const cardAmounts = [5000, 10000, 20000, 50000];
-
-  cardAmounts.forEach(amt => {
-    pool.push({
-      id: `cr-q-${amt}`,
-      q: `${amt} TL kart borcun var ve sadece asgariyi ödedin. Kalan tutara ne olur?`,
-      choices: ['Silinir', 'Dondurulur', 'Yüksek faiz işlemeye devam eder', 'Banka hediye puan verir'],
-      correctIndex: 2,
-      explain: 'Asgari ödeme seni sadece "gecikmeden" kurtarır, borcun sarmala girmesini engellemez.',
-    });
-  });
-
-  pool.push({
-    id: 'cr-score-1',
-    q: 'Findeks kredi notun neden önemlidir?',
-    choices: [
-      'Sosyal medyada hava atmak için',
-      'Bankadan daha düşük faizle veya daha kolay kredi çekebilmek için',
-      'Market alışverişinde indirim almak için',
-      'Telefonun şarjını hızlandırır'
-    ],
-    correctIndex: 1,
-    explain: 'Kredi notun senin "finansal dürüstlük" karnendir.',
-  });
-
-  return pool;
+  const pool: LearnQuestion[] = [
+    { id: 'c1', q: 'Kredi kartı asgari ödemesi hakkında hangisi doğrudur?', choices: ['Borcu bitirmenin en iyi yoludur', 'Kalan borca faiz işleten ve borcu uzatan bir tuzaktır', 'Sadece zenginlere özeldir', 'Puan kazandırır'], correctIndex: 1, explain: 'Asgari ödeme borç sarmalı yaratır.' },
+    { id: 'c2', q: 'Hangi davranış kredi notunu (Findeks) olumlu etkiler?', choices: ['Fatura ve taksitleri düzenli/vaktinde ödemek', 'Sürekli yeni kredi başvurusu yapmak', 'Tüm kart limitlerini sonuna kadar kullanmak', 'Hiç banka hesabı açmamak'], correctIndex: 0, explain: 'Ödeme disiplini en büyük puandır.' },
+    { id: 'c3', q: 'Kredi kartı limiti neye göre belirlenmelidir?', choices: ['Maksimum harcama isteğine göre', 'Ödeme gücüne ve gelire göre', 'Arkadaşının limitine göre', 'Cüzdanın büyüklüğüne göre'], correctIndex: 1, explain: 'Limit, ödeyebileceğin kadar olmalı.' },
+  ];
+  return pool.map(shuffleChoices);
 }
 
 function generateMacroQuiz(): LearnQuestion[] {
-  return [
-    {
-      id: 'ma-q-1',
-      q: 'Merkez Bankası faiz artırırsa paranın değeri genelde ne olur?',
-      choices: ['Düşer', 'Artar', 'Değişmez', 'Yok olur'],
-      correctIndex: 1,
-      explain: 'Yüksek faiz, o parayı tutmayı daha çekici hale getirir.',
-    },
-    {
-      id: 'ma-q-2',
-      q: 'Ekonomide "Resesyon" neyi ifade eder?',
-      choices: ['Aşırı büyümeyi', 'Ekonomik daralmayı ve işsizlik artışını', 'Altın fiyatlarının sabitlenmesini', 'Yaz tatilini'],
-      correctIndex: 1,
-      explain: 'Resesyon, ekonominin vites küçültmesi ve geri gitmesidir.',
-    },
+  const pool: LearnQuestion[] = [
+    { id: 'm1', q: 'Merkez Bankası neden faiz artırır?', choices: ['Herkesin zengin olması için', 'Piyasayı soğutmak ve yükselen enflasyonu frenlemek için', 'Harcamaları teşvik etmek için', 'Doların bitmesi için'], correctIndex: 1, explain: 'Sıkı para politikası enflasyonu düşürmeyi hedefler.' },
+    { id: 'm2', q: 'Resesyon neyin habercisidir?', choices: ['Ekonomik bayramın', 'Ekonomik daralma ve üretimin azalmasının', 'Herkesin işe girmesinin', 'Borsanın uçmasının'], correctIndex: 1, explain: 'Ekonomik durgunluk demektir.' },
   ];
+  return pool.map(shuffleChoices);
 }
 
 function generatePsychSafetyQuiz(): LearnQuestion[] {
-  return [
-    {
-      id: 'ps-q-1',
-      q: 'Tanımadığın birinden "Günde 5000 TL kazanmak ister misin?" mesajı geldi. Ne yaparsın?',
-      choices: ['Hemen mesaj atarım', 'Kredi çekerim', 'Direkt engellerim, dolandırıcıdır', 'Arkadaşıma sorarım'],
-      correctIndex: 2,
-      explain: 'Kimse sana bedava veya aşırı kolay para vermez bro.',
-    },
-    {
-      id: 'ps-q-2',
-      q: 'Piyasada "FOMO" hissettiğinde en doğru hareket nedir?',
-      choices: ['Hemen her şeyimi satmak', 'Hemen alım yapmak', 'Ekranı kapatıp sakinleşmek ve planı beklemek', 'Borç almak'],
-      correctIndex: 2,
-      explain: 'Duyguyla yapılan işlem genelde "tepeden alma" ile sonuçlanır.',
-    },
+  const pool: LearnQuestion[] = [
+    { id: 'p1', q: 'FOMO etkisi altına giren biri hangisini yapar?', choices: ['Sakin kalıp analiz yapar', 'Başkaları kazanıyor diye gaza gelip en tepeden alım yapar', 'Zararına her şeyi satar', 'Hicbir şey yapmaz'], correctIndex: 1, explain: 'Fırsatı kaçırma korkusu hata yaptırır.' },
+    { id: 'p2', q: 'Sahte bir banka linkine tıklamak neye yol açabilir?', choices: ['Hediye kazanmaya', 'Kişisel bilgilerinin ve şifrelerinin çalınmasına', 'İnternetin hızlanmasına', 'Telefonun güncellenmesine'], correctIndex: 1, explain: 'Oltalama saldırıları çok tehlikelidir.' },
+    { id: 'p3', q: 'Zararda olan bir pozisyonu "belki çıkar" diye aylarca bekletmek hangi psikolojik hatadır?', choices: ['Analitik düşünme', 'Kayıptan kaçınma (Loss Aversion)', 'Stratejik deha', 'Şans faktörü'], correctIndex: 1, explain: 'Zararı kabullenememek sermayeyi bitirebilir.' },
   ];
+  return pool.map(shuffleChoices);
 }
 
 // --- CONTENT DEFINITIONS ---
@@ -241,7 +136,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         short: 'Paranın sinsi düşmanı.',
         body: [
           'Enflasyon, her şeyin fiyatının artması değil, paranın "değer kaybetmesidir".',
-          'Bro olay şu: Maaşın %30 artırken her şey %60 artıyorsa aslında her ay daha çok fakirleşiyorsun.',
+          'Bro olay şu: Maaşın %30 artarken her şey %60 artıyorsa aslında her ay daha çok fakirleşiyorsun.',
           'Reel değer, cebindeki TL değil o TL ile kaç hamburger alabildiğindir.',
         ],
         tips: ['Alım gücünü korumak için yatırım yapman şart.'],
@@ -296,7 +191,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: generateBasicsQuiz(),
+    quiz: generateBasicsQuiz(), // Can be improved
   },
   {
     id: 'credit',
@@ -435,7 +330,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
   },
   {
     id: 'psychology',
-    title: 'YATIRIM PSİKOLOJISI',
+    title: 'YATIRIM PSİKOLOJİSİ',
     subtitle: 'Kendi zihnini yen.',
     icon: '🧘',
     items: [

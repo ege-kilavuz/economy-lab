@@ -308,16 +308,28 @@ export function LearnScreen() {
                       const inc = ok ? 1 : 0;
                       const related = !ok ? (q.relatedItemIds ?? []) : [];
                       const merged = Array.from(new Set([...(view.reviewItemIds ?? []), ...related]));
-                      setView({
-                        kind: 'quiz',
-                        category: c,
-                        index: view.index + 1,
-                        correct: (view.correct ?? 0) + inc,
-                        total: view.total,
-                        reviewItemIds: merged,
-                        questionOrder: view.questionOrder,
-                        mode: view.mode,
-                      });
+                      
+                      const nextIndex = view.index + 1;
+                      if (nextIndex >= view.total) {
+                        // End of quiz
+                        setView({
+                          ...view,
+                          index: nextIndex,
+                          correct: (view.correct ?? 0) + inc,
+                          reviewItemIds: merged,
+                        });
+                      } else {
+                        setView({
+                          kind: 'quiz',
+                          category: c,
+                          index: nextIndex,
+                          correct: (view.correct ?? 0) + inc,
+                          total: view.total,
+                          reviewItemIds: merged,
+                          questionOrder: view.questionOrder,
+                          mode: view.mode,
+                        });
+                      }
                     }}
                   />
                 </Stack>
