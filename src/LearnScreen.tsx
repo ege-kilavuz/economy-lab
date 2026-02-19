@@ -120,6 +120,15 @@ function ItemCard({ item, highlight }: { item: LearnItem; highlight?: boolean })
   );
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+  const out = [...array];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
   const itemIndex = React.useMemo(() => buildItemIndex(), []);
@@ -374,18 +383,20 @@ export function LearnScreen() {
         <Box sx={{ mt: 4 }}>
           <GlassCard>
             <CardContent
-              onClick={() =>
+              onClick={() => {
+                const indices = c.quiz.map((_, i) => i);
+                const shuffled = shuffleArray(indices);
                 setView({
                   kind: 'quiz',
                   category: c,
                   index: 0,
                   correct: 0,
-                  total: c.quiz.length,
+                  total: Math.min(10, c.quiz.length), // Limit to 10 random questions per run
                   reviewItemIds: [],
-                  questionOrder: c.quiz.map((_, i) => i),
+                  questionOrder: shuffled,
                   mode: 'full',
-                })
-              }
+                });
+              }}
               sx={{ cursor: 'pointer' }}
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center">
