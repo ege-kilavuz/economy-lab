@@ -1,4 +1,11 @@
-export type LearnCategoryId = 'basics' | 'budget' | 'credit' | 'markets' | 'stock-patterns';
+export type LearnCategoryId =
+  | 'basics'
+  | 'budget'
+  | 'credit'
+  | 'markets'
+  | 'stock-patterns'
+  | 'psychology'
+  | 'safety';
 
 export type LearnItem = {
   id: string;
@@ -170,6 +177,22 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         explain: 'Amaç garanti kazanç değil; riski tek noktadan yaymaktır.',
         relatedItemIds: ['diversification'],
       },
+      {
+        id: 'q7',
+        q: 'Reel getiri nasıl hesaplanır (yaklaşık)?',
+        choices: ['Nominal Getiri + Enflasyon', 'Nominal Getiri - Enflasyon', 'Sadece Maaş', 'Kira / 2'],
+        correctIndex: 1,
+        explain: 'Paranın değer kaybını (enflasyonu) kazancından düşersen gerçekte ne kazandığını bulursun.',
+        relatedItemIds: ['nominal-real', 'inflation'],
+      },
+      {
+        id: 'q8',
+        q: 'Acil paraya ihtiyaç duyduğunda hangi varlık türü daha avantajlıdır?',
+        choices: ['Düşük likiditeli (Emlak vb.)', 'Yüksek likiditeli (Nakit/Likit Fon)', 'Kripto', 'Antika'],
+        correctIndex: 1,
+        explain: 'Likit varlıklar hızlıca ve değer kaybı riski daha az şekilde nakde döner.',
+        relatedItemIds: ['liquidity'],
+      },
     ],
   },
   {
@@ -297,6 +320,22 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         correctIndex: 1,
         explain: 'Küçük ödemeler birikir; kullanmadığın abonelikleri kapatmak hızlı tasarruftur.',
         relatedItemIds: ['subscriptions'],
+      },
+      {
+        id: 'q7',
+        q: 'İstekler (Wants) bütçede nerede olmalı?',
+        choices: ['Hiç olmamalı', 'Zorunlu giderlerden sonra artan kısımda', 'En başta', 'Borç alınarak yapılmalı'],
+        correctIndex: 1,
+        explain: 'Keyifli bir hayat için isteklere yer vardır ama önce zorunlu temel ihtiyaçlar karşılanmalıdır.',
+        relatedItemIds: ['needs-wants'],
+      },
+      {
+        id: 'q8',
+        q: 'Birikime ne zaman başlanmalı?',
+        choices: ['Borçlar bitince ve gelir artınca (hemen/düzenli)', 'Emekli olunca', 'Piyasa yükselince', 'Hiçbir zaman'],
+        correctIndex: 0,
+        explain: 'Küçük de olsa erken ve düzenli başlamak bileşik getirinin gücünü kullanmanı sağlar.',
+        relatedItemIds: ['50-30-20', 'goals'],
       },
     ],
   },
@@ -513,6 +552,22 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         explain: 'İşlem maliyetleri birikir ve performansı düşürebilir.',
         relatedItemIds: ['spread-fee'],
       },
+      {
+        id: 'q7',
+        q: 'Hisse senedi sahibi olmak ne anlama gelir?',
+        choices: ['Şirkete borç vermek', 'Şirketin ortağı olmak', 'Şirketi yönetmek', 'Devletten alacaklı olmak'],
+        correctIndex: 1,
+        explain: 'Hisse, o şirketin mülkiyetinin küçük bir parçasına sahip olduğunuzu gösterir.',
+        relatedItemIds: ['stock-basic'],
+      },
+      {
+        id: 'q8',
+        q: 'Döviz (FX) kurlarındaki hızlı artışın en olası yan etkisi nedir?',
+        choices: ['İthal ürün fiyatlarının artması', 'İşsizliğin anında bitmesi', 'Tüm borçların silinmesi', 'Hava durumunun değişmesi'],
+        correctIndex: 0,
+        explain: 'Maliyet enflasyonu yoluyla fiyatlar üzerinde baskı yaratır.',
+        relatedItemIds: ['fx'],
+      },
     ],
   },
   {
@@ -631,6 +686,186 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         correctIndex: 1,
         explain: 'Risk yönetimi, tek kötü senaryonun oyunu bitirmemesidir.',
         relatedItemIds: ['risk-management'],
+      },
+      {
+        id: 'q7',
+        q: 'Trend tersine dönmeden önce ne beklenir?',
+        choices: ['Teyit (Onay)', 'Hemen işlem', 'Borç alma', 'Evi satma'],
+        correctIndex: 0,
+        explain: 'Formasyonlar tek başına yetmez, trendin değiştiğine dair ek onay (teyit) beklenmelidir.',
+        relatedItemIds: ['trend', 'doji'],
+      },
+      {
+        id: 'q8',
+        q: 'Candlestick grafiklerinde "fitil" neden oluşur?',
+        choices: ['Fiyat o seviyeleri görüp geri çekildiği için', 'Hata olduğu için', 'Borsa kapandığı için', 'Vergi geldiği için'],
+        correctIndex: 0,
+        explain: 'Fiyatın o zaman dilimindeki uç noktalarını (en yüksek/en düşük) temsil eder.',
+        relatedItemIds: ['candle-basic', 'wick'],
+      },
+    ],
+  },
+  {
+    id: 'psychology',
+    title: 'Yatırım Psikolojisi',
+    subtitle: 'FOMO, FUD, sabır ve duygusal kontrol…',
+    icon: '🧘',
+    items: [
+      {
+        id: 'fomo',
+        title: 'FOMO (Fırsatı Kaçırma Korkusu)',
+        short: 'Başkaları kazanırken geride kalma endişesi.',
+        body: [
+          'FOMO: Fear of Missing Out.',
+          'Fiyat çok yükselmişken "hâlâ gidecek yolu vardır" diye tepeden girmeye neden olur.',
+          'Duygusal karar, genelde en riskli anlarda verilir.',
+        ],
+        tips: ['Piyasa koşarken değil, sakinken karar ver.'],
+      },
+      {
+        id: 'fud',
+        title: 'FUD (Korku, Belirsizlik, Şüphe)',
+        short: 'Panik dalgasına kapılıp yanlış kararlar verme.',
+        body: [
+          'FUD: Fear, Uncertainty, Doubt.',
+          'Kötü haberlerin abartılmasıyla elindekini zararına ve aceleyle satma durumudur.',
+        ],
+        tips: ['Haberin kaynağını ve gerçekliğini sorgula.'],
+      },
+      {
+        id: 'patience',
+        title: 'Sabır & Zaman Ufku',
+        short: 'Hızlı zenginlik değil, sürdürülebilir büyüme.',
+        body: [
+          'Yatırım bir sprint (kısa koşu) değil, maratondur.',
+          'Sık sık ekrana bakmak duygusal hataları artırabilir.',
+        ],
+      },
+      {
+        id: 'loss-aversion',
+        title: 'Kayıptan Kaçınma',
+        short: 'Kaybetmenin acısı, kazanmanın sevincinden büyüktür.',
+        body: [
+          'İnsan beyni zararı kabul etmekte zorlanır.',
+          'Bu yüzden yanlış bir kararda "belki döner" diye bekleyip zararı büyütmek yaygındır.',
+        ],
+        tips: ['İşlemi açmadan önce nerede çıkacağını (zarar durdur) belirle.'],
+      },
+    ],
+    quiz: [
+      {
+        id: 'q1',
+        q: 'FOMO etkisi altındaki bir yatırımcı ne yapar?',
+        choices: ['Sakin kalır', 'Fiyat uçarken heyecanla en tepeden alır', 'Analiz yapar', 'Hepsini satar'],
+        correctIndex: 1,
+        explain: 'Başkalarının kazandığını görüp geride kalma korkusuyla riskli alım yapar.',
+        relatedItemIds: ['fomo'],
+      },
+      {
+        id: 'q2',
+        q: 'FUD ne anlama gelir?',
+        choices: ['Finansal Uygunluk Durumu', 'Korku, Belirsizlik ve Şüphe', 'Fiyatın Uçma Durumu', 'Gelecek Tahmini'],
+        correctIndex: 1,
+        explain: 'Panik ve korku yayan haberlerin yarattığı psikolojik durumdur.',
+        relatedItemIds: ['fud'],
+      },
+      {
+        id: 'q3',
+        q: 'Kaybetmenin acısı neden tehlikelidir?',
+        choices: ['Zararı kabul edemeyip daha çok risk almaya iter', 'Parayı artırır', 'Hiç tehlikeli değil', 'Faizi düşürür'],
+        correctIndex: 0,
+        explain: 'İnsan beyni zararı sevmez, bu da rasyonel olmayan bekleyişlere yol açar.',
+        relatedItemIds: ['loss-aversion'],
+      },
+      {
+        id: 'q4',
+        q: 'Duygusal hataları azaltmanın en iyi yolu nedir?',
+        choices: ['Daha çok ekrana bakmak', 'Önceden bir plana sahip olmak', 'Başkalarını dinlemek', 'Tüm parayla oynamak'],
+        correctIndex: 1,
+        explain: 'Piyasa dışındayken yapılan plan, piyasa içindeki duyguları frenler.',
+        relatedItemIds: ['patience', 'loss-aversion'],
+      },
+    ],
+  },
+  {
+    id: 'safety',
+    title: 'Güvenlik & Korunma',
+    subtitle: 'Dolandırıcılık türleri, şifre güvenliği, sosyal mühendislik…',
+    icon: '🛡️',
+    items: [
+      {
+        id: 'phishing',
+        title: 'Oltalama (Phishing)',
+        short: 'Sahte link ve mesajlarla bilgi çalma.',
+        body: [
+          'Banka, kargo veya devlet kurumundan geliyormuş gibi görünen sahte SMS/E-postalar.',
+          'Hedef: şifreni, kart bilgilerini veya OTP kodunu ele geçirmek.',
+        ],
+        tips: ['Gelen linke tıklama, kurumu kendi numarasından ara veya uygulamasını aç.'],
+      },
+      {
+        id: 'social-engineering',
+        title: 'Sosyal Mühendislik',
+        short: 'Psikolojik baskı ve aciliyet hissi yaratma.',
+        body: [
+          '“Hesabınız ele geçirildi, hemen bu kodu söyleyin” diyen aramalara dikkat.',
+          'Seni korkutarak mantıklı düşünmeni engellemeye çalışırlar.',
+        ],
+        warning: 'Resmî kurumlar asla telefonda şifre veya kod istemez.',
+      },
+      {
+        id: 'ponzi',
+        title: 'Ponzi / Saadet Zinciri',
+        short: 'Sürdürülemez "yüksek kazanç" vaatleri.',
+        body: [
+          'Sisteme yeni girenlerin parasıyla eskilerin ödemesi yapılır.',
+          'Yeni giriş durduğunda sistem çöker ve son girenlerin parası uçar.',
+        ],
+        tips: ['Bir şey "gerçek olamayacak kadar iyiyse" muhtemelen gerçek değildir.'],
+      },
+      {
+        id: 'digital-hygiene',
+        title: 'Dijital Hijyen',
+        short: 'Şifre ve cihaz güvenliği.',
+        body: [
+          'Her yerde aynı şifreyi kullanma.',
+          'İki faktörlü doğrulamayı (2FA) mutlaka aç.',
+          'Bilinmeyen APK veya dosyaları telefonuna indirme.',
+        ],
+      },
+    ],
+    quiz: [
+      {
+        id: 'q1',
+        q: 'Telefonda kendini polis/bankacı olarak tanıtıp şifre isteyen birine ne yapılmalı?',
+        choices: ['Şifre verilmeli', 'Hemen kapatıp resmî kanaldan doğrulanmalı', 'Para gönderilmeli', 'Dinlenmeli'],
+        correctIndex: 1,
+        explain: 'Kurumlar asla telefonda şifre istemez. Kapatıp kendiniz aramalısınız.',
+        relatedItemIds: ['social-engineering'],
+      },
+      {
+        id: 'q2',
+        q: 'Oltalama (Phishing) saldırısının ana belirtisi nedir?',
+        choices: ['Resmî bir dil', 'Sahte/şüpheli link ve aciliyet baskısı', 'Ücretsiz hediye', 'Güvenli bağlantı'],
+        correctIndex: 1,
+        explain: 'Sizi hızlıca bir linke tıklamaya veya bilgi girmeye zorlarlar.',
+        relatedItemIds: ['phishing'],
+      },
+      {
+        id: 'q3',
+        q: 'Yüksek ve "garanti" kazanç vaat eden sistemlerin riski nedir?',
+        choices: ['Ponzi/Dolandırıcılık olma ihtimali çok yüksektir', 'Risk yoktur', 'Devlet garantisidir', 'Zengin eder'],
+        correctIndex: 0,
+        explain: 'Finansal piyasalarda garanti ve çok yüksek kazanç yan yana gelmez.',
+        relatedItemIds: ['ponzi'],
+      },
+      {
+        id: 'q4',
+        q: 'Hesap güvenliği için en kritik adım hangisidir?',
+        choices: ['Basit şifre koymak', 'İki faktörlü doğrulama (2FA) kullanmak', 'Şifreyi paylaşmak', 'Her yere aynı şifreyi vermek'],
+        correctIndex: 1,
+        explain: '2FA, şifreniz çalınsa bile hesabınızı korumaya yardımcı olur.',
+        relatedItemIds: ['digital-hygiene'],
       },
     ],
   },

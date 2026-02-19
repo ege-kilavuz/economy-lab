@@ -40,10 +40,41 @@ function cartesian<T, U>(a: T[], b: U[]): Array<[T, U]> {
 }
 
 function expandNewsNoise(): NewsNoiseItem[] {
-  const assets = ['X Coin', 'BTC', 'ETH', 'Altın', 'Dolar', 'Borsa'] as const;
-  const urgency = ['Hemen', 'Son şans', '10 dakika', 'Geç kalma', 'Şimdi'] as const;
-  const shortDomains = ['bit.ly', 'tinyurl.com', 'cutt.ly', 't.co'] as const;
-  const anonymousSources = ['anon Telegram', 'anon X hesabı', 'kapalı Discord', 'WhatsApp zinciri'] as const;
+  const assets = [
+    'X Coin',
+    'BTC',
+    'ETH',
+    'Altın',
+    'Dolar',
+    'Borsa',
+    'Gümüş',
+    'Petrol',
+    'Nasdaq',
+    'BIST100',
+    'Yapay Zeka Hisseleri',
+    'Emlak Endeksi',
+  ] as const;
+  const urgency = [
+    'Hemen',
+    'Son şans',
+    '10 dakika',
+    'Geç kalma',
+    'Şimdi',
+    'Kaçırma',
+    'Fırsat bu',
+    'Az kaldı',
+  ] as const;
+  const shortDomains = ['bit.ly', 'tinyurl.com', 'cutt.ly', 't.co', 'rb.gy', 'v.gd'] as const;
+  const anonymousSources = [
+    'anon Telegram',
+    'anon X hesabı',
+    'kapalı Discord',
+    'WhatsApp zinciri',
+    'Reddit duyumu',
+    'TikTok analisti',
+    'YouTube yorumu',
+    'Instagram magazin',
+  ] as const;
 
   const base: NewsNoiseItem[] = [
     {
@@ -117,8 +148,27 @@ function expandNewsNoise(): NewsNoiseItem[] {
   }
 
   const methodologyPack: NewsNoiseItem[] = [];
-  const topics = ['harcama alışkanlıkları', 'borçlanma', 'tasarruf', 'enflasyon algısı', 'finans okuryazarlığı'] as const;
-  const orgs = ['üniversite raporu', 'STK raporu', 'kamu istatistiği', 'hakemli makale özeti'] as const;
+  const topics = [
+    'harcama alışkanlıkları',
+    'borçlanma',
+    'tasarruf',
+    'enflasyon algısı',
+    'finans okuryazarlığı',
+    'vergi paketi',
+    'asgari ücret',
+    'kredi notu',
+    'dış ticaret',
+    'faiz beklentisi',
+  ] as const;
+  const orgs = [
+    'üniversite raporu',
+    'STK raporu',
+    'kamu istatistiği',
+    'hakemli makale özeti',
+    'Yatırım bankası',
+    'derecelendirme kuruluşu',
+    'bağımsız araştırma',
+  ] as const;
   for (const [t, o] of cartesian(topics as any, orgs as any)) {
     methodologyPack.push({
       id: `report-${t}-${o}`.replace(/\s+/g, '_').toLowerCase(),
@@ -134,9 +184,24 @@ function expandNewsNoise(): NewsNoiseItem[] {
 }
 
 function expandScamRadar(): ScamScenario[] {
-  const institutions = ['banka', 'kargo', 'e-Devlet', 'vergi dairesi', 'telefon operatörü', 'kripto borsası'] as const;
-  const shortDomains = ['bit.ly', 'tinyurl.com', 'cutt.ly', 't.co'] as const;
-  const times = ['10 dk', '15 dk', '1 saat', 'hemen'] as const;
+  const institutions = [
+    'banka',
+    'kargo',
+    'e-Devlet',
+    'vergi dairesi',
+    'telefon operatörü',
+    'kripto borsası',
+    'HGS/OGS',
+    'Netflix',
+    'iCloud',
+    'Sigorta Şirketi',
+    'Sağlık Bakanlığı',
+    'Tapu Dairesi',
+    'Amazon',
+    'Trendyol',
+  ] as const;
+  const shortDomains = ['bit.ly', 'tinyurl.com', 'cutt.ly', 't.co', 'url.co', 'shrt.it'] as const;
+  const times = ['5 dk', '10 dk', '15 dk', '1 saat', 'hemen', 'bugün', 'yarın'] as const;
   const channels: ScamScenario['channel'][] = ['SMS', 'DM', 'E-posta', 'Arama'];
 
   const base: ScamScenario[] = [
@@ -178,7 +243,18 @@ function expandScamRadar(): ScamScenario[] {
   }
 
   const dmMoneyPack: ScamScenario[] = [];
-  const excuses = ['acil hastane', 'cüzdanım kayboldu', 'kartım çalışmıyor', 'kargom takıldı'] as const;
+  const excuses = [
+    'acil hastane',
+    'cüzdanım kayboldu',
+    'kartım çalışmıyor',
+    'kargom takıldı',
+    'trafik cezası',
+    'telafi ödemesi',
+    'hediye çeki',
+    'yardım kampanyası',
+    'kira ödemesi',
+    'borç kapama',
+  ] as const;
   for (const e of excuses) {
     dmMoneyPack.push({
       id: `dm-acil-para-${e}`.replace(/\s+/g, '_').toLowerCase(),
@@ -192,7 +268,7 @@ function expandScamRadar(): ScamScenario[] {
   }
 
   const emailPack: ScamScenario[] = [];
-  const attachments = ['.zip', '.exe', '.js', '.iso'] as const;
+  const attachments = ['.zip', '.exe', '.js', '.iso', '.bat', '.scr', '.vbs', '.docm', '.xlsm'] as const;
   for (const [inst, ext] of cartesian(institutions as any, attachments as any)) {
     emailPack.push({
       id: `mail-${inst}-${ext}`.replace(/\s+/g, '_').toLowerCase(),
