@@ -18,11 +18,6 @@ type Label =
   | 'Inverted Hammer'
   | 'Shooting Star'
   | 'Spinning Top'
-  | 'Dragonfly Doji'
-  | 'Gravestone Doji'
-  | 'Long Upper Wick'
-  | 'Long Lower Wick'
-  | 'Big Body'
   | 'Marubozu';
 
 type Context = {
@@ -84,8 +79,8 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
     const low = mid - 30 - r() * 15;
     return {
       candle: { open, close, high, low },
-      answer: 'Dragonfly Doji',
-      hint: 'Açılış/Kapanış tepede, çok uzun alt fitil: aşağı denendi ama sert reddedildi.',
+      answer: 'Doji',
+      hint: 'Özel bir Doji (Dragonfly): aşağı denendi ama sert reddedildi. Kararsızlık ama boğa ağırlıklı.',
       context,
       bestPractice: 'Destek seviyesindeyse anlamlıdır, ancak ertesi gün teyit şarttır.',
     };
@@ -100,8 +95,8 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
     const low = mid - 1 - r() * 3;
     return {
       candle: { open, close, high, low },
-      answer: 'Gravestone Doji',
-      hint: 'Açılış/Kapanış dipte, çok uzun üst fitil: yukarı denendi ama satıcılar baskın çıktı.',
+      answer: 'Doji',
+      hint: 'Özel bir Doji (Gravestone): yukarı denendi ama satıcılar baskın çıktı. Kararsızlık ama ayı ağırlıklı.',
       context,
       bestPractice: 'Direnç seviyesindeyse düşüş ihtimalini artırır; teyit beklemek güvenlidir.',
     };
@@ -177,35 +172,37 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
     };
   }
   if (kindPick < 0.75) {
-    // Long upper wick
-    const bodyBottom = base - 2 - r() * 4;
-    const body = 8 + r() * 10;
-    const open = bodyBottom;
-    const close = bodyBottom + body;
-    const high = close + 30 + r() * 20;
-    const low = bodyBottom - 5 - r() * 5;
+    // Long upper wick -> Map to Shooting Star or Spinning Top based on body? 
+    // Let's just merge these into the others or adjust probabilities.
+    // Actually I will just replace the logic to return Marubozu or Spinning top for the remaining ranges.
+    const mid = base;
+    const body = 4 + r() * 6;
+    const open = mid - body / 2;
+    const close = mid + body / 2;
+    const high = close + 12 + r() * 10;
+    const low = open - 12 - r() * 10;
     return {
       candle: { open, close, high, low },
-      answer: 'Long Upper Wick',
-      hint: 'Gövde orta/büyük olsa da üst fitil çok belirgin: yukarıda satış gelmiş.',
+      answer: 'Spinning Top',
+      hint: 'Küçük gövde, benzer boyda üst ve alt fitiller: piyasada kararsızlık.',
       context,
-      bestPractice: 'Önemli bir dirençteyse alıcıların gücünün azaldığını düşündürür.',
+      bestPractice: 'Büyük hareketler sonrası kararsızlığı gösterir. Trend dönüşü veya dinlenme sinyali olabilir.',
     };
   }
   if (kindPick < 0.85) {
-    // Long lower wick
-    const bodyTop = base + 2 + r() * 4;
-    const body = 8 + r() * 10;
-    const close = bodyTop;
+    // Long lower wick -> Map to Hammer/Spinning Top
+    const bodyTop = base + 10 + r() * 6;
+    const body = 3 + r() * 5;
     const open = bodyTop - body;
-    const high = bodyTop + 5 + r() * 5;
-    const low = open - 30 - r() * 20;
+    const close = bodyTop;
+    const high = bodyTop + 1 + r() * 4;
+    const low = bodyTop - 25 - r() * 15;
     return {
       candle: { open, close, high, low },
-      answer: 'Long Lower Wick',
-      hint: 'Aşağıda sert alım tepkisi geldiğini gösteren belirgin alt fitil.',
+      answer: 'Hammer',
+      hint: 'Alt fitil uzun (gövdenin 2-3 katı), gövde küçük: düşüş sonrası alış tepkisi.',
       context,
-      bestPractice: 'Destek seviyesinde görülmesi dönüş ihtimalini artırır; teyit ara.',
+      bestPractice: 'Düşüş trendi sonunda anlamlıdır.',
     };
   }
   if (kindPick < 0.93) {
@@ -221,40 +218,23 @@ function genCandle(r: () => number): { candle: Candle; answer: Label; hint: stri
       answer: 'Marubozu',
       hint: 'Neredeyse hiç fitil yok, tam gövde: tek yönlü çok güçlü hakimiyet.',
       context,
-      bestPractice: 'Trendin devamını işaret eder ancak çok uzamış bir trend sonunda olması yorulma belirtisi de olabilir.',
+      bestPractice: 'Trendin devamını işaret eder.',
     };
   }
 
-  // Big body
+  // Fallback to Spinning Top
   const mid = base;
-  const body = 28 + r() * 15;
+  const body = 5 + r() * 5;
   const open = mid - body / 2;
   const close = mid + body / 2;
-  const high = close + 8 + r() * 10;
-  const low = open - 8 - r() * 10;
+  const high = close + 15 + r() * 10;
+  const low = open - 15 - r() * 10;
   return {
     candle: { open, close, high, low },
-    answer: 'Big Body',
-    hint: 'Ortalamadan büyük bir gövde: piyasada o yönde net bir hacim var.',
+    answer: 'Spinning Top',
+    hint: 'Küçük gövde: piyasada o yönde net bir hacim yok, kararsızlık.',
     context,
-    bestPractice: 'Güçlü bir harekettir ama her zaman riskini yönet; haber/veri etkisini kontrol et.',
-  };
-}
-
-  // Big body
-  const mid = base;
-  const body = 24 + r() * 12;
-  const open = mid - body / 2;
-  const close = mid + body / 2;
-  const high = close + 6 + r() * 8;
-  const low = open - 6 - r() * 8;
-  return {
-    candle: { open, close, high, low },
-    answer: 'Big Body',
-    hint: 'Uzun gövde: güçlü hareket. Bağlam (trend/haber) önemli.',
-    context,
-    bestPractice:
-      'Uzun gövde güç demek olabilir ama hangi yönde ve hangi seviyede olduğun önemli. Riskini küçük tut.',
+    bestPractice: 'Dönüş sinyali olabilir, teyit bekle.',
   };
 }
 
@@ -294,12 +274,7 @@ const CHOICES: Label[] = [
   'Inverted Hammer',
   'Shooting Star',
   'Spinning Top',
-  'Dragonfly Doji',
-  'Gravestone Doji',
-  'Long Upper Wick',
-  'Long Lower Wick',
   'Marubozu',
-  'Big Body',
 ];
 
 export function CandleGame() {

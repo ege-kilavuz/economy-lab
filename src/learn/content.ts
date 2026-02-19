@@ -603,18 +603,46 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         body: [
           'Doji, iki tarafın da üstünlük kuramadığını gösterir.',
           'Dönüş ihtimali konuşulur ama “teyit” şarttır.',
+          'Dragonfly Doji: Alt fitil çok uzun, boğa ağırlıklı kararsızlık.',
+          'Gravestone Doji: Üst fitil çok uzun, ayı ağırlıklı kararsızlık.',
         ],
         tips: ['Doji gördün diye işlem açma; sonraki mum/akışı izle.'],
       },
       {
         id: 'hammer',
-        title: 'Çekiç (Hammer)',
-        short: 'Düşüşten sonra tepki ihtimali doğabilir.',
+        title: 'Çekiç (Hammer) & Inverted Hammer',
+        short: 'Dönüş sinyali olabilecek küçük gövde ve uzun fitil.',
         body: [
-          'Gün içi düşer ama toparlar. Satışa rağmen alıcı geldi sinyali olabilir.',
-          'Daha anlamlı: düşüş trendi + destek bölgesi + hacim artışı.',
+          'Hammer: Alt fitil uzun, tepede küçük gövde. Düşüş sonrası alıcı tepkisi.',
+          'Inverted Hammer: Üst fitil uzun, dipte küçük gövde. Düşüş sonrası alıcıların yukarıyı denemesi.',
         ],
         warning: 'Kesin dönüş değildir. Risk yönetimi olmadan kullanılmaz.',
+      },
+      {
+        id: 'shooting-star',
+        title: 'Shooting Star',
+        short: 'Yükseliş trendi sonunda "kayan yıldız".',
+        body: [
+          'Küçük gövde dipte, çok uzun üst fitil.',
+          'Yükseliş sonrası fiyatın yukarıda tutunamayıp satış yediğini gösterir.',
+        ],
+      },
+      {
+        id: 'spinning-top',
+        title: 'Spinning Top (Fırıldak)',
+        short: 'Küçük gövde, her iki yöne de uzun/eşit fitiller.',
+        body: [
+          'Piyasanın yön bulmakta zorlandığı, güç topladığı veya kararsız olduğu anlardır.',
+        ],
+      },
+      {
+        id: 'marubozu',
+        title: 'Marubozu',
+        short: 'Fitilsiz, tam dolu gövde.',
+        body: [
+          'Piyasanın o yönde çok güçlü ve kararlı olduğunu gösterir.',
+          'Açılıştan kapanışa kadar tek yönlü baskın hareket vardır.',
+        ],
       },
       {
         id: 'trend',
