@@ -4,7 +4,7 @@ export type LearnCategoryId =
   | 'credit'
   | 'investing'
   | 'markets'
-  | 'analysis'
+  | 'stock-patterns'
   | 'macro'
   | 'psychology'
   | 'safety';
@@ -36,237 +36,286 @@ export type LearnCategory = {
   quiz: LearnQuestion[];
 };
 
-// --- DYNAMIC QUIZ GENERATORS ---
-
-function generateQuiz(categoryId: LearnCategoryId): LearnQuestion[] {
-  const pool: LearnQuestion[] = [];
-
-  if (categoryId === 'basics') {
-    const scenarios = [
-      { q: 'Enflasyon %100 ise cebindeki 200 TL bir yıl sonra kaç TL değerinde olur?', a: ['200 TL', '100 TL', '400 TL', '0 TL'], c: 1, e: 'Fiyatlar 2 katına çıktığı için paran yarı yarıya erir.' },
-      { q: 'Bileşik getirinin en büyük dostu nedir?', a: ['Yüksek maaş', 'Zaman', 'Şans', 'Borç'], c: 1, e: 'Zaman geçtikçe kazancın kazancı katlanarak büyür.' },
-      { q: 'Likidite neyi temsil eder?', a: ['Paranın rengini', 'Hemen nakde dönebilme hızını', 'Toplam borcu', 'Altın miktarını'], c: 1, e: 'Likit varlıklar (nakit gibi) anında harcanabilir.' },
-      { q: 'Nominal artış %20, Enflasyon %50 ise durum nedir?', a: ['Zenginsin', '%30 Kardasın', 'Reel olarak fakirleştin', 'Değişmedi'], c: 2, e: 'Giderin gelirinden çok artıyorsa alım gücün düşer.' },
-    ];
-    scenarios.forEach((s, i) => pool.push({ id: `b-q-${i}`, ...s }));
-  }
-
-  if (categoryId === 'investing') {
-    const assets = ['Hisse', 'Kripto', 'Fon', 'Altın'];
-    assets.forEach((as, i) => {
-      pool.push({
-        id: `inv-q-${i}`,
-        q: `${as} yatırımında "Kademeli Alım" (DCA) yapmanın mantığı nedir?`,
-        choices: ['Hemen zengin olmak', 'Ortalama maliyeti düşürüp riski yaymak', 'En tepeden almak', 'Borçlanmak'],
-        correctIndex: 1,
-        explain: 'Fiyatlar düşerken de alarak ortalamayı dengelemek her zaman daha güvenlidir.',
-      });
-    });
-    pool.push({
-      id: 'inv-q-div',
-      q: 'Portföy çeşitlendirmesi neden "ücretsiz öğle yemeği"dir?',
-      choices: ['Yemek bedava olduğu için', 'Riski azaltıp getiri potansiyelini koruduğu için', 'Sadece zenginlere özel olduğu için', 'Garanti kazanç sağladığı için'],
-      correctIndex: 1,
-      explain: 'Tüm yumurtaları aynı sepete koymamak risk yönetiminin temelidir.',
-    });
-  }
-
-  if (categoryId === 'macro') {
-    pool.push({
-      id: 'macro-q-1',
-      q: 'Merkez Bankası faizleri artırırsa genelde ne olması beklenir?',
-      choices: ['Krediler ucuzlar', 'Harcamalar azalır, enflasyon frenlenir', 'Borsa uçar', 'Dolar düşer (kesin)'],
-      correctIndex: 1,
-      explain: 'Yüksek faiz borçlanmayı zorlaştırır ve piyasayı soğutur.',
-    });
-    pool.push({
-      id: 'macro-q-2',
-      q: 'Resesyon ne demektir?',
-      choices: ['Ekonominin aşırı büyümesi', 'Ekonomik daralma/duraklama', 'Fiyatların düşmesi', 'Vergi indirimi'],
-      correctIndex: 1,
-      explain: 'Ekonomik faaliyetlerin uzun süre gerilemesine resesyon denir.',
-    });
-  }
-
-  if (categoryId === 'psychology') {
-    pool.push({
-      id: 'psy-q-1',
-      q: 'Zararda bekleyip karda hemen satma eğilimi nedir?',
-      choices: ['Dahilik', 'Kayıptan kaçınma (Loss Aversion)', 'Sabır', 'Teknik analiz'],
-      correctIndex: 1,
-      explain: 'İnsan beyni acıyı sevmez, bu yüzden zararı kabullenemez ama karı hemen almak ister.',
-    });
-  }
-
-  // Fallback / Filler to reach volume
-  for (let k = pool.length; k < 30; k++) {
-    pool.push({
-      id: `${categoryId}-fill-${k}`,
-      q: `Bu kategorideki finansal okuryazarlık düzeyi neden önemlidir?`,
-      choices: ['Gerek yok', 'Hatalı kararları azaltmak için', 'Hemen milyoner olmak için', 'Borsa oynamak için'],
-      correctIndex: 1,
-      explain: 'Bilgi en büyük koruyucudur.',
-    });
-  }
-
-  return pool;
+// --- GEN-Z QUIZ GENERATOR HELPERS ---
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// --- CONTENT DEFINITIONS ---
+function generateBasicsQuiz(): LearnQuestion[] {
+  return [
+    { id: 'bq1', q: 'Reel gelir ne demektir?', choices: ['Cepteki para miktarı', 'Paranın alabildiği mal miktarı', 'Banka puanı', 'Maaş zammı'], correctIndex: 1, explain: 'Nominal rakam değil, alım gücü önemlidir.' },
+    { id: 'bq2', q: 'Bileşik faiz için en önemli değişken nedir?', choices: ['Yüksek anapara', 'Zaman/Süre', 'Şans', 'Banka adı'], correctIndex: 1, explain: 'Zaman en büyük çarpandır, kartopu etkisi yaratır.' },
+    { id: 'bq3', q: 'Likidite neyi anlatır?', choices: ['Paranın rengini', 'Varlığın nakde dönme hızını', 'Toplam borcu', 'Enflasyonu'], correctIndex: 1, explain: 'Likit varlık (nakit gibi) anında harcanabilir.' },
+  ];
+}
+
+function generateStockQuiz(): LearnQuestion[] {
+  return [
+    { id: 'sq1', q: 'Çekiç (Hammer) mumu nerede daha anlamlıdır?', choices: ['Yükselişin tepesinde', 'Düşüş trendinin sonunda/destekte', 'Yatay piyasada', 'Hafta sonu'], correctIndex: 1, explain: 'Düşüşten sonra alıcı tepkisini gösterir.' },
+    { id: 'sq2', q: 'Marubozu mumu neyi temsil eder?', choices: ['Kararsızlık', 'Sert ve kararlı bir hareket', 'Borsa kapanışı', 'Haber beklentisi'], correctIndex: 1, explain: 'Fitilsiz gövde, o yöndeki mutlak gücü gösterir.' },
+    { id: 'sq3', q: 'Doji mumu gördüğünüzde ne yapmalısınız?', choices: ['Hemen her şeyi satın', 'Hemen her şeyi alın', 'Kararsızlık var, teyit bekleyin', 'Uygulamayı kapatın'], correctIndex: 2, explain: 'Açılış/Kapanış aynıysa güçler dengededir, yön belli değildir.' },
+  ];
+}
+
+function generateCreditQuiz(): LearnQuestion[] {
+  return [
+    { id: 'cq1', q: 'Kredi kartı asgari tutarını ödemek borcu bitirir mi?', choices: ['Evet', 'Hayır, kalan borca faiz biner', 'Bazen', 'Banka siler'], correctIndex: 1, explain: 'Asgari sadece gecikmeye düşmeni engeller, borç sarmalı yaratır.' },
+    { id: 'cq2', q: 'Limitin tamamını kullanmak neden risklidir?', choices: ['Banka kızar', 'Acil durumda yerin kalmaz', 'Puanın artar', 'Daha çok kazandırır'], correctIndex: 1, explain: 'Limit doluysa manevra alanın sıfıra iner.' },
+  ];
+}
+
+// --- FULL DATASET ---
 
 export const LEARN_CATEGORIES: LearnCategory[] = [
   {
     id: 'basics',
-    title: 'Finans 101: Temeller',
-    subtitle: 'Para nasıl çalışır? Alım gücü neden önemli?',
+    title: 'TEMELLER & FAİZ',
+    subtitle: 'Para nasıl erir, nasıl büyür?',
     icon: '🧠',
     items: [
       {
-        id: 'inflation-deep',
-        title: 'Enflasyon: Sinsi Hırsız',
-        short: 'Paranın zaman içindeki değer kaybı.',
+        id: 'inflation',
+        title: 'ENFLASYON',
+        short: 'Paranın sinsi düşmanı.',
         body: [
-          'Enflasyon sadece "zam gelmesi" değildir; paranın alım gücünün buharlaşmasıdır.',
-          'Eğer yıllık enflasyon %60 ise, kenarda tuttuğun 1000 TL seneye aslında 400 TL gibi davranır.',
-          'Gençler için kural: Gelirini enflasyondan hızlı artırman veya paranı enflasyona karşı koruyan varlıklara (hisse, emtia vb.) yatırman şart.',
+          'Enflasyon, her şeyin fiyatının artması değil, paranın "değer kaybetmesidir".',
+          'Bro olay şu: Maaşın %30 artarken her şey %60 artıyorsa aslında her ay daha çok fakirleşiyorsun.',
+          'Reel değer, cebindeki TL değil o TL ile kaç hamburger alabildiğindir.',
         ],
-        tips: ['Bir varlığın fiyatına bakma, o parayla kaç tane "sepet" alabildiğine bak.'],
+        tips: ['Alım gücünü korumak için yatırım yapman şart.'],
       },
       {
-        id: 'opportunity-cost',
-        title: 'Fırsat Maliyeti',
-        short: 'Bir şeyi seçerken vazgeçtiğin diğer şey.',
+        id: 'interest-basic',
+        title: 'FAİZ & BİLEŞİK ETKİ',
+        short: 'Einstein’ın 8. harikası.',
         body: [
-          'Bugün o pahalı ayakkabıyı alırken sadece para harcamıyorsun. O parayı bir fonun içinde büyütme "fırsatından" da vazgeçiyorsun.',
-          'Her harcama bir tercihtir. "Bunu almasaydım ne yapabilirdim?" sorusu finansal zekanın başlangıcıdır.',
+          'Faiz, parayı kullanmanın kira bedelidir.',
+          'Bileşik etki ise kazancının da kazanç getirmesidir. Kar topu gibi büyür.',
+          'Zaman bu işin en büyük hilesidir (cheat code). Ne kadar erken, o kadar stonks.',
+        ],
+      },
+      {
+        id: 'liquidity',
+        title: 'LİKİDİTE',
+        short: 'Paraya hemen ulaşabilmek.',
+        body: [
+          'Nakit en likit varlıktır. Ev/Arsa ise likiditesi en düşük olandır.',
+          'Acil bir şey olduğunda evini 5 dakikada satamazsın ama bankadaki parayı hemen harcarsın.',
         ],
       },
     ],
-    quiz: generateQuiz('basics'),
+    quiz: generateBasicsQuiz(),
+  },
+  {
+    id: 'budget',
+    title: 'PARA YÖNETİMİ',
+    subtitle: 'Bütçeni yap, patron ol.',
+    icon: '💸',
+    items: [
+      {
+        id: '50-30-20',
+        title: '50/30/20 KURALI',
+        short: 'Bütçe yapmanın en kolay yolu.',
+        body: [
+          '%50 İhtiyaç (Kira, fatura, gıda).',
+          '%30 İstek (Konser, oyun, dışarıda yemek).',
+          '%20 Gelecek (Yatırım ve borç kapatma).',
+        ],
+        tips: ['Bu oranlar kutsal değil, kendine göre esnetebilirsin ama %20 altına düşmemeye çalış.'],
+      },
+      {
+        id: 'emergency-fund',
+        title: 'ACİL DURUM FONU',
+        short: 'Kötü gün kalkanı.',
+        body: [
+          'Hayat bazen tokat atar: telefon bozulur, sağlık masrafı çıkar.',
+          'Acil durum fonun yoksa kredi kartına sarılırsın, sonra faiz sarmalına girersin.',
+          'Hedef: En az 3 aylık temel giderini kenara koy.',
+        ],
+      },
+    ],
+    quiz: generateBasicsQuiz(), // Placeholder mix
+  },
+  {
+    id: 'credit',
+    title: 'KREDİ & KARTLAR',
+    subtitle: 'Bankalarla aranı iyi tut.',
+    icon: '💳',
+    items: [
+      {
+        id: 'min-pay',
+        title: 'ASGARİ ÖDEME TUZAĞI',
+        short: 'Bitmeyen borç sarmalı.',
+        body: [
+          'Asgariyi ödediğinde sadece gecikmeye düşmezsin ama borcun ana kısmı durur ve deli gibi faiz biner.',
+          'Her ay asgari ödemek, süzgeçle havuz doldurmaya çalışmaktır.',
+        ],
+        tips: ['Her zaman kart borcunun tamamını kapatmaya çalış.'],
+      },
+      {
+        id: 'credit-score',
+        title: 'KREDİ NOTU (FİNDEKS)',
+        short: 'Senin finansal karizman.',
+        body: [
+          'Ödemelerini aksatırsan kredi notun düşer. Notun düşükse banka sana kredi vermez veya yüksek faiz ister.',
+          'Zamanında ödenen her fatura ve taksit puanını artırır.',
+        ],
+      },
+    ],
+    quiz: generateCreditQuiz(),
   },
   {
     id: 'investing',
-    title: 'Yatırım Dünyası',
-    subtitle: 'Hisseler, Fonlar ve Stratejiler',
+    title: 'YATIRIM DÜNYASI',
+    subtitle: 'Para senin için çalışsın.',
     icon: '🚀',
     items: [
       {
-        id: 'asset-classes',
-        title: 'Varlık Sınıfları',
-        short: 'Paranı nereye koyabilirsin?',
-        body: [
-          'Hisse Senedi: Şirket ortaklığıdır. Riskli ama uzun vadede büyüme potansiyeli yüksektir.',
-          'Yatırım Fonu: Uzmanların yönettiği bir sepettir. "Ben anlamam" diyorsan en iyisidir.',
-          'Emtia: Altın, gümüş, petrol gibi fiziksel varlıklardır. Güvenli liman algısı yaratır.',
-          'Kripto: Dijital varlıklar. Çok yüksek volatilite (dalgalanma) ve yüksek risk/ödül.',
-        ],
-        tips: ['Kendi risk profilini belirle: Ne kadar kaybetmeye tahammülün var?'],
-      },
-      {
-        id: 'dca-strategy',
-        title: 'Kademeli Alım (DCA)',
+        id: 'dca',
+        title: 'KADEMELİ ALIM (DCA)',
         short: 'Fiyatı boşver, disipline bak.',
         body: [
-          'En dipten almaya çalışmak kumardır. DCA (Dollar Cost Averaging) her ay fiyat ne olursa olsun düzenli alım yapmaktır.',
-          'Bu sayede fiyat düştüğünde daha çok lot alırsın, yükseldiğinde ise kar edersin. Ortalama maliyetin her zaman optimize olur.',
+          'DCA: Dollar Cost Averaging. Her ay fiyat ne olursa olsun sabit miktarda alım yapmaktır.',
+          'Fiyat düştüğünde daha çok, yükseldiğinde daha az alırsın. Sonuç: Ortalama maliyetin her zaman iyileşir.',
         ],
-        tips: ['Duyguları devreden çıkar, ayın belli bir gününü yatırım günü ilan et.'],
+        tips: ['Piyasayı izleyip strese girmek yerine otomatiğe bağla.'],
+      },
+      {
+        id: 'diversification',
+        title: 'ÇEŞİTLENDİRME',
+        short: 'Tüm yumurtalar aynı sepete konmaz.',
+        body: [
+          'Sadece bir coin veya bir hisse alırsan, o batarsa sen de batarsın.',
+          'Portföyünü hisse, fon, altın ve döviz olarak bölüştür ki bir taraf düşerken diğeri seni tutsun.',
+        ],
       },
     ],
-    quiz: generateQuiz('investing'),
+    quiz: generateStockQuiz(),
   },
   {
-    id: 'analysis',
-    title: 'Nasıl İnceleme Yapılır?',
-    subtitle: 'Temel ve Teknik Analize Giriş',
-    icon: '🔍',
+    id: 'stock-patterns',
+    title: 'MUMLAR & GRAFİKLER',
+    subtitle: 'Grafik okuma rehberi.',
+    icon: '🕯️',
     items: [
       {
-        id: 'fundamental',
-        title: 'Temel Analiz: İşin Özü',
-        short: 'Şirket ne iş yapar? Para kazanıyor mu?',
+        id: 'candle-intro',
+        title: 'MUM ÇUBUKLARI NEDİR?',
+        short: 'Fiyatın o anki ruh hali.',
         body: [
-          'Bir hisse alırken aslında bir işe ortak oluyorsun. Şirketin borcu var mı? Satışları artıyor mu? Rakipleri kim?',
-          'Fiyatı boşver, şirketin "değerine" odaklan. Değerli bir şeyi ucuza almak en iyi yatırımdır.',
+          'Mumlar belirli bir sürede fiyatın nereden açılıp nerede kapandığını gösterir.',
+          'Gövde gerçek hareketi, fitiller (iğneler) ise fiyatın oraya kadar gidip reddedildiğini gösterir.',
         ],
       },
       {
-        id: 'technical',
-        title: 'Teknik Analiz: Grafik Okuma',
-        short: 'Geçmiş fiyat hareketleri geleceği söyler mi?',
+        id: 'doji-deep',
+        title: 'DOJİ',
+        short: 'Kararsızlık simgesi.',
         body: [
-          'Grafiklerdeki mumlar, destekler ve dirençler piyasanın psikolojisini gösterir.',
-          'Trendi takip etmek (akıntıya karşı yüzmemek) teknik analizin temelidir.',
+          'Açılış ve kapanış fiyatı birbirine çok yakındır. Artı (+) şekline benzer.',
+          'Alıcılar ve satıcılar yenişememiş demektir. Genelde yön değişikliği sinyalidir ama teyit şarttır.',
         ],
-        tips: ['Teknik analiz falcılık değildir; olasılıkları değerlendirmektir.'],
+      },
+      {
+        id: 'hammer-deep',
+        title: 'ÇEKİÇ (HAMMER)',
+        short: 'Düşüş bitiyor mu?',
+        body: [
+          'Küçük bir gövde ve altında çok uzun bir fitil olur.',
+          'Fiyat çok düşmüş ama alıcılar "hop" deyip yukarı çekmiş demektir. Destek seviyesinde görülürse "al" sinyali olabilir.',
+        ],
+      },
+      {
+        id: 'shooting-star-deep',
+        title: 'SHOOTING STAR',
+        short: 'Kayan Yıldız.',
+        body: [
+          'Hammer’ın tam tersidir. Üst fitil çok uzundur. Yükselişin sonunda görülürse satıcıların baskın geldiğini gösterir.',
+        ],
+      },
+      {
+        id: 'marubozu-deep',
+        title: 'MARUBOZU',
+        short: 'Tek tarafın mutlak hakimiyeti.',
+        body: [
+          'Neredeyse hiç fitili olmayan tam bir gövdedir.',
+          'Yeşilse alıcılar, kırmızıysa satıcılar piyasayı tamamen ele geçirmiş demektir. Hareketin devamı beklenir.',
+        ],
       },
     ],
-    quiz: generateQuiz('analysis'),
+    quiz: generateStockQuiz(),
   },
   {
     id: 'macro',
-    title: 'Büyük Resim: Ekonomi',
-    subtitle: 'Dünya ve Türkiye Ekonomisini Okumak',
+    title: 'EKONOMİ VE MERKEZ BANKASI',
+    subtitle: 'Büyük resme odaklan.',
     icon: '🌍',
     items: [
       {
-        id: 'central-bank',
-        title: 'Merkez Bankaları ve Faiz',
-        short: 'Piyasanın hakimi kim?',
+        id: 'cb-faiz',
+        title: 'MERKEZ BANKASI VE FAİZ',
+        short: 'Piyasanın hakimi.',
         body: [
-          'Merkez Bankası (TCMB, FED vb.) faizi artırırsa, para çekici hale gelir, harcamalar azalır ve enflasyon düşmeye başlar.',
-          'Faiz inerse, krediler ucuzlar, harcama artar, ekonomi canlanır ama enflasyon riski doğar.',
-          'Yatırımcılar her zaman "Merkez Bankası ne yapacak?" diye bekler.',
+          'Merkez Bankası faizi artırırsa paranın değeri artar, kredi çekmek zorlaşır, harcamalar azalır.',
+          'Amaç: Piyasayı soğutmak ve enflasyonu düşürmek.',
         ],
       },
       {
-        id: 'gdp-growth',
-        title: 'Büyüme ve Refah',
+        id: 'growth-gdp',
+        title: 'EKONOMİK BÜYÜME (GSYH)',
         short: 'Ülke ne kadar üretiyor?',
         body: [
-          'GSYH (Gayrisafi Yurt İçi Hasıla): Bir ülkenin ürettiği her şeyin toplamıdır.',
-          'Ekonomi büyüyorsa şirket karları artar, işsizlik düşer. Ama kontrolsüz büyüme enflasyon yaratabilir.',
+          'GSYH bir ülkenin 1 yılda ürettiği her şeydir. Büyüme artarsa şirketler daha çok kazanır, işsizlik düşer.',
         ],
       },
     ],
-    quiz: generateQuiz('macro'),
+    quiz: generateBasicsQuiz(),
   },
   {
     id: 'psychology',
-    title: 'Para Psikolojisi',
-    subtitle: 'En Büyük Rakibin Kendi Zihnin',
+    title: 'YATIRIM PSİKOLOJİSİ',
+    subtitle: 'Kendi zihnini yen.',
     icon: '🧘',
     items: [
       {
-        id: 'emotions',
-        title: 'Duygusal Yatırımcı Batmaya Mahkumdur',
-        short: 'Korku ve açgözlülükle başa çıkmak.',
+        id: 'fomo-deep',
+        title: 'FOMO',
+        short: 'Fırsatı kaçırma korkusu.',
         body: [
-          'Piyasalar düşerken korkup en alttan satmak (Panik Satışı) ve yükselirken gaza gelip en tepeden almak (FOMO) amatör hatasıdır.',
-          'Başarılı yatırımcılar "başkaları açgözlüyken korkar, başkaları korkarken açgözlü olur" (Warren Buffett).',
+          'Arkadaşın "coin uçuyor" dediğinde gaza gelip en tepeden almandır.',
+          'Unutma: Herkes alırken satmak, herkes korkarken almak zordur ama kazandırır.',
         ],
-        tips: ['Yatırım yaparken bir günlüğün olsun ve o gün neden aldığını/sattığını yaz.'],
+        tips: ['Duyguların tavan yaptığında işlem yapma, 24 saat bekle.'],
+      },
+      {
+        id: 'loss-aversion',
+        title: 'KAYIPTAN KAÇINMA',
+        short: 'Zararı kabul edememek.',
+        body: [
+          'İnsan beyni zararı kabullenmektense o pozisyonda batmayı tercih edebilir.',
+          'Doğru yatırımcı hata yaptığını anladığı an stop olur (zarar durdur).',
+        ],
       },
     ],
-    quiz: generateQuiz('psychology'),
+    quiz: generateBasicsQuiz(),
   },
   {
     id: 'safety',
-    title: 'Finansal Güvenlik',
-    subtitle: 'Paranı ve Verilerini Koru',
+    title: 'GÜVENLİK',
+    subtitle: 'Paranı çaldırma.',
     icon: '🛡️',
     items: [
       {
-        id: 'scams-deep',
-        title: 'Dolandırıcılık 2.0',
-        short: 'Dijital dünyada hayatta kalma rehberi.',
+        id: 'phishing-deep',
+        title: 'OLTALAMA (PHISHING)',
+        short: 'Linklere dikkat.',
         body: [
-          'Kimse sana bedava para vermez. "Günde 5000 TL kazanç" vaat eden Telegram grupları, sahte borsa siteleri ve "şifre isteyen polisler" her yerdedir.',
-          'Kural: Bir şey gerçek olamayacak kadar iyiyse, muhtemelen sahtedir.',
+          'Dolandırıcılar banka/kargo gibi davranıp sana sahte link atar.',
+          'Şifreni girdiğin an geçmiş olsun. 2FA (Çift Faktörlü Doğrulama) mutlaka açık olsun.',
         ],
-        tips: ['2FA kullanmayan borsa veya banka hesabın kalmasın.'],
+        tips: ['Resmi kurumlar asla mesajla şifre istemez.'],
       },
     ],
-    quiz: generateQuiz('safety'),
+    quiz: generateBasicsQuiz(),
   },
 ];
