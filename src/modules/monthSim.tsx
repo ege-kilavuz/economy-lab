@@ -132,7 +132,8 @@ export function MonthSimModule() {
         variant={game.cardDebt > 0 ? 'filled' : 'outlined'}
       />
       <Chip size="small" label={`Dolap: ${game.fridge}%`} />
-      <Chip size="small" label={`Moral: ${game.mood}%`} />
+      <Chip size="small" label={`Moral: ${game.mood}%`} color={game.mood < 45 ? 'error' : game.mood < 60 ? 'warning' : 'default'} />
+      {game.mood < 45 ? <Chip size="small" color="error" label="Stresli" /> : null}
     </Stack>
   );
 
@@ -156,6 +157,11 @@ export function MonthSimModule() {
             <Typography variant="caption" sx={{ opacity: 0.75 }}>
               İpucu: {game.quest.hint} {game.quest.done ? '✅ (+10)' : ''}
             </Typography>
+            {game.mood < 45 ? (
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#fca5a5' }}>
+                Moral düşük: olumsuz olay ihtimali artar, küçük harcamalar bile etkili olur.
+              </Typography>
+            ) : null}
 
             <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
 
@@ -391,6 +397,9 @@ export function MonthSimModule() {
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
                 Kira: <b>{game.rentPaid ? 'ödendi' : 'ödenmedi'}</b> · Faturalar: <b>{Object.values(game.billsPaid).filter(Boolean).length}/4</b>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Moral durumu: <b>{game.mood}%</b> {game.mood < 45 ? '— stres etkisiyle olaylar zorlaşır.' : ''}
               </Typography>
 
               <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />

@@ -276,8 +276,14 @@ function maybeLifeEvents(s: GameState) {
   const b = balanceFor(s.difficulty);
   const rng = mulberry32(s.seed + s.day * 9001);
 
+  // Stress factor: low cash + high debt + low mood => more negative events
+  const cashPressure = s.cash < 500 ? 0.25 : 0;
+  const debtPressure = clamp(s.cardDebt / Math.max(1, b.startingCash * 2), 0, 0.6);
+  const moodPressure = s.mood < 40 ? 0.25 : s.mood < 55 ? 0.1 : 0;
+  const stressFactor = clamp(1 + cashPressure + debtPressure + moodPressure, 0.7, 1.8);
+
   // Guest probability calibrated so avg guest days approx given
-  const guestP = clamp(b.guestDaysAvg / 30, 0, 0.6);
+  const guestP = clamp((b.guestDaysAvg / 30) * (2 - stressFactor), 0, 0.6);
   if (rng() < guestP) {
     const cost = tl(b.guestCostMin + rng() * (b.guestCostMax - b.guestCostMin));
     let s2 = s;
@@ -286,9 +292,13 @@ function maybeLifeEvents(s: GameState) {
     return logPush(s2, `Misafir geldi: -${cost.toLocaleString()} TL (ikram/alışveriş)`);
   }
 
-  // Other random events
+  // Other random events (stress shifts probabilities)
   const roll = rng();
-  if (roll < 0.12) {
+  const negThreshold = 0.12 * stressFactor;
+  const posThreshold = negThreshold + 0.08 * (2 - stressFactor); // positive events shrink under stress
+  const spoilThreshold = posThreshold + 0.06 * stressFactor;
+
+  if (roll < negThreshold) {
     const cost = tl(1500 + rng() * 3500);
     const payWithCash = s.cash >= cost;
     const s2 = payWithCash
@@ -296,11 +306,11 @@ function maybeLifeEvents(s: GameState) {
       : { ...s, cardDebt: s.cardDebt + cost, mood: clamp(s.mood - 4, 0, 100) };
     return logPush(s2, `Beklenmedik gider: -${cost.toLocaleString()} TL (telefon/ev eşyası)`);
   }
-  if (roll < 0.20) {
+  if (roll < posThreshold) {
     const extra = tl(1000 + rng() * 2500);
     return logPush({ ...s, cash: s.cash + extra, mood: clamp(s.mood + 1, 0, 100) }, `Ek gelir: +${extra.toLocaleString()} TL (freelance/prim)`);
   }
-  if (roll < 0.26) {
+  if (roll < spoilThreshold) {
     const drop = tl(10 + rng() * 25);
     return logPush({ ...s, fridge: clamp(s.fridge - drop, 0, 100), mood: clamp(s.mood - 2, 0, 100) }, `Dolap sürprizi: bazı ürünler bozuldu (-${drop.toLocaleString()}% dolap)`);
   }
