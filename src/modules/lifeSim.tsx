@@ -23,6 +23,8 @@ type MonthResult = {
   debtEnd: number;
   investEnd: number;
   emergencyEnd: number;
+  wellbeingEnd: number;
+  nextIncome: number;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -37,33 +39,43 @@ function roundTL(n: number) {
 // We simulate 12 months of income/expenses + debt + emergency fund + investing.
 // This is not financial advice.
 
-const EVENTS: Array<{ p: number; title: string; apply: (s: SimState) => SimState } > = [
+const EVENTS: Array<{ p: number; kind: 'neg' | 'pos'; title: string; apply: (s: SimState) => SimState } > = [
   {
     p: 0.18,
+    kind: 'neg',
     title: 'Telefon bozuldu (beklenmedik gider) - 4.000 TL',
     apply: (s) => ({ ...s, cash: s.cash - 4000 }),
   },
   {
     p: 0.14,
+    kind: 'neg',
     title: 'Sağlık gideri - 2.500 TL',
     apply: (s) => ({ ...s, cash: s.cash - 2500 }),
   },
   {
     p: 0.12,
+    kind: 'pos',
     title: 'Ufak ek gelir (freelance) + 2.000 TL',
     apply: (s) => ({ ...s, cash: s.cash + 2000 }),
   },
   {
     p: 0.10,
+    kind: 'neg',
     title: 'İş görüşmesi/sertifika masrafı - 1.500 TL',
     apply: (s) => ({ ...s, cash: s.cash - 1500 }),
   },
 ];
 
-function pickEvent(rng: () => number) {
-  const x = rng();
+function pickEvent(rng: () => number, stressFactor: number) {
+  // stressFactor > 1 => more negative events, < 1 => more positive chance
+  const adjusted = EVENTS.map((e) => ({
+    ...e,
+    p: e.kind === 'neg' ? e.p * stressFactor : e.p * (2 - stressFactor),
+  }));
+  const total = adjusted.reduce((acc, e) => acc + e.p, 0);
+  const x = rng() * total;
   let acc = 0;
-  for (const e of EVENTS) {
+  for (const e of adjusted) {
     acc += e.p;
     if (x < acc) return e;
   }
@@ -87,6 +99,7 @@ type SimState = {
   debt: number;
   invest: number;
   emergency: number;
+  wellbeing: number; // 0-100
   score: number;
   history: MonthResult[];
   seed: number;
@@ -117,6 +130,7 @@ export function LifeSimModule() {
       debt: 20000, // starts with some debt
       invest: 0,
       emergency: 0,
+      wellbeing: 70,
       score: 0,
       history: [],
       seed,
@@ -150,9 +164,14 @@ export function LifeSimModule() {
     // pay needs + wants
     cash -= needs + wants;
 
+    // stress affects events (more stress => more negative events)
+    const debtPressure = sim.debt / Math.max(1, sim.income);
+    const cashPressure = sim.cash <= 0 ? 0.2 : 0;
+    const stressFactor = clamp(1 + debtPressure * 0.25 + cashPressure, 0.6, 1.8);
+
     // apply event
     const rng = mulberry32(sim.seed + sim.month * 997);
-    const ev = pickEvent(rng);
+    const ev = pickEvent(rng, stressFactor);
     let eventText: string | undefined;
     if (ev) {
       const before = { ...sim, cash };
@@ -189,6 +208,20 @@ export function LifeSimModule() {
 
     const emergencyEnd = sim.emergency + emergencySave;
 
+    // wellbeing (hissiyat) affects next month income & events
+    let wellbeing = sim.wellbeing;
+    if (cash === 0) wellbeing -= 8;
+    if (debt > sim.income * 3) wellbeing -= 10;
+    if (debt <= sim.debt) wellbeing += 4; // debt improving
+    if (emergencyEnd >= sim.income) wellbeing += 6; // 1-month buffer
+    if (wantsPct > 30 && cash === 0) wellbeing -= 6; // overspend guilt
+    wellbeing = clamp(Math.round(wellbeing), 20, 95);
+
+    // next income is affected by wellbeing (stress hurts productivity)
+    let nextIncome = sim.income;
+    if (wellbeing < 40) nextIncome = Math.round(sim.income * 0.95);
+    if (wellbeing > 80) nextIncome = Math.round(sim.income * 1.02);
+
     // score rules (simple & transparent)
     // - emergency fund progress
     // - keep debt going down
@@ -218,6 +251,8 @@ export function LifeSimModule() {
       debtEnd: debt,
       investEnd: investEnd,
       emergencyEnd,
+      wellbeingEnd: wellbeing,
+      nextIncome,
     };
 
     const next: SimState = {
@@ -227,6 +262,8 @@ export function LifeSimModule() {
       debt,
       invest: investEnd,
       emergency: emergencyEnd,
+      wellbeing,
+      income: nextIncome,
       score: sim.score + scoreDelta,
       history: [...sim.history, monthResult],
     };
@@ -244,6 +281,7 @@ export function LifeSimModule() {
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.8 }}>
           Amaç: Asgari ücret seviyesinde bir gelirle 12 ay boyunca giderleri, borcu, acil durum fonunu ve küçük bir yatırımı dengelemek.
+          Burada hissiyat (dayanıklılık) düşerse bir sonraki ay gelir düşebilir ve olumsuz olaylar artabilir.
         </Typography>
         <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
           Not: Bu eğitim amaçlı oyuncak modeldir. Rakamlar/etkiler basitleştirilmiştir.
@@ -329,6 +367,9 @@ export function LifeSimModule() {
           <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
             Nakit: <b>{roundTL(sim.cash).toLocaleString()} TL</b> · Borç: <b>{roundTL(sim.debt).toLocaleString()} TL</b> · Acil fon: <b>{roundTL(sim.emergency).toLocaleString()} TL</b> · Yatırım: <b>{roundTL(sim.invest).toLocaleString()} TL</b>
           </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
+            Hissiyat/Dayanıklılık: <b>{sim.wellbeing}</b> · Sonraki ay gelir: <b>{roundTL(sim.income).toLocaleString()} TL</b>
+          </Typography>
 
           <Divider sx={{ my: 1.5 }} />
 
@@ -345,6 +386,9 @@ export function LifeSimModule() {
                 )}
                 <Typography variant="body2" sx={{ opacity: 0.85 }}>
                   Gelir: {roundTL(last.income).toLocaleString()} · Gider: {roundTL(last.expenses).toLocaleString()} · Borç ödeme: {roundTL(last.debtPayment).toLocaleString()} · Acil fon: {roundTL(last.emergencySave).toLocaleString()} · Yatırım: {roundTL(last.invest).toLocaleString()}
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                  Hissiyat: {last.wellbeingEnd} · Gelecek ay gelir: {roundTL(last.nextIncome).toLocaleString()} TL
                 </Typography>
               </Box>
             );
