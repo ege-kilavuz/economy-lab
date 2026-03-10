@@ -15,8 +15,9 @@ function computeSeries(params: {
   monthlyIncome: number;
   inflationMonthlyPct: number;
   basket0: number;
+  incomeIndex: number;
 }) {
-  const { months, monthlyIncome, inflationMonthlyPct, basket0 } = params;
+  const { months, monthlyIncome, inflationMonthlyPct, basket0, incomeIndex } = params;
 
   const series: Array<{
     m: number;
@@ -29,7 +30,9 @@ function computeSeries(params: {
 
   for (let m = 0; m <= months; m++) {
     const basket = basket0 * Math.pow(1 + inflation, m);
-    const realIncome = monthlyIncome / Math.pow(1 + inflation, m);
+    const incomeGrowth = 1 + inflation * (incomeIndex / 100);
+    const nominalIncome = monthlyIncome * Math.pow(incomeGrowth, m);
+    const realIncome = nominalIncome / Math.pow(1 + inflation, m);
     const realIncomeIndex = (realIncome / monthlyIncome) * 100;
     series.push({ m, basket, realIncome, realIncomeIndex });
   }
@@ -42,8 +45,9 @@ export function InflationModule() {
   const [basket0, setBasket0] = React.useState(12000);
   const [inflationMonthlyPct, setInflationMonthlyPct] = React.useState(3.0);
   const [months, setMonths] = React.useState(24);
+  const [incomeIndex, setIncomeIndex] = React.useState(0); // 0 = maaş sabit, 100 = enflasyon kadar artış
 
-  const data = computeSeries({ months, monthlyIncome, inflationMonthlyPct, basket0 });
+  const data = computeSeries({ months, monthlyIncome, inflationMonthlyPct, basket0, incomeIndex });
 
   const basketEnd = data[data.length - 1]?.basket ?? basket0;
   const realIncomeEndIndex = data[data.length - 1]?.realIncomeIndex ?? 100;
@@ -54,6 +58,13 @@ export function InflationModule() {
       : realIncomeEndIndex >= 70
         ? 'Alım gücü belirgin şekilde eridi.'
         : 'Alım gücü ciddi şekilde eridi.';
+
+  const feeling =
+    realIncomeEndIndex >= 90
+      ? 'Hissiyat: dengeli — küçük ayarlamalar yeter.'
+      : realIncomeEndIndex >= 70
+        ? 'Hissiyat: baskı artıyor — gideri optimize et, ek gelir ara.'
+        : 'Hissiyat: stres yüksek — sepeti küçültmek veya gelir artırmak şart.';
 
   return (
     <Stack spacing={2}>
@@ -92,6 +103,13 @@ export function InflationModule() {
               />
             </Box>
             <Box>
+              <Typography fontWeight={600}>Maaş artışı endeksi: %{incomeIndex}</Typography>
+              <Slider value={incomeIndex} min={0} max={100} step={5} onChange={(_, v) => setIncomeIndex(v as number)} />
+              <Typography variant="caption" sx={{ opacity: 0.75 }}>
+                0 = maaş sabit · 100 = maaş enflasyon kadar artar
+              </Typography>
+            </Box>
+            <Box>
               <Typography fontWeight={600}>Süre: {months} ay</Typography>
               <Slider value={months} min={6} max={60} step={1} onChange={(_, v) => setMonths(v as number)} />
             </Box>
@@ -105,7 +123,10 @@ export function InflationModule() {
           {headline} {months}. ayda sepet yaklaşık <b>{basketEnd.toLocaleString()} TL</b> olur.
         </Typography>
         <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-          Sabit maaşın "reel" değeri yaklaşık <b>%{realIncomeEndIndex.toFixed(0)}</b> seviyesine düşer.
+          Reel maaş endeksi yaklaşık <b>%{realIncomeEndIndex.toFixed(0)}</b> seviyesinde.
+        </Typography>
+        <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+          {feeling}
         </Typography>
       </Paper>
 
