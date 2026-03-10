@@ -63,6 +63,15 @@ export function CentralBankModule() {
         ? 'Dengeye yaklaşan bir görünüm var; trade-off hâlâ devam ediyor.'
         : 'Enflasyon yüksek kalıyor; faiz/demand/supply dengesi zor.';
 
+  const feeling =
+    last.unemployment > 14
+      ? 'Hissiyat: iş güvencesi zayıf — tüketim isteği düşer.'
+      : last.inflation > 40
+        ? 'Hissiyat: fiyat baskısı yüksek — güven azalır.'
+        : last.growth < 0
+          ? 'Hissiyat: durgunluk — risk algısı artar.'
+          : 'Hissiyat: temkinli iyimserlik.';
+
   return (
     <Stack spacing={2}>
       <Paper sx={{ p: 2 }}>
@@ -95,6 +104,7 @@ export function CentralBankModule() {
           Enflasyon: <b>{last.inflation.toFixed(1)}%</b> · İşsizlik: <b>{last.unemployment.toFixed(1)}%</b> · Büyüme: <b>{last.growth.toFixed(1)}%</b>
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>{summary}</Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>{feeling}</Typography>
       </Paper>
 
       <Paper sx={{ p: 2 }}>

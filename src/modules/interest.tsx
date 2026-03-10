@@ -33,6 +33,14 @@ export function InterestModule() {
 
   const compound = compoundGrowth(principal, annualRatePct, months);
 
+  const installmentRatio = pay / Math.max(1, principal * 0.06); // toy ratio
+  const stressLabel =
+    pay > principal * 0.06
+      ? 'Hissiyat: baskı yüksek — taksit yükü ağır.'
+      : pay > principal * 0.04
+        ? 'Hissiyat: dikkat — taksit yükü artıyor.'
+        : 'Hissiyat: yönetilebilir.';
+
   const bars = [
     { k: 'Anapara', v: principal },
     { k: 'Toplam ödeme', v: total },
@@ -72,6 +80,9 @@ export function InterestModule() {
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
           Faiz maliyeti yaklaşık <b>{Math.round(totalInterest).toLocaleString()} TL</b>.
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+          {stressLabel}
         </Typography>
       </Paper>
 
