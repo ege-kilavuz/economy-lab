@@ -521,6 +521,10 @@ export function LearnScreen() {
                   <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
                     {c.subtitle}
                   </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 0.75 }}>
+                    <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                    <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                  </Stack>
                 </Box>
                 <Chip size="small" label="AÇ" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
               </Stack>
