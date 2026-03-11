@@ -72,6 +72,13 @@ function holdingPriceTL(game: any, h: HoldingId) {
   }
 }
 
+const panelSx = {
+  borderRadius: 4,
+  bgcolor: 'rgba(255,255,255,0.06)',
+  color: 'white',
+  border: '1px solid rgba(255,255,255,0.08)',
+};
+
 export function MonthSimModule({
   onEvent,
   onSummary,
@@ -199,7 +206,7 @@ export function MonthSimModule({
           <StatChips />
         </Box>
 
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Günlük Görev</Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
@@ -230,27 +237,31 @@ export function MonthSimModule({
         </Card>
 
         <Typography sx={{ mt: 2, fontWeight: 900, color: 'rgba(255,255,255,0.9)' }}>Uygulamalar</Typography>
-        <Stack direction="row" flexWrap="wrap" useFlexGap sx={{ mt: 1, gap: 1 }}>
-          <AppIcon label="Banka" color="#1d4ed8" emoji="🏦" onClick={() => setScreen('bank')} />
-          <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
-          <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
-          <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
-          <AppIcon label="Kart" color="#f97316" emoji="💳" onClick={() => setScreen('card-escape')} />
-          <AppIcon label="Bütçe" color="#34d399" emoji="🧩" onClick={() => setScreen('budget-tetris')} />
-          <AppIcon label="Gürültü" color="#a78bfa" emoji="📰" onClick={() => setScreen('news-noise')} />
-          <AppIcon label="Radar" color="#ef4444" emoji="🛡️" onClick={() => setScreen('scam-radar')} />
-          <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
-          <AppIcon
-            label="Uyku"
-            color="#0ea5e9"
-            emoji="🌙"
-            onClick={() => {
-              advanceDay();
-            }}
-          />
-        </Stack>
+        <Card sx={{ mt: 1, ...panelSx }}>
+          <CardContent sx={{ p: 1.5 }}>
+            <Stack direction="row" flexWrap="wrap" useFlexGap sx={{ gap: 1 }}>
+              <AppIcon label="Banka" color="#1d4ed8" emoji="🏦" onClick={() => setScreen('bank')} />
+              <AppIcon label="Market" color="#16a34a" emoji="🛒" onClick={() => setScreen('market')} />
+              <AppIcon label="Yatırım" color="#f59e0b" emoji="📈" onClick={() => setScreen('invest')} />
+              <AppIcon label="Haber" color="#7c3aed" emoji="📰" onClick={() => setScreen('news')} />
+              <AppIcon label="Kart" color="#f97316" emoji="💳" onClick={() => setScreen('card-escape')} />
+              <AppIcon label="Bütçe" color="#34d399" emoji="🧩" onClick={() => setScreen('budget-tetris')} />
+              <AppIcon label="Gürültü" color="#a78bfa" emoji="📰" onClick={() => setScreen('news-noise')} />
+              <AppIcon label="Radar" color="#ef4444" emoji="🛡️" onClick={() => setScreen('scam-radar')} />
+              <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
+              <AppIcon
+                label="Uyku"
+                color="#0ea5e9"
+                emoji="🌙"
+                onClick={() => {
+                  advanceDay();
+                }}
+              />
+            </Stack>
+          </CardContent>
+        </Card>
 
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Zorluk</Typography>
             <FormControl sx={{ mt: 1 }}>
@@ -272,7 +283,7 @@ export function MonthSimModule({
       <Box sx={{ pt: 1 }}>
         <StatChips />
 
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Zorunlu Ödemeler</Typography>
             <Typography variant="caption" sx={{ opacity: 0.75 }}>
@@ -289,7 +300,7 @@ export function MonthSimModule({
           </CardContent>
         </Card>
 
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Kredi Kartı</Typography>
             <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
@@ -310,7 +321,7 @@ export function MonthSimModule({
       <Top title="Market" />
       <Box sx={{ pt: 1 }}>
         <StatChips />
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Alışveriş</Typography>
             <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
@@ -334,14 +345,7 @@ export function MonthSimModule({
     const value = owned * price;
 
     return (
-      <Card
-        sx={{
-          borderRadius: 4,
-          bgcolor: 'rgba(255,255,255,0.06)',
-          color: 'white',
-          border: '1px solid rgba(255,255,255,0.08)',
-        }}
-      >
+      <Card sx={panelSx}>
         <CardContent>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
@@ -400,7 +404,7 @@ export function MonthSimModule({
       <Top title="Haber" />
       <Box sx={{ pt: 1 }}>
         <StatChips />
-        <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Card sx={{ mt: 2, ...panelSx }}>
           <CardContent>
             <Typography fontWeight={900}>Akış</Typography>
             <Typography variant="caption" sx={{ opacity: 0.75 }}>
@@ -432,7 +436,7 @@ export function MonthSimModule({
       <>
         <Top title="Ay Sonu" />
         <Box sx={{ pt: 1 }}>
-          <Card sx={{ borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <Card sx={panelSx}>
             <CardContent>
               <Typography variant="h6" fontWeight={950}>
                 Sonuç
