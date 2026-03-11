@@ -108,13 +108,33 @@ export function MonthSimModule({
   }, [finished]);
 
   const lastTopRef = React.useRef<string | null>(null);
+  const prevSnapRef = React.useRef({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge });
+
+  function diffLabel(label: string, diff: number, unit = '') {
+    if (diff === 0) return null;
+    const sign = diff > 0 ? '+' : '';
+    return `${label} ${sign}${Math.round(diff)}${unit}`;
+  }
+
   React.useEffect(() => {
     const top = game.log[0];
     if (!top) return;
     if (top === lastTopRef.current) return;
+
+    const prev = prevSnapRef.current;
+    const parts = [
+      diffLabel('Nakit', game.cash - prev.cash, ' TL'),
+      diffLabel('Kart', game.cardDebt - prev.cardDebt, ' TL'),
+      diffLabel('Moral', game.mood - prev.mood, '%'),
+      diffLabel('Dolap', game.fridge - prev.fridge, '%'),
+    ].filter(Boolean);
+
     lastTopRef.current = top;
-    onEvent?.(top);
-  }, [game.log, onEvent]);
+    prevSnapRef.current = { cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge };
+
+    const suffix = parts.length ? ` (${parts.join(', ')})` : '';
+    onEvent?.(`${top}${suffix}`);
+  }, [game.log, game.cash, game.cardDebt, game.mood, game.fridge, onEvent]);
 
   React.useEffect(() => {
     onSummary?.({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, day: game.day });

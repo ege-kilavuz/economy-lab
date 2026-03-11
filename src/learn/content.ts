@@ -14,6 +14,7 @@ export type LearnItem = {
   title: string;
   short: string;
   body: string[];
+  scenario?: string;
   tips?: string[];
   warning?: string;
 };
@@ -139,6 +140,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Maaşın %30 artıp fiyatlar %60 artarsa aslında daha az ürün alırsın.',
           'Reel değer: Cebindeki para değil, o parayla kaç ürün alabildiğindir.',
         ],
+        scenario: 'Market sepeti 1.000 TL iken 1.500 TL oldu; maaşın sadece 1.200 TL’ye çıktı → daha az ürün alırsın.',
         tips: ['Alım gücünü korumak için tasarruf + bilinçli yatırım önemlidir.'],
       },
       {
@@ -150,6 +152,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Bileşik etki, kazancın tekrar kazanç üretmesidir. Zamanla hızlanır.',
           'Ne kadar erken başlarsan, büyüme o kadar güçlü olur.',
         ],
+        scenario: '1.000 TL’yi her ay %2 büyütürsen, bir süre sonra kazanç kendi kendini hızlandırır.',
       },
       {
         id: 'liquidity',
@@ -159,6 +162,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Nakit en likit varlıktır. Ev/arsa ise likiditesi düşüktür.',
           'Acil durumda nakde hızlı dönebilen şey daha güvenlidir.',
         ],
+        scenario: 'Acil para lazım oldu: nakit hemen kullanılır, ev satmak ise haftalar sürer.',
       },
     ],
     quiz: generateBasicsQuiz(),
@@ -178,6 +182,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           '%30 istekler: eğlence, hobi, dışarıda yemek.',
           '%20 gelecek: birikim ve borç kapatma.',
         ],
+        scenario: 'Aylık gelirin 20.000 TL ise: 10.000 ihtiyaç, 6.000 istek, 4.000 birikim gibi düşünebilirsin.',
         tips: ['Oranları durumuna göre esnetebilirsin; ama birikimi sıfırlama.'],
       },
       {
@@ -189,6 +194,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Acil fon yoksa kredi kartına yüklenirsin ve faiz büyür.',
           'Hedef: En az 3–6 aylık temel gideri biriktirmek.',
         ],
+        scenario: 'Telefonun bozuldu ve 8.000 TL çıktı; acil fon varsa kart borcuna girmeden çözersin.',
       },
     ],
     quiz: generateBasicsQuiz(), // Can be improved
@@ -207,6 +213,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Asgari ödeme gecikmeyi önler ama borcun büyük kısmı kalır.',
           'Her ay asgari ödemek borcu uzatır ve faiz yükünü artırır.',
         ],
+        scenario: '10.000 TL borcun var, asgariyi ödedin → borç yavaş azalır ama faiz işlemeye devam eder.',
         tips: ['Mümkünse kart borcunu tamamen kapat.'],
       },
       {
@@ -217,6 +224,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Ödemeleri geciktirirsen not düşer. Not düşükse kredi almak zorlaşır.',
           'Düzenli ödeme yapmak puanı yükseltir.',
         ],
+        scenario: 'Faturaları hep zamanında ödersen bankalar seni daha güvenilir görür.',
       },
     ],
     quiz: generateCreditQuiz(),
@@ -235,6 +243,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'DCA: Her ay sabit bir tutarla alım yapmak.',
           'Fiyat düşünce daha çok, yükselince daha az alırsın. Ortalama maliyet dengelenir.',
         ],
+        scenario: 'Her ay 500 TL ile alım yaparsan, fiyat dalgalansa da ortalama maliyet dengelenir.',
         tips: ['Stresten kaçınmak için düzenli plan iş görür.'],
       },
       {
@@ -245,6 +254,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Tek bir varlığa bağlanırsan, o düşerse tüm para zarar görür.',
           'Hisse, fon, altın ve döviz gibi farklı araçlara dağıtmak riski azaltır.',
         ],
+        scenario: 'Sadece tek hisse yerine, 3–4 farklı araca dağıtınca risk düşer.',
       },
     ],
     quiz: generateInvestingQuiz(),
@@ -263,6 +273,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Mumlar, belirli bir sürede fiyatın açılış ve kapanışını gösterir.',
           'Gövde ana hareketi, fitiller ise gidip geri dönen fiyatları anlatır.',
         ],
+        scenario: 'Bir mumda fiyat 10’dan 12’ye çıktıysa gövde büyür; 13’e gidip 12’ye dönerse üst fitil oluşur.',
       },
       {
         id: 'doji-deep',
@@ -272,6 +283,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Açılış ve kapanış çok yakındır. Artı (+) gibi görünür.',
           'Alıcılar ve satıcılar dengededir. Tek başına kesin sinyal değildir.',
         ],
+        scenario: 'Fiyat gün boyu gidip geldi ama kapanış açılışa çok yakınsa doji oluşur.',
       },
       {
         id: 'hammer-deep',
@@ -281,6 +293,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Küçük gövde + altta uzun fitil.',
           'Fiyat düşmüş ama alıcılar toparlamıştır. Destekte görülürse dikkat çekebilir.',
         ],
+        scenario: 'Fiyat 100’den 90’a sarktı ama gün sonu 98’e döndü → alt fitil uzar.',
       },
       {
         id: 'shooting-star-deep',
@@ -290,6 +303,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Üstte uzun fitil, küçük gövde.',
           'Yükseliş sonrası görülürse satış baskısını gösterebilir.',
         ],
+        scenario: 'Fiyat 100’den 115’e çıktı ama 102’ye indi → üst fitil uzun kalır.',
       },
       {
         id: 'marubozu-deep',
@@ -299,6 +313,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Fitil çok azdır; gövde güçlüdür.',
           'Yeşilse alıcılar, kırmızıysa satıcılar baskındır.',
         ],
+        scenario: 'Gün boyu sürekli yükselip yüksekten kapanırsa marubozu oluşur.',
       },
     ],
     quiz: generateStockPatternsQuiz(),
@@ -317,6 +332,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Faiz artarsa kredi almak pahalanır, harcama azalır.',
           'Amaç çoğu zaman enflasyonu düşürmektir.',
         ],
+        scenario: 'Faiz yükselince kredi çekmek zorlaşır; insanlar harcamayı azaltır.',
       },
       {
         id: 'growth-gdp',
@@ -326,6 +342,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'GSYH, bir ülkenin bir yılda ürettiği toplam değer demektir.',
           'Büyüme artarsa iş fırsatları ve gelirler artabilir.',
         ],
+        scenario: 'Yeni fabrikalar açılırsa üretim artar, daha çok kişi iş bulabilir.',
       },
     ],
     quiz: generateMacroQuiz(),
@@ -344,6 +361,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Başkaları kazanıyor diye aceleyle alım yapmak.',
           'Duygusal kararlar genelde pahalıya patlar.',
         ],
+        scenario: 'Herkes bir coinden bahsedince hemen almak, çoğu zaman en pahalı noktaya denk gelir.',
         tips: ['Yoğun heyecan varsa 24 saat beklemek iyi bir filtredir.'],
       },
       {
@@ -354,6 +372,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Zararını kabul etmemek daha büyük kayıplara yol açabilir.',
           'Planlı yatırımcı gerektiğinde zarar durdur uygular.',
         ],
+        scenario: 'Zararda olan hissede “belki döner” diye beklemek, zararı büyütebilir.',
       },
     ],
     quiz: generatePsychSafetyQuiz(),
@@ -372,6 +391,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Dolandırıcılar banka/kargo gibi davranıp sahte link gönderir.',
           'Şifre girersen hesap ele geçirilir. 2FA mutlaka açık olsun.',
         ],
+        scenario: '“Kargonuz yolda” linki geldi; resmi uygulamadan kontrol et, linke tıklama.',
         tips: ['Resmî kurumlar mesajla şifre istemez.'],
       },
     ],

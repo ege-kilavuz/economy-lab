@@ -93,6 +93,18 @@ function ItemCard({ item, highlight }: { item: LearnItem; highlight?: boolean })
           ))}
         </Stack>
 
+        {item.scenario ? (
+          <>
+            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
+            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', fontWeight: 800 }}>
+              Mini Senaryo
+            </Typography>
+            <Typography variant="caption" sx={{ opacity: 0.75, display: 'block' }}>
+              {item.scenario}
+            </Typography>
+          </>
+        ) : null}
+
         {item.tips?.length ? (
           <>
             <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
@@ -367,6 +379,25 @@ export function LearnScreen() {
                     </CardContent>
                   </GlassCard>
                 ))}
+                {it.scenario ? (
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      bgcolor: 'rgba(255,255,255,0.08)',
+                      color: 'white',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    <CardContent sx={{ py: 1.25 }}>
+                      <Typography variant="caption" sx={{ display: 'block', fontWeight: 900, mb: 0.5 }}>
+                        🎯 Mini Senaryo
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        {it.scenario}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ) : null}
                 {it.tips?.map((t, i) => (
                   <Card
                     key={`${it.id}-tip-${i}`}
