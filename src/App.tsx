@@ -28,12 +28,31 @@ export default function App() {
   const [playView, setPlayView] = React.useState<PlayView>('sims');
   const [events, setEvents] = React.useState<string[]>([]);
   const [summary, setSummary] = React.useState<{ cash: number; cardDebt: number; mood: number; day: number } | null>(null);
+  const [activeTags, setActiveTags] = React.useState<string[]>([]);
 
   const title = tab === 'learn' ? 'Öğren' : playView === 'sims' ? 'Simülasyonlar' : 'Oyun';
 
   const pushEvent = React.useCallback((msg: string) => {
     setEvents((prev) => [msg, ...prev].slice(0, 12));
   }, []);
+
+  const tags = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const e of events) {
+      const match = e.match(/^\[(.+?)\]\s/);
+      if (match?.[1]) set.add(match[1]);
+    }
+    return Array.from(set);
+  }, [events]);
+
+  const visibleEvents = React.useMemo(() => {
+    if (activeTags.length === 0) return events;
+    return events.filter((e) => {
+      const match = e.match(/^\[(.+?)\]\s/);
+      const tag = match?.[1];
+      return tag ? activeTags.includes(tag) : false;
+    });
+  }, [events, activeTags]);
 
   return (
     <>
@@ -66,8 +85,36 @@ export default function App() {
                       </Stack>
                     </Box>
                   ) : null}
+
+                  {tags.length ? (
+                    <Box sx={{ mt: 1 }}>
+                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                        {tags.map((tag) => {
+                          const active = activeTags.includes(tag);
+                          return (
+                            <Chip
+                              key={tag}
+                              size="small"
+                              label={tag}
+                              variant={active ? 'filled' : 'outlined'}
+                              onClick={() =>
+                                setActiveTags((prev) =>
+                                  prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+                                )
+                              }
+                              sx={{ cursor: 'pointer' }}
+                            />
+                          );
+                        })}
+                        {activeTags.length ? (
+                          <Chip size="small" label="Temizle" onClick={() => setActiveTags([])} sx={{ cursor: 'pointer' }} />
+                        ) : null}
+                      </Stack>
+                    </Box>
+                  ) : null}
+
                   <Box sx={{ mt: 1 }}>
-                    {events.slice(0, 6).map((e, i) => (
+                    {visibleEvents.slice(0, 6).map((e, i) => (
                       <Typography key={`${e}-${i}`} variant="body2" sx={{ opacity: 0.85 }}>
                         • {e}
                       </Typography>
