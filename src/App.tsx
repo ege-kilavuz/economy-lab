@@ -24,8 +24,13 @@ type PlayView = 'month' | 'sims';
 export default function App() {
   const [tab, setTab] = React.useState<RootTab>('learn');
   const [playView, setPlayView] = React.useState<PlayView>('sims');
+  const [events, setEvents] = React.useState<string[]>([]);
 
   const title = tab === 'learn' ? 'Öğren' : playView === 'sims' ? 'Simülasyonlar' : 'Oyun';
+
+  const pushEvent = React.useCallback((msg: string) => {
+    setEvents((prev) => [msg, ...prev].slice(0, 12));
+  }, []);
 
   return (
     <>
@@ -41,6 +46,24 @@ export default function App() {
 
         <Box sx={{ py: 1.5, pb: 10 }}>
           <Container maxWidth="md" sx={{ px: 1.5 }}>
+            {events.length ? (
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.5 }}>
+                  <Typography fontWeight={900}>Etki-Tepki Akışı</Typography>
+                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                    Oyunda olanlar uygulama genelinde burada görünür.
+                  </Typography>
+                  <Box sx={{ mt: 1 }}>
+                    {events.slice(0, 6).map((e, i) => (
+                      <Typography key={`${e}-${i}`} variant="body2" sx={{ opacity: 0.85 }}>
+                        • {e}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Box>
+              </Box>
+            ) : null}
+
             {tab === 'learn' ? (
               <LearnScreen />
             ) : (
@@ -62,7 +85,7 @@ export default function App() {
                   </Button>
                 </Box>
 
-                {playView === 'sims' ? <SimulationsScreen /> : <MonthSimModule />}
+                {playView === 'sims' ? <SimulationsScreen /> : <MonthSimModule onEvent={pushEvent} />}
               </>
             )}
           </Container>
