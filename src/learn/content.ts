@@ -267,6 +267,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Fiyat düşünce daha çok, yükselince daha az alırsın. Ortalama maliyet dengelenir.',
         ],
         scenario: 'Her ay 500 TL ile alım yaparsan, fiyat dalgalansa da ortalama maliyet dengelenir.',
+        qa: [
+          { q: 'DCA’nın amacı ne?', a: 'Fiyat stresini azaltmak.' },
+        ],
         tips: ['Stresten kaçınmak için düzenli plan iş görür.'],
       },
       {
@@ -278,6 +281,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Hisse, fon, altın ve döviz gibi farklı araçlara dağıtmak riski azaltır.',
         ],
         scenario: 'Sadece tek hisse yerine, 3–4 farklı araca dağıtınca risk düşer.',
+        qa: [
+          { q: 'Çeşitlendirme ne sağlar?', a: 'Riski dağıtır.' },
+        ],
       },
     ],
     quiz: generateInvestingQuiz(),
@@ -297,6 +303,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Gövde ana hareketi, fitiller ise gidip geri dönen fiyatları anlatır.',
         ],
         scenario: 'Bir mumda fiyat 10’dan 12’ye çıktıysa gövde büyür; 13’e gidip 12’ye dönerse üst fitil oluşur.',
+        qa: [
+          { q: 'Fitil neyi anlatır?', a: 'Gidip geri dönen fiyatları.' },
+        ],
       },
       {
         id: 'doji-deep',
@@ -307,6 +316,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Alıcılar ve satıcılar dengededir. Tek başına kesin sinyal değildir.',
         ],
         scenario: 'Fiyat gün boyu gidip geldi ama kapanış açılışa çok yakınsa doji oluşur.',
+        qa: [
+          { q: 'Doji tek başına yeter mi?', a: 'Hayır, teyit gerekir.' },
+        ],
       },
       {
         id: 'hammer-deep',
@@ -317,6 +329,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Fiyat düşmüş ama alıcılar toparlamıştır. Destekte görülürse dikkat çekebilir.',
         ],
         scenario: 'Fiyat 100’den 90’a sarktı ama gün sonu 98’e döndü → alt fitil uzar.',
+        qa: [
+          { q: 'Alt fitil uzunsa ne olabilir?', a: 'Dönüş ihtimali artar.' },
+        ],
       },
       {
         id: 'shooting-star-deep',
@@ -327,6 +342,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Yükseliş sonrası görülürse satış baskısını gösterebilir.',
         ],
         scenario: 'Fiyat 100’den 115’e çıktı ama 102’ye indi → üst fitil uzun kalır.',
+        qa: [
+          { q: 'Nerede daha anlamlıdır?', a: 'Yükseliş sonunda.' },
+        ],
       },
       {
         id: 'marubozu-deep',
@@ -337,6 +355,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Yeşilse alıcılar, kırmızıysa satıcılar baskındır.',
         ],
         scenario: 'Gün boyu sürekli yükselip yüksekten kapanırsa marubozu oluşur.',
+        qa: [
+          { q: 'Marubozu ne anlatır?', a: 'Tek taraf güçlüdür.' },
+        ],
       },
     ],
     quiz: generateStockPatternsQuiz(),
@@ -356,6 +377,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Amaç çoğu zaman enflasyonu düşürmektir.',
         ],
         scenario: 'Faiz yükselince kredi çekmek zorlaşır; insanlar harcamayı azaltır.',
+        qa: [
+          { q: 'Faiz artarsa ne olur?', a: 'Kredi pahalanır, harcama azalır.' },
+        ],
       },
       {
         id: 'growth-gdp',
@@ -366,6 +390,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Büyüme artarsa iş fırsatları ve gelirler artabilir.',
         ],
         scenario: 'Yeni fabrikalar açılırsa üretim artar, daha çok kişi iş bulabilir.',
+        qa: [
+          { q: 'Büyüme artınca ne olabilir?', a: 'İş ve gelir artabilir.' },
+        ],
       },
     ],
     quiz: generateMacroQuiz(),
@@ -385,6 +412,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Duygusal kararlar genelde pahalıya patlar.',
         ],
         scenario: 'Herkes bir coinden bahsedince hemen almak, çoğu zaman en pahalı noktaya denk gelir.',
+        qa: [
+          { q: 'FOMO’ya kapılınca ne olur?', a: 'Aceleyi artırır, hata riski büyür.' },
+        ],
         tips: ['Yoğun heyecan varsa 24 saat beklemek iyi bir filtredir.'],
       },
       {
@@ -396,6 +426,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Planlı yatırımcı gerektiğinde zarar durdur uygular.',
         ],
         scenario: 'Zararda olan hissede “belki döner” diye beklemek, zararı büyütebilir.',
+        qa: [
+          { q: 'Kayıptan kaçınma neye yol açar?', a: 'Zararı büyütebilir.' },
+        ],
       },
     ],
     quiz: generatePsychSafetyQuiz(),
@@ -415,6 +448,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Şifre girersen hesap ele geçirilir. 2FA mutlaka açık olsun.',
         ],
         scenario: '“Kargonuz yolda” linki geldi; resmi uygulamadan kontrol et, linke tıklama.',
+        qa: [
+          { q: 'Güvenli hareket ne?', a: 'Resmî uygulamadan kontrol etmek.' },
+        ],
         tips: ['Resmî kurumlar mesajla şifre istemez.'],
       },
     ],
