@@ -1,4 +1,4 @@
-import { Box, Paper, Slider, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Slider, Stack, Typography } from '@mui/material';
 import {
   CartesianGrid,
   Line,
@@ -40,12 +40,20 @@ function computeSeries(params: {
   return series;
 }
 
+const DEFAULTS = {
+  monthlyIncome: 25000,
+  basket0: 12000,
+  inflationMonthlyPct: 3.0,
+  months: 24,
+  incomeIndex: 0,
+};
+
 export function InflationModule() {
-  const [monthlyIncome, setMonthlyIncome] = React.useState(25000);
-  const [basket0, setBasket0] = React.useState(12000);
-  const [inflationMonthlyPct, setInflationMonthlyPct] = React.useState(3.0);
-  const [months, setMonths] = React.useState(24);
-  const [incomeIndex, setIncomeIndex] = React.useState(0); // 0 = maaş sabit, 100 = enflasyon kadar artış
+  const [monthlyIncome, setMonthlyIncome] = React.useState(DEFAULTS.monthlyIncome);
+  const [basket0, setBasket0] = React.useState(DEFAULTS.basket0);
+  const [inflationMonthlyPct, setInflationMonthlyPct] = React.useState(DEFAULTS.inflationMonthlyPct);
+  const [months, setMonths] = React.useState(DEFAULTS.months);
+  const [incomeIndex, setIncomeIndex] = React.useState(DEFAULTS.incomeIndex); // 0 = maaş sabit, 100 = enflasyon kadar artış
 
   const data = computeSeries({ months, monthlyIncome, inflationMonthlyPct, basket0, incomeIndex });
 
@@ -76,8 +84,37 @@ export function InflationModule() {
           Sepet fiyatı artarken maaş aynı kalırsa (nominal sabit), alım gücü nasıl değişir?
         </Typography>
 
+        <Box sx={{ mt: 1.5 }}>
+          <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800, display: 'block' }}>
+            Öğrenme hedefi
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Enflasyonun alım gücüne etkisini görmek</Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Maaş artışı endeksiyle reel gelir farkını anlamak</Typography>
+        </Box>
+
+        <Box sx={{ mt: 1 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setMonthlyIncome(DEFAULTS.monthlyIncome);
+                setBasket0(DEFAULTS.basket0);
+                setInflationMonthlyPct(DEFAULTS.inflationMonthlyPct);
+                setMonths(DEFAULTS.months);
+                setIncomeIndex(DEFAULTS.incomeIndex);
+              }}
+            >
+              Sıfırla
+            </Button>
+          </Stack>
+        </Box>
+
         <Box sx={{ mt: 2 }}>
           <Stack spacing={2}>
+            <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800 }}>
+              Simülasyon girdileri
+            </Typography>
             <Box>
               <Typography fontWeight={600}>Aylık gelir (TL): {monthlyIncome.toLocaleString()}</Typography>
               <Slider

@@ -4,6 +4,7 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
+  Button,
   Container,
   CssBaseline,
   Toolbar,
@@ -15,13 +16,16 @@ import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 // PhoneFrame is used only inside the game module
 import { LearnScreen } from './LearnScreen';
 import { MonthSimModule } from './modules/monthSim';
+import { SimulationsScreen } from './SimulationsScreen';
 
 type RootTab = 'learn' | 'play';
+type PlayView = 'month' | 'sims';
 
 export default function App() {
   const [tab, setTab] = React.useState<RootTab>('learn');
+  const [playView, setPlayView] = React.useState<PlayView>('sims');
 
-  const title = tab === 'learn' ? 'Öğren' : 'Oyun';
+  const title = tab === 'learn' ? 'Öğren' : playView === 'sims' ? 'Simülasyonlar' : 'Oyun';
 
   return (
     <>
@@ -37,7 +41,30 @@ export default function App() {
 
         <Box sx={{ py: 1.5, pb: 10 }}>
           <Container maxWidth="md" sx={{ px: 1.5 }}>
-            {tab === 'learn' ? <LearnScreen /> : <MonthSimModule />}
+            {tab === 'learn' ? (
+              <LearnScreen />
+            ) : (
+              <>
+                <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
+                  <Button
+                    variant={playView === 'sims' ? 'contained' : 'outlined'}
+                    size="small"
+                    onClick={() => setPlayView('sims')}
+                  >
+                    Simülasyonlar
+                  </Button>
+                  <Button
+                    variant={playView === 'month' ? 'contained' : 'outlined'}
+                    size="small"
+                    onClick={() => setPlayView('month')}
+                  >
+                    1 Ay Ekonomi
+                  </Button>
+                </Box>
+
+                {playView === 'sims' ? <SimulationsScreen /> : <MonthSimModule />}
+              </>
+            )}
           </Container>
         </Box>
 
