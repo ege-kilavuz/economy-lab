@@ -72,7 +72,13 @@ function holdingPriceTL(game: any, h: HoldingId) {
   }
 }
 
-export function MonthSimModule({ onEvent }: { onEvent?: (msg: string) => void }) {
+export function MonthSimModule({
+  onEvent,
+  onSummary,
+}: {
+  onEvent?: (msg: string) => void;
+  onSummary?: (s: { cash: number; cardDebt: number; mood: number; day: number }) => void;
+}) {
   const [difficulty, setDifficulty] = React.useState<Difficulty>('easy');
   const [useCard, setUseCard] = React.useState(false);
   const [screen, setScreen] = React.useState<Screen>('home');
@@ -109,6 +115,10 @@ export function MonthSimModule({ onEvent }: { onEvent?: (msg: string) => void })
     lastTopRef.current = top;
     onEvent?.(top);
   }, [game.log, onEvent]);
+
+  React.useEffect(() => {
+    onSummary?.({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, day: game.day });
+  }, [game.cash, game.cardDebt, game.mood, game.day, onSummary]);
 
   const endScore = scoreEndOfMonth(game);
 

@@ -5,8 +5,10 @@ import {
   BottomNavigationAction,
   Box,
   Button,
+  Chip,
   Container,
   CssBaseline,
+  Stack,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -25,6 +27,7 @@ export default function App() {
   const [tab, setTab] = React.useState<RootTab>('learn');
   const [playView, setPlayView] = React.useState<PlayView>('sims');
   const [events, setEvents] = React.useState<string[]>([]);
+  const [summary, setSummary] = React.useState<{ cash: number; cardDebt: number; mood: number; day: number } | null>(null);
 
   const title = tab === 'learn' ? 'Öğren' : playView === 'sims' ? 'Simülasyonlar' : 'Oyun';
 
@@ -53,6 +56,16 @@ export default function App() {
                   <Typography variant="caption" sx={{ opacity: 0.7 }}>
                     Oyunda olanlar uygulama genelinde burada görünür.
                   </Typography>
+                  {summary ? (
+                    <Box sx={{ mt: 1 }}>
+                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                        <Chip size="small" label={`Gün ${summary.day}/30`} />
+                        <Chip size="small" label={`Nakit: ${Math.round(summary.cash).toLocaleString()} TL`} />
+                        <Chip size="small" label={`Kart: ${Math.round(summary.cardDebt).toLocaleString()} TL`} color={summary.cardDebt > 0 ? 'warning' : 'default'} />
+                        <Chip size="small" label={`Moral: ${summary.mood}%`} color={summary.mood < 45 ? 'error' : summary.mood < 60 ? 'warning' : 'default'} />
+                      </Stack>
+                    </Box>
+                  ) : null}
                   <Box sx={{ mt: 1 }}>
                     {events.slice(0, 6).map((e, i) => (
                       <Typography key={`${e}-${i}`} variant="body2" sx={{ opacity: 0.85 }}>
@@ -85,7 +98,14 @@ export default function App() {
                   </Button>
                 </Box>
 
-                {playView === 'sims' ? <SimulationsScreen /> : <MonthSimModule onEvent={pushEvent} />}
+                {playView === 'sims' ? (
+                  <SimulationsScreen />
+                ) : (
+                  <MonthSimModule
+                    onEvent={pushEvent}
+                    onSummary={(s) => setSummary({ cash: s.cash, cardDebt: s.cardDebt, mood: s.mood, day: s.day })}
+                  />
+                )}
               </>
             )}
           </Container>
