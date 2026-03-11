@@ -373,9 +373,14 @@ export function LearnScreen() {
     return (
       <Box sx={{ pt: 1, pb: 6 }}>
         <Top title={`${c.icon} ${c.title}`} canBack />
-        <Typography variant="body2" sx={{ mt: 1, mb: 2, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
+        <Typography variant="body2" sx={{ mt: 1, mb: 1, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
           {c.subtitle}
         </Typography>
+
+        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
+          <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+          <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+        </Stack>
 
         <Stack spacing={2}>
           {c.items.map((it) => (

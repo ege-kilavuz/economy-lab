@@ -68,61 +68,65 @@ export default function App() {
 
         <Box sx={{ py: 1.5, pb: 10 }}>
           <Container maxWidth="md" sx={{ px: 1.5 }}>
-            {events.length ? (
-              <Box sx={{ mb: 2 }}>
-                <Box sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.5 }}>
-                  <Typography fontWeight={900}>Etki-Tepki Akışı</Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
-                    Oyunda olanlar uygulama genelinde burada görünür.
-                  </Typography>
-                  {summary ? (
-                    <Box sx={{ mt: 1 }}>
-                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                        <Chip size="small" label={`Gün ${summary.day}/30`} />
-                        <Chip size="small" label={`Nakit: ${Math.round(summary.cash).toLocaleString()} TL`} />
-                        <Chip size="small" label={`Kart: ${Math.round(summary.cardDebt).toLocaleString()} TL`} color={summary.cardDebt > 0 ? 'warning' : 'default'} />
-                        <Chip size="small" label={`Moral: ${summary.mood}%`} color={summary.mood < 45 ? 'error' : summary.mood < 60 ? 'warning' : 'default'} />
-                      </Stack>
-                    </Box>
-                  ) : null}
-
-                  {tags.length ? (
-                    <Box sx={{ mt: 1 }}>
-                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                        {tags.map((tag) => {
-                          const active = activeTags.includes(tag);
-                          return (
-                            <Chip
-                              key={tag}
-                              size="small"
-                              label={tag}
-                              variant={active ? 'filled' : 'outlined'}
-                              onClick={() =>
-                                setActiveTags((prev) =>
-                                  prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-                                )
-                              }
-                              sx={{ cursor: 'pointer', fontWeight: active ? 800 : 500, bgcolor: active ? 'rgba(96,165,250,0.3)' : undefined }}
-                            />
-                          );
-                        })}
-                        {activeTags.length ? (
-                          <Chip size="small" label="Temizle" onClick={() => setActiveTags([])} sx={{ cursor: 'pointer' }} />
-                        ) : null}
-                      </Stack>
-                    </Box>
-                  ) : null}
-
+            <Box sx={{ mb: 2 }}>
+              <Box sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.5 }}>
+                <Typography fontWeight={900}>Etki-Tepki Akışı</Typography>
+                <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                  Oyunda olanlar uygulama genelinde burada görünür.
+                </Typography>
+                {summary ? (
                   <Box sx={{ mt: 1 }}>
-                    {visibleEvents.slice(0, 6).map((e, i) => (
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                      <Chip size="small" label={`Gün ${summary.day}/30`} />
+                      <Chip size="small" label={`Nakit: ${Math.round(summary.cash).toLocaleString()} TL`} />
+                      <Chip size="small" label={`Kart: ${Math.round(summary.cardDebt).toLocaleString()} TL`} color={summary.cardDebt > 0 ? 'warning' : 'default'} />
+                      <Chip size="small" label={`Moral: ${summary.mood}%`} color={summary.mood < 45 ? 'error' : summary.mood < 60 ? 'warning' : 'default'} />
+                    </Stack>
+                  </Box>
+                ) : null}
+
+                {tags.length ? (
+                  <Box sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                      {tags.map((tag) => {
+                        const active = activeTags.includes(tag);
+                        return (
+                          <Chip
+                            key={tag}
+                            size="small"
+                            label={tag}
+                            variant={active ? 'filled' : 'outlined'}
+                            onClick={() =>
+                              setActiveTags((prev) =>
+                                prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+                              )
+                            }
+                            sx={{ cursor: 'pointer', fontWeight: active ? 800 : 500, bgcolor: active ? 'rgba(96,165,250,0.3)' : undefined }}
+                          />
+                        );
+                      })}
+                      {activeTags.length ? (
+                        <Chip size="small" label="Temizle" onClick={() => setActiveTags([])} sx={{ cursor: 'pointer' }} />
+                      ) : null}
+                    </Stack>
+                  </Box>
+                ) : null}
+
+                <Box sx={{ mt: 1 }}>
+                  {visibleEvents.length ? (
+                    visibleEvents.slice(0, 6).map((e, i) => (
                       <Typography key={`${e}-${i}`} variant="body2" sx={{ opacity: 0.85 }}>
                         • {e}
                       </Typography>
-                    ))}
-                  </Box>
+                    ))
+                  ) : (
+                    <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                      Henüz olay yok. Oyun içinden bir işlem yapınca burada görünecek.
+                    </Typography>
+                  )}
                 </Box>
               </Box>
-            ) : null}
+            </Box>
 
             {tab === 'learn' ? (
               <LearnScreen />
