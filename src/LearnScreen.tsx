@@ -105,6 +105,20 @@ function ItemCard({ item, highlight }: { item: LearnItem; highlight?: boolean })
           </>
         ) : null}
 
+        {item.qa?.length ? (
+          <>
+            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
+            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', fontWeight: 800 }}>
+              Hızlı Soru‑Cevap
+            </Typography>
+            {item.qa.map((qa, i) => (
+              <Typography key={i} variant="caption" sx={{ opacity: 0.75, display: 'block' }}>
+                • {qa.q} — {qa.a}
+              </Typography>
+            ))}
+          </>
+        ) : null}
+
         {item.tips?.length ? (
           <>
             <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
@@ -395,6 +409,27 @@ export function LearnScreen() {
                       <Typography variant="body2" sx={{ opacity: 0.9 }}>
                         {it.scenario}
                       </Typography>
+                    </CardContent>
+                  </Card>
+                ) : null}
+                {it.qa?.length ? (
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                      color: 'white',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                  >
+                    <CardContent sx={{ py: 1.25 }}>
+                      <Typography variant="caption" sx={{ display: 'block', fontWeight: 900, mb: 0.5 }}>
+                        ✅ Hızlı Soru‑Cevap
+                      </Typography>
+                      {it.qa.map((qa, i) => (
+                        <Typography key={i} variant="body2" sx={{ opacity: 0.9 }}>
+                          • {qa.q} — {qa.a}
+                        </Typography>
+                      ))}
                     </CardContent>
                   </Card>
                 ) : null}

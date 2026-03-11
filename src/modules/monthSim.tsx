@@ -116,6 +116,17 @@ export function MonthSimModule({
     return `${label} ${sign}${Math.round(diff)}${unit}`;
   }
 
+  function categoryForLog(line: string) {
+    const text = line.toLowerCase();
+    if (text.includes('market') || text.includes('dolap')) return 'Market';
+    if (text.includes('sinema') || text.includes('moral')) return 'Yaşam';
+    if (text.includes('kira') || text.includes('aidat') || text.includes('elektrik') || text.includes('doğalgaz') || text.includes('internet')) return 'Fatura';
+    if (text.includes('kart') || text.includes('kredi')) return 'Kredi';
+    if (text.includes('alım') || text.includes('satış') || text.includes('borsa') || text.includes('altın') || text.includes('btc') || text.includes('usd')) return 'Yatırım';
+    if (text.includes('haber') || text.includes('tcmb') || text.includes('enflasyon')) return 'Makro';
+    return 'Genel';
+  }
+
   React.useEffect(() => {
     const top = game.log[0];
     if (!top) return;
@@ -133,7 +144,8 @@ export function MonthSimModule({
     prevSnapRef.current = { cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge };
 
     const suffix = parts.length ? ` (${parts.join(', ')})` : '';
-    onEvent?.(`${top}${suffix}`);
+    const tag = categoryForLog(top);
+    onEvent?.(`[${tag}] ${top}${suffix}`);
   }, [game.log, game.cash, game.cardDebt, game.mood, game.fridge, onEvent]);
 
   React.useEffect(() => {

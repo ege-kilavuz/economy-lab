@@ -15,6 +15,7 @@ export type LearnItem = {
   short: string;
   body: string[];
   scenario?: string;
+  qa?: { q: string; a: string }[];
   tips?: string[];
   warning?: string;
 };
@@ -141,6 +142,10 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Reel değer: Cebindeki para değil, o parayla kaç ürün alabildiğindir.',
         ],
         scenario: 'Market sepeti 1.000 TL iken 1.500 TL oldu; maaşın sadece 1.200 TL’ye çıktı → daha az ürün alırsın.',
+        qa: [
+          { q: 'Enflasyon olunca ne hissederim?', a: 'Aynı parayla daha az şey alırsın.' },
+          { q: 'Reel gelir nedir?', a: 'Paranın satın alma gücüdür.' },
+        ],
         tips: ['Alım gücünü korumak için tasarruf + bilinçli yatırım önemlidir.'],
       },
       {
@@ -153,6 +158,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Ne kadar erken başlarsan, büyüme o kadar güçlü olur.',
         ],
         scenario: '1.000 TL’yi her ay %2 büyütürsen, bir süre sonra kazanç kendi kendini hızlandırır.',
+        qa: [
+          { q: 'Bileşik etki neden önemlidir?', a: 'Kazanç tekrar kazanç üretir.' },
+        ],
       },
       {
         id: 'liquidity',
@@ -163,6 +171,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Acil durumda nakde hızlı dönebilen şey daha güvenlidir.',
         ],
         scenario: 'Acil para lazım oldu: nakit hemen kullanılır, ev satmak ise haftalar sürer.',
+        qa: [
+          { q: 'En likit varlık hangisi?', a: 'Nakit.' },
+        ],
       },
     ],
     quiz: generateBasicsQuiz(),
@@ -183,6 +194,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           '%20 gelecek: birikim ve borç kapatma.',
         ],
         scenario: 'Aylık gelirin 20.000 TL ise: 10.000 ihtiyaç, 6.000 istek, 4.000 birikim gibi düşünebilirsin.',
+        qa: [
+          { q: 'Bu oranlar sabit mi?', a: 'Değil; ama birikimi sıfırlama.' },
+        ],
         tips: ['Oranları durumuna göre esnetebilirsin; ama birikimi sıfırlama.'],
       },
       {
@@ -195,6 +209,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Hedef: En az 3–6 aylık temel gideri biriktirmek.',
         ],
         scenario: 'Telefonun bozuldu ve 8.000 TL çıktı; acil fon varsa kart borcuna girmeden çözersin.',
+        qa: [
+          { q: 'Acil fon ne işe yarar?', a: 'Beklenmedik masrafları borçsuz kapatır.' },
+        ],
       },
     ],
     quiz: generateBasicsQuiz(), // Can be improved
@@ -214,6 +231,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Her ay asgari ödemek borcu uzatır ve faiz yükünü artırır.',
         ],
         scenario: '10.000 TL borcun var, asgariyi ödedin → borç yavaş azalır ama faiz işlemeye devam eder.',
+        qa: [
+          { q: 'Asgari ödeme borcu bitirir mi?', a: 'Hayır, borcu uzatır.' },
+        ],
         tips: ['Mümkünse kart borcunu tamamen kapat.'],
       },
       {
@@ -225,6 +245,9 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           'Düzenli ödeme yapmak puanı yükseltir.',
         ],
         scenario: 'Faturaları hep zamanında ödersen bankalar seni daha güvenilir görür.',
+        qa: [
+          { q: 'Notu ne yükseltir?', a: 'Düzenli ve zamanında ödeme.' },
+        ],
       },
     ],
     quiz: generateCreditQuiz(),
