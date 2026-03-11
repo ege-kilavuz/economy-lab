@@ -79,6 +79,17 @@ const panelSx = {
   border: '1px solid rgba(255,255,255,0.08)',
 };
 
+function categoryForLog(line: string) {
+  const text = line.toLowerCase();
+  if (text.includes('market') || text.includes('dolap')) return 'Market';
+  if (text.includes('sinema') || text.includes('moral')) return 'Yaşam';
+  if (text.includes('kira') || text.includes('aidat') || text.includes('elektrik') || text.includes('doğalgaz') || text.includes('internet')) return 'Fatura';
+  if (text.includes('kart') || text.includes('kredi')) return 'Kredi';
+  if (text.includes('alım') || text.includes('satış') || text.includes('borsa') || text.includes('altın') || text.includes('btc') || text.includes('usd')) return 'Yatırım';
+  if (text.includes('haber') || text.includes('tcmb') || text.includes('enflasyon')) return 'Makro';
+  return 'Genel';
+}
+
 export function MonthSimModule({
   onEvent,
   onSummary,
@@ -121,17 +132,6 @@ export function MonthSimModule({
     if (diff === 0) return null;
     const sign = diff > 0 ? '+' : '';
     return `${label} ${sign}${Math.round(diff)}${unit}`;
-  }
-
-  function categoryForLog(line: string) {
-    const text = line.toLowerCase();
-    if (text.includes('market') || text.includes('dolap')) return 'Market';
-    if (text.includes('sinema') || text.includes('moral')) return 'Yaşam';
-    if (text.includes('kira') || text.includes('aidat') || text.includes('elektrik') || text.includes('doğalgaz') || text.includes('internet')) return 'Fatura';
-    if (text.includes('kart') || text.includes('kredi')) return 'Kredi';
-    if (text.includes('alım') || text.includes('satış') || text.includes('borsa') || text.includes('altın') || text.includes('btc') || text.includes('usd')) return 'Yatırım';
-    if (text.includes('haber') || text.includes('tcmb') || text.includes('enflasyon')) return 'Makro';
-    return 'Genel';
   }
 
   React.useEffect(() => {

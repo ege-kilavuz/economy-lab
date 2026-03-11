@@ -102,7 +102,7 @@ export default function App() {
                                   prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
                                 )
                               }
-                              sx={{ cursor: 'pointer' }}
+                              sx={{ cursor: 'pointer', fontWeight: active ? 800 : 500, bgcolor: active ? 'rgba(96,165,250,0.3)' : undefined }}
                             />
                           );
                         })}
@@ -133,6 +133,7 @@ export default function App() {
                     variant={playView === 'sims' ? 'contained' : 'outlined'}
                     size="small"
                     onClick={() => setPlayView('sims')}
+                    sx={playView === 'sims' ? { fontWeight: 900 } : { borderColor: 'rgba(255,255,255,0.35)', color: 'rgba(255,255,255,0.9)' }}
                   >
                     Simülasyonlar
                   </Button>
@@ -140,6 +141,7 @@ export default function App() {
                     variant={playView === 'month' ? 'contained' : 'outlined'}
                     size="small"
                     onClick={() => setPlayView('month')}
+                    sx={playView === 'month' ? { fontWeight: 900 } : { borderColor: 'rgba(255,255,255,0.35)', color: 'rgba(255,255,255,0.9)' }}
                   >
                     1 Ay Ekonomi
                   </Button>
