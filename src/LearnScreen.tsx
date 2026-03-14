@@ -15,6 +15,7 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnCategoryId } from './learn/content';
+import { LEARNING_SCENARIOS } from './learn/scenarios';
 
 function buildItemIndex() {
   const map = new Map<string, { title: string; categoryId: string; categoryTitle: string }>();
@@ -456,6 +457,56 @@ export function LearnScreen() {
             ) : (
               <Chip size="small" label="Ana öğrenme yolu tamamlandı" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} />
             )}
+          </Stack>
+        </CardContent>
+      </GlassCard>
+
+      <GlassCard>
+        <CardContent>
+          <Typography fontWeight={950}>Senaryo kütüphanesi</Typography>
+          <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+            İçerik başlıklarını sınıf içinde tartışmaya çevirmek için kısa vaka kartları.
+          </Typography>
+          <Stack spacing={1.25} sx={{ mt: 1.5 }}>
+            {LEARNING_SCENARIOS.map((scenario) => {
+              const category = categoryById(scenario.categoryId);
+              return (
+                <Box
+                  key={scenario.id}
+                  sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.08)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.25 }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
+                    <Box>
+                      <Typography fontWeight={900}>{scenario.title}</Typography>
+                      <Typography variant="body2" sx={{ mt: 0.35, opacity: 0.82 }}>
+                        {scenario.summary}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      size="small"
+                      label={category ? `${category.icon} ${category.title}` : scenario.categoryId}
+                      sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }}
+                    />
+                  </Stack>
+                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                    {scenario.prompt}
+                  </Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                    {scenario.check.map((item) => (
+                      <Chip key={item} size="small" label={item} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                    ))}
+                  </Stack>
+                  {category ? (
+                    <Chip
+                      size="small"
+                      label="İlgili içeriği aç"
+                      onClick={() => setView({ kind: 'category', category })}
+                      sx={{ mt: 1.25, cursor: 'pointer', bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }}
+                    />
+                  ) : null}
+                </Box>
+              );
+            })}
           </Stack>
         </CardContent>
       </GlassCard>
