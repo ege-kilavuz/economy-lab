@@ -14,7 +14,7 @@ import {
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 
 import { LEARN_CATEGORIES } from './learn/content';
-import type { LearnCategory, LearnItem } from './learn/content';
+import type { LearnCategory } from './learn/content';
 
 function buildItemIndex() {
   const map = new Map<string, { title: string; categoryId: string; categoryTitle: string }>();
@@ -57,92 +57,6 @@ function GlassCard({ children }: { children: React.ReactNode }) {
     >
       {children}
     </Card>
-  );
-}
-
-function ItemCard({ item, highlight }: { item: LearnItem; highlight?: boolean }) {
-  return (
-    <GlassCard>
-      <CardContent
-        id={`item-${item.id}`}
-        sx={
-          highlight
-            ? {
-                outline: '2px solid rgba(96,165,250,0.55)',
-                outlineOffset: '2px',
-                borderRadius: 3,
-              }
-            : undefined
-        }
-      >
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography fontWeight={950}>{item.title}</Typography>
-          <Chip size="small" label="TERİM" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-        </Stack>
-        <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-          {item.short}
-        </Typography>
-
-        <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
-
-        <Stack spacing={0.75}>
-          {item.body.map((p, i) => (
-            <Typography key={i} variant="body2" sx={{ opacity: 0.85 }}>
-              • {p}
-            </Typography>
-          ))}
-        </Stack>
-
-        {item.scenario ? (
-          <>
-            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
-            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', fontWeight: 800 }}>
-              Mini Senaryo
-            </Typography>
-            <Typography variant="caption" sx={{ opacity: 0.75, display: 'block' }}>
-              {item.scenario}
-            </Typography>
-          </>
-        ) : null}
-
-        {item.qa?.length ? (
-          <>
-            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
-            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', fontWeight: 800 }}>
-              Hızlı Soru‑Cevap
-            </Typography>
-            {item.qa.map((qa, i) => (
-              <Typography key={i} variant="caption" sx={{ opacity: 0.75, display: 'block' }}>
-                • {qa.q} — {qa.a}
-              </Typography>
-            ))}
-          </>
-        ) : null}
-
-        {item.tips?.length ? (
-          <>
-            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
-            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', fontWeight: 800 }}>
-              Taktik / İpucu
-            </Typography>
-            {item.tips.map((t, i) => (
-              <Typography key={i} variant="caption" sx={{ opacity: 0.75, display: 'block' }}>
-                • {t}
-              </Typography>
-            ))}
-          </>
-        ) : null}
-
-        {item.warning ? (
-          <>
-            <Divider sx={{ my: 1.25, borderColor: 'rgba(255,255,255,0.12)' }} />
-            <Typography variant="caption" sx={{ opacity: 0.75 }}>
-              Uyarı: {item.warning}
-            </Typography>
-          </>
-        ) : null}
-      </CardContent>
-    </GlassCard>
   );
 }
 

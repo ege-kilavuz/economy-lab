@@ -39,7 +39,6 @@ export function InterestModule() {
 
   const compound = compoundGrowth(principal, annualRatePct, months);
 
-  const installmentRatio = pay / Math.max(1, principal * 0.06); // toy ratio
   const stressLabel =
     pay > principal * 0.06
       ? 'Hissiyat: baskı yüksek — taksit yükü ağır.'

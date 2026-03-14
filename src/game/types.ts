@@ -2,6 +2,16 @@ export type Difficulty = 'easy' | 'normal' | 'hard';
 
 export type HoldingId = 'gold' | 'stock' | 'usd' | 'btc' | 'eth';
 
+export type QuestState = {
+  title: string;
+  hint: string;
+  done: boolean;
+};
+
+export type BillId = 'electric' | 'gas' | 'internet' | 'dues';
+
+export type BillsState = Record<BillId, boolean>;
+
 export type GameState = {
   day: number; // 1..30
   cash: number;
@@ -13,14 +23,14 @@ export type GameState = {
   holdings: Record<HoldingId, number>; // amounts (gold grams, stock units, usd dollars, coins)
 
   rentPaid: boolean;
-  billsPaid: { electric: boolean; gas: boolean; internet: boolean; dues: boolean };
+  billsPaid: BillsState;
   difficulty: Difficulty;
   seed: number;
   log: string[];
 
   // daily gamification
   points: number;
-  quest: { title: string; hint: string; done: boolean };
+  quest: QuestState;
 
   // market prices
   goldPrice: number; // TL per gram

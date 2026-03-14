@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 
-import type { Difficulty, HoldingId } from '../game/types';
+import type { Difficulty, GameState, HoldingId } from '../game/types';
 import { applyAction, newGame, nextDay, scoreEndOfMonth } from '../game/engine';
 import { balanceFor } from '../game/balance';
 import { PhoneFrame } from '../ui/PhoneFrame';
@@ -57,7 +57,7 @@ function holdingLabel(h: HoldingId) {
   }
 }
 
-function holdingPriceTL(game: any, h: HoldingId) {
+function holdingPriceTL(game: GameState, h: HoldingId) {
   switch (h) {
     case 'gold':
       return game.goldPrice;
@@ -128,7 +128,7 @@ export function MonthSimModule({
   const lastTopRef = React.useRef<string | null>(null);
   const prevSnapRef = React.useRef({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge });
 
-  function diffLabel(label: string, diff: number, unit = '') {
+  function diffText(label: string, diff: number, unit = '') {
     if (diff === 0) return null;
     const sign = diff > 0 ? '+' : '';
     return `${label} ${sign}${Math.round(diff)}${unit}`;
@@ -141,10 +141,10 @@ export function MonthSimModule({
 
     const prev = prevSnapRef.current;
     const parts = [
-      diffLabel('Nakit', game.cash - prev.cash, ' TL'),
-      diffLabel('Kart', game.cardDebt - prev.cardDebt, ' TL'),
-      diffLabel('Moral', game.mood - prev.mood, '%'),
-      diffLabel('Dolap', game.fridge - prev.fridge, '%'),
+      diffText('Nakit', game.cash - prev.cash, ' TL'),
+      diffText('Kart', game.cardDebt - prev.cardDebt, ' TL'),
+      diffText('Moral', game.mood - prev.mood, '%'),
+      diffText('Dolap', game.fridge - prev.fridge, '%'),
     ].filter(Boolean);
 
     lastTopRef.current = top;

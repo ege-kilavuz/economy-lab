@@ -1,4 +1,4 @@
-import type { ActionId, Difficulty, GameState, HoldingId } from './types';
+import type { ActionId, BillId, BillsState, Difficulty, GameState, HoldingId, QuestState } from './types';
 import { balanceFor } from './balance';
 import { mulberry32, pickWeighted } from './rng';
 
@@ -14,7 +14,16 @@ function logPush(s: GameState, msg: string) {
   return { ...s, log: [msg, ...s.log].slice(0, 120) };
 }
 
-function questForDay(s: GameState) {
+type PaymentResult = {
+  state: GameState;
+  ok: boolean;
+  chargedTo: 'cash' | 'card' | null;
+};
+
+const INITIAL_BILLS: BillsState = { electric: false, gas: false, internet: false, dues: false };
+const INITIAL_QUEST: QuestState = { title: 'Bugün dolabı 40% üstünde tut', hint: 'Market yapmayı unutma.', done: false };
+
+function questForDay(s: GameState): QuestState {
   const rng = mulberry32(s.seed + s.day * 777);
   const pick = pickWeighted(rng, [
     { w: 1, v: { title: 'Bugün dolabı 40% üstünde tut', hint: 'Market yapmayı unutma.' } },
@@ -42,9 +51,8 @@ function tryCompleteQuest(s: GameState) {
   return logPush({ ...s, points: s.points + 10, quest: { ...s.quest, done: true } }, `Görev tamamlandı! +10 puan: ${q.title}`);
 }
 
-export function newGame(difficulty: Difficulty): GameState {
+export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): GameState {
   const b = balanceFor(difficulty);
-  const seed = Date.now() % 1000000;
   return {
     day: 1,
     cash: b.startingCash,
@@ -56,13 +64,13 @@ export function newGame(difficulty: Difficulty): GameState {
     holdings: { gold: 0, stock: 0, usd: 0, btc: 0, eth: 0 },
 
     rentPaid: false,
-    billsPaid: { electric: false, gas: false, internet: false, dues: false },
+    billsPaid: { ...INITIAL_BILLS },
     difficulty,
     seed,
     log: [`Oyun başladı (${difficulty}). Maaş yattı: ${b.startingCash.toLocaleString()} TL`],
 
     points: 0,
-    quest: { title: 'Bugün dolabı 40% üstünde tut', hint: 'Market yapmayı unutma.', done: false },
+    quest: { ...INITIAL_QUEST },
 
     goldPrice: 2200,
     stockIndex: 100,
@@ -74,14 +82,35 @@ export function newGame(difficulty: Difficulty): GameState {
   };
 }
 
-function pay(s: GameState, amount: number, useCard: boolean) {
-  if (amount <= 0) return s;
+function pay(s: GameState, amount: number, useCard: boolean): PaymentResult {
+  if (amount <= 0) return { state: s, ok: false, chargedTo: null };
   if (!useCard) {
-    if (s.cash < amount) return logPush(s, `Yetersiz bakiye: ${tl(amount).toLocaleString()} TL ödenemedi.`);
-    return { ...s, cash: s.cash - amount };
+    if (s.cash < amount) {
+      return {
+        state: logPush(s, `Yetersiz bakiye: ${tl(amount).toLocaleString()} TL ödenemedi.`),
+        ok: false,
+        chargedTo: null,
+      };
+    }
+    return { state: { ...s, cash: s.cash - amount }, ok: true, chargedTo: 'cash' };
   }
   // credit card
-  return { ...s, cardDebt: s.cardDebt + amount };
+  return { state: { ...s, cardDebt: s.cardDebt + amount }, ok: true, chargedTo: 'card' };
+}
+
+function payBill(s: GameState, billId: BillId, amount: number, label: string, useCard: boolean): GameState {
+  if (s.billsPaid[billId]) return logPush(s, `${label} zaten ödendi.`);
+
+  const payment = pay(s, amount, useCard);
+  if (!payment.ok) return payment.state;
+
+  return logPush(
+    {
+      ...payment.state,
+      billsPaid: { ...payment.state.billsPaid, [billId]: true },
+    },
+    `${label} ödendi: ${amount.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'})`
+  );
 }
 
 export function canAfford(s: GameState, amount: number) {
@@ -100,15 +129,27 @@ export function applyAction(
   switch (action) {
     case 'grocery': {
       const cost = tl(b.groceryBase * (0.8 + (s0.fridge < 35 ? 0.6 : 0.2)));
-      s = pay(s, cost, useCard);
-      s = { ...s, fridge: clamp(s.fridge + 20, 0, 100), mood: clamp(s.mood + 2, 0, 100) };
-      return logPush(s, `Market: -${cost.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'}), dolap +20`);
+      const payment = pay(s, cost, useCard);
+      if (!payment.ok) return payment.state;
+
+      s = {
+        ...payment.state,
+        fridge: clamp(payment.state.fridge + 20, 0, 100),
+        mood: clamp(payment.state.mood + 2, 0, 100),
+      };
+      return logPush(s, `Market: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), dolap +20`);
     }
     case 'cinema': {
       const cost = b.cinema;
-      s = pay(s, cost, useCard);
-      s = { ...s, mood: clamp(s.mood + 12, 0, 100), energy: clamp(s.energy - 5, 0, 100) };
-      return logPush(s, `Sinema: -${cost.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'}), moral +12`);
+      const payment = pay(s, cost, useCard);
+      if (!payment.ok) return payment.state;
+
+      s = {
+        ...payment.state,
+        mood: clamp(payment.state.mood + 12, 0, 100),
+        energy: clamp(payment.state.energy - 5, 0, 100),
+      };
+      return logPush(s, `Sinema: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), moral +12`);
     }
     case 'lightsOff': {
       // tiny habit. increases energy/mood slightly, gives end-of-month bill reduction via daily flag? simplified to immediate cash-saving token.
@@ -117,34 +158,25 @@ export function applyAction(
     }
     case 'payRent': {
       if (s.rentPaid) return logPush(s, 'Kira zaten ödendi.');
-      s = pay(s, b.rent, useCard);
-      // If paid (cash reduced or debt increased) we still mark paid.
-      s = { ...s, rentPaid: true };
-      return logPush(s, `Kira ödendi: ${b.rent.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
+      const payment = pay(s, b.rent, useCard);
+      if (!payment.ok) return payment.state;
+
+      return logPush(
+        { ...payment.state, rentPaid: true },
+        `Kira ödendi: ${b.rent.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'})`
+      );
     }
     case 'payDues': {
-      if (s.billsPaid.dues) return logPush(s, 'Aidat zaten ödendi.');
-      s = pay(s, b.dues, useCard);
-      s = { ...s, billsPaid: { ...s.billsPaid, dues: true } };
-      return logPush(s, `Aidat ödendi: ${b.dues.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
+      return payBill(s, 'dues', b.dues, 'Aidat', useCard);
     }
     case 'payElectric': {
-      if (s.billsPaid.electric) return logPush(s, 'Elektrik zaten ödendi.');
-      s = pay(s, b.electric, useCard);
-      s = { ...s, billsPaid: { ...s.billsPaid, electric: true } };
-      return logPush(s, `Elektrik ödendi: ${b.electric.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
+      return payBill(s, 'electric', b.electric, 'Elektrik', useCard);
     }
     case 'payGas': {
-      if (s.billsPaid.gas) return logPush(s, 'Doğalgaz zaten ödendi.');
-      s = pay(s, b.gas, useCard);
-      s = { ...s, billsPaid: { ...s.billsPaid, gas: true } };
-      return logPush(s, `Doğalgaz ödendi: ${b.gas.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
+      return payBill(s, 'gas', b.gas, 'Doğalgaz', useCard);
     }
     case 'payInternet': {
-      if (s.billsPaid.internet) return logPush(s, 'İnternet zaten ödendi.');
-      s = pay(s, b.internet, useCard);
-      s = { ...s, billsPaid: { ...s.billsPaid, internet: true } };
-      return logPush(s, `İnternet ödendi: ${b.internet.toLocaleString()} TL (${useCard ? 'kart' : 'nakit'})`);
+      return payBill(s, 'internet', b.internet, 'İnternet', useCard);
     }
     case 'buyAsset': {
       const asset = opts?.asset;
@@ -211,6 +243,9 @@ export function applyAction(
       if (s.cash < amt) return logPush(s, 'Kart borcunu kapatacak nakit yok.');
       s = { ...s, cash: s.cash - amt, cardDebt: 0 };
       return logPush(s, `Kredi kartı borcu kapatıldı: -${amt.toLocaleString()} TL`);
+    }
+    default: {
+      return s;
     }
   }
 }
