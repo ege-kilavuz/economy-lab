@@ -9,103 +9,14 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-
-type MonthResult = {
-  month: number;
-  income: number;
-  expenses: number;
-  debtPayment: number;
-  invest: number;
-  emergencySave: number;
-  eventText?: string;
-  net: number;
-  cashEnd: number;
-  debtEnd: number;
-  investEnd: number;
-  emergencyEnd: number;
-  wellbeingEnd: number;
-  nextIncome: number;
-};
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function roundTL(n: number) {
-  return Math.round(n);
-}
-
-// Educational toy model.
-// We simulate 12 months of income/expenses + debt + emergency fund + investing.
-// This is not financial advice.
-
-const EVENTS: Array<{ p: number; kind: 'neg' | 'pos'; title: string; apply: (s: SimState) => SimState } > = [
-  {
-    p: 0.18,
-    kind: 'neg',
-    title: 'Telefon bozuldu (beklenmedik gider) - 4.000 TL',
-    apply: (s) => ({ ...s, cash: s.cash - 4000 }),
-  },
-  {
-    p: 0.14,
-    kind: 'neg',
-    title: 'Sağlık gideri - 2.500 TL',
-    apply: (s) => ({ ...s, cash: s.cash - 2500 }),
-  },
-  {
-    p: 0.12,
-    kind: 'pos',
-    title: 'Ufak ek gelir (freelance) + 2.000 TL',
-    apply: (s) => ({ ...s, cash: s.cash + 2000 }),
-  },
-  {
-    p: 0.10,
-    kind: 'neg',
-    title: 'İş görüşmesi/sertifika masrafı - 1.500 TL',
-    apply: (s) => ({ ...s, cash: s.cash - 1500 }),
-  },
-];
-
-function pickEvent(rng: () => number, stressFactor: number) {
-  // stressFactor > 1 => more negative events, < 1 => more positive chance
-  const adjusted = EVENTS.map((e) => ({
-    ...e,
-    p: e.kind === 'neg' ? e.p * stressFactor : e.p * (2 - stressFactor),
-  }));
-  const total = adjusted.reduce((acc, e) => acc + e.p, 0);
-  const x = rng() * total;
-  let acc = 0;
-  for (const e of adjusted) {
-    acc += e.p;
-    if (x < acc) return e;
-  }
-  return null;
-}
-
-// Deterministic RNG so the same "seed" produces same run.
-function mulberry32(seed: number) {
-  return function () {
-    let t = (seed += 0x6d2b79f5);
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-type SimState = {
-  month: number;
-  income: number;
-  cash: number;
-  debt: number;
-  invest: number;
-  emergency: number;
-  wellbeing: number; // 0-100
-  score: number;
-  history: MonthResult[];
-  seed: number;
-};
-
-const DEFAULT_INCOME = 17002; // approx 2024/2025 TR min-wage-ish, placeholder
+import {
+  createLifeSim,
+  DEFAULT_INCOME,
+  roundTL,
+  runLifeSimMonth,
+  type LifeSimPlan,
+  type LifeSimState,
+} from '../game/lifeSimEngine';
 
 export function LifeSimModule() {
   const [baseIncome, setBaseIncome] = React.useState(DEFAULT_INCOME);
@@ -119,22 +30,10 @@ export function LifeSimModule() {
 
   const pctSum = needsPct + wantsPct + debtPayPct + emergencyPct + investPct;
 
-  const [sim, setSim] = React.useState<SimState | null>(null);
+  const [sim, setSim] = React.useState<LifeSimState | null>(null);
 
   function start() {
-    const seed = Date.now() % 100000;
-    setSim({
-      month: 1,
-      income: baseIncome,
-      cash: 0,
-      debt: 20000, // starts with some debt
-      invest: 0,
-      emergency: 0,
-      wellbeing: 70,
-      score: 0,
-      history: [],
-      seed,
-    });
+    setSim(createLifeSim(baseIncome));
   }
 
   function reset() {
@@ -144,131 +43,15 @@ export function LifeSimModule() {
   function runOneMonth() {
     if (!sim) return;
 
-    // Normalize plan if not 100% (we clamp but keep educational)
-    const sum = pctSum;
-    const norm = sum === 0 ? 1 : sum / 100;
-
-    const income = sim.income;
-    const needs = roundTL((income * (needsPct / 100)) / norm);
-    const wants = roundTL((income * (wantsPct / 100)) / norm);
-    const plannedDebtPay = roundTL((income * (debtPayPct / 100)) / norm);
-    const plannedEmergency = roundTL((income * (emergencyPct / 100)) / norm);
-    const plannedInvest = roundTL((income * (investPct / 100)) / norm);
-
-    // debt interest monthly ~ 3.5% toy
-    const debtInterest = sim.debt * 0.035;
-    let debt = sim.debt + debtInterest;
-
-    let cash = sim.cash + income;
-
-    // pay needs + wants
-    cash -= needs + wants;
-
-    // stress affects events (more stress => more negative events)
-    const debtPressure = sim.debt / Math.max(1, sim.income);
-    const cashPressure = sim.cash <= 0 ? 0.2 : 0;
-    const stressFactor = clamp(1 + debtPressure * 0.25 + cashPressure, 0.6, 1.8);
-
-    // apply event
-    const rng = mulberry32(sim.seed + sim.month * 997);
-    const ev = pickEvent(rng, stressFactor);
-    let eventText: string | undefined;
-    if (ev) {
-      const before = { ...sim, cash };
-      const after = ev.apply(before);
-      cash = after.cash;
-      eventText = ev.title;
-    }
-
-    // If cash goes negative, it becomes new debt (credit card / overdraft) with penalty
-    let scoreDelta = 0;
-
-    // debt payment (cannot exceed cash)
-    const debtPayment = clamp(plannedDebtPay, 0, Math.max(0, cash));
-    cash -= debtPayment;
-    debt = Math.max(0, debt - debtPayment);
-
-    // emergency saving
-    const emergencySave = clamp(plannedEmergency, 0, Math.max(0, cash));
-    cash -= emergencySave;
-
-    // invest
-    const invest = clamp(plannedInvest, 0, Math.max(0, cash));
-    cash -= invest;
-
-    // if still negative -> convert to debt
-    if (cash < 0) {
-      debt += Math.abs(cash);
-      cash = 0;
-      scoreDelta -= 20; // debt spiral penalty
-    }
-
-    // investment grows monthly ~ 1.2% toy
-    const investEnd = (sim.invest + invest) * 1.012;
-
-    const emergencyEnd = sim.emergency + emergencySave;
-
-    // wellbeing (hissiyat) affects next month income & events
-    let wellbeing = sim.wellbeing;
-    if (cash === 0) wellbeing -= 8;
-    if (debt > sim.income * 3) wellbeing -= 10;
-    if (debt <= sim.debt) wellbeing += 4; // debt improving
-    if (emergencyEnd >= sim.income) wellbeing += 6; // 1-month buffer
-    if (wantsPct > 30 && cash === 0) wellbeing -= 6; // overspend guilt
-    wellbeing = clamp(Math.round(wellbeing), 20, 95);
-
-    // next income is affected by wellbeing (stress hurts productivity)
-    let nextIncome = sim.income;
-    if (wellbeing < 40) nextIncome = Math.round(sim.income * 0.95);
-    if (wellbeing > 80) nextIncome = Math.round(sim.income * 1.02);
-
-    // score rules (simple & transparent)
-    // - emergency fund progress
-    // - keep debt going down
-    // - don't overspend wants too much
-    if (emergencySave > 0) scoreDelta += 5;
-    if (debtPayment > 0) scoreDelta += 5;
-    if (debt < sim.debt) scoreDelta += 5;
-    if (wantsPct <= 25) scoreDelta += 3;
-    if (cash >= 0) scoreDelta += 2;
-    if (debt > sim.debt + 1000) scoreDelta -= 10;
-
-    // "needs met" proxy: if needs budget exists and cash didn't go negative
-    if (needsPct >= 45 && cash >= 0) scoreDelta += 3;
-
-    const expenses = needs + wants;
-
-    const monthResult: MonthResult = {
-      month: sim.month,
-      income,
-      expenses,
-      debtPayment,
-      invest,
-      emergencySave,
-      eventText,
-      net: income - expenses - debtPayment - invest - emergencySave,
-      cashEnd: cash,
-      debtEnd: debt,
-      investEnd: investEnd,
-      emergencyEnd,
-      wellbeingEnd: wellbeing,
-      nextIncome,
+    const plan: LifeSimPlan = {
+      needsPct,
+      wantsPct,
+      debtPayPct,
+      emergencyPct,
+      investPct,
     };
 
-    const next: SimState = {
-      ...sim,
-      month: sim.month + 1,
-      cash,
-      debt,
-      invest: investEnd,
-      emergency: emergencyEnd,
-      wellbeing,
-      income: nextIncome,
-      score: sim.score + scoreDelta,
-      history: [...sim.history, monthResult],
-    };
-
-    setSim(next);
+    setSim(runLifeSimMonth(sim, plan).state);
   }
 
   const finished = sim && sim.month > 12;
