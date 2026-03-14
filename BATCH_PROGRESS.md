@@ -18,3 +18,17 @@
   - `npm run lint` ⛔ Projede batch dışı mevcut lint borçları var; bu batchte temizlenmedi.
 - Sıradaki batch:
   - Batch 2 — Öğrenme akışı ve görev tasarımı
+
+## Batch 2 — Öğrenme akışı ve görev tasarımı
+- Yapılan işler:
+  - Öğren ekranına önerilen öğrenme yolu ve ilerleme özeti ekledim.
+  - Kategori test tamamlama takibi ekleyip kartlarda "önerilen sıra" / "test tamam" durumlarını görünür yaptım.
+  - Quiz bitiş ekranına sıradaki önerilen kategori yönlendirmesi ekledim.
+  - Placeholder quiz tekrarlarını azaltmak için bütçe, psikoloji ve güvenlik için ayrı soru havuzları oluşturdum.
+- Ana değişen dosyalar:
+  - `src/LearnScreen.tsx`
+  - `src/learn/content.ts`
+- Doğrulama:
+  - `npm run build` ✅
+- Sıradaki batch:
+  - Batch 3 — UI/UX ve görsel anlatım

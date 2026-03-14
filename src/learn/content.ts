@@ -97,6 +97,17 @@ function generateInvestingQuiz(): LearnQuestion[] {
   return pool.map(shuffleChoices);
 }
 
+function generateBudgetQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'bu1', q: 'Acil durum fonunun temel amacı nedir?', choices: ['Daha çok alışveriş yapmak', 'Beklenmedik masrafta borca girmemek', 'Vergi ödememek', 'Kur farkı kovalamak'], correctIndex: 1, explain: 'Acil fon, şok giderlerde güvenlik yastığıdır.' },
+    { id: 'bu2', q: '50/30/20 kuralındaki %20 genelde ne içindir?', choices: ['Sadece tatil', 'Birikim ve borç kapatma', 'Sadece kira', 'Kripto al-sat'], correctIndex: 1, explain: 'Gelecek payı genelde birikim + borç azaltma içindir.' },
+    { id: 'bu3', q: 'Bütçe yaparken ilk sıraya genelde ne yazılır?', choices: ['Lüks harcamalar', 'Temel ihtiyaçlar', 'Sosyal medya abonelikleri', 'Hediyeler'], correctIndex: 1, explain: 'Kira, gıda, ulaşım gibi temel ihtiyaçlar önce gelir.' },
+    { id: 'bu4', q: 'Beklenmedik 8.000 TL masraf çıktıysa en sağlıklı ilk kaynak hangisi olabilir?', choices: ['Yeni kredi çekmek', 'Acil durum fonu', 'Asgari ödeme', 'Arkadaş gazı'], correctIndex: 1, explain: 'Acil fon bu tip şoklar içindir.' },
+    { id: 'bu5', q: 'Bütçede “istekler” bölümü neyi kapsar?', choices: ['Kira ve faturalar', 'Eğlence ve keyfi harcamalar', 'Vergi ve sigorta', 'Borç faizi'], correctIndex: 1, explain: 'İstekler, ertelenebilir/keyfi harcamalardır.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
 function generateCreditQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
     { id: 'c1', q: 'Asgari ödeme hakkında hangisi doğru?', choices: ['Borcu bitirir', 'Borcu uzatır ve faizi artırır', 'Sadece zenginlere özeldir', 'Hediye kazandırır'], correctIndex: 1, explain: 'Asgari ödeme borcu bitirmez.' },
@@ -114,11 +125,22 @@ function generateMacroQuiz(): LearnQuestion[] {
   return pool.map(shuffleChoices);
 }
 
-function generatePsychSafetyQuiz(): LearnQuestion[] {
+function generatePsychologyQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
-    { id: 'p1', q: 'FOMO yaşayan biri ne yapar?', choices: ['Sakin analiz yapar', 'Herkes kazanıyor diye acele alım yapar', 'Zararına hemen satar', 'Hiçbir şey yapmaz'], correctIndex: 1, explain: 'Fırsatı kaçırma korkusu hataya sürükler.' },
-    { id: 'p2', q: 'Sahte banka linkine tıklamak neye yol açabilir?', choices: ['Hediye kazanmak', 'Şifrelerin çalınması', 'İnternetin hızlanması', 'Telefon güncellemesi'], correctIndex: 1, explain: 'Oltalama ile hesap ele geçirilebilir.' },
-    { id: 'p3', q: 'Zarardaki pozisyonu “belki çıkar” diye bekletmek hangi hatadır?', choices: ['Analitik düşünme', 'Kayıptan kaçınma', 'Stratejik deha', 'Şans faktörü'], correctIndex: 1, explain: 'Zararı kabullenmemek kaybı büyütebilir.' },
+    { id: 'ps1', q: 'FOMO yaşayan biri en çok hangi riski alır?', choices: ['Planlı hareket etme', 'Aceleyle yüksekten alma', 'Daha düşük komisyon ödeme', 'Nakit biriktirme'], correctIndex: 1, explain: 'FOMO, plansız ve pahalı girişe yol açabilir.' },
+    { id: 'ps2', q: 'Kayıptan kaçınma hangi davranışta görülür?', choices: ['Zarar kesip plana dönmek', 'Zarardaki pozisyonu “belki döner” diye sonsuza dek tutmak', 'Portföyü çeşitlendirmek', 'Acil fon ayırmak'], correctIndex: 1, explain: 'Zararı kabullenmeyi ertelemek, kayıptan kaçınmadır.' },
+    { id: 'ps3', q: 'Yatırımda yoğun heyecan hissediyorsan en sağlıklı kısa aksiyon ne olabilir?', choices: ['Hemen tüm parayla girmek', '24 saat bekleyip planı tekrar okumak', 'Daha fazla borçlanmak', 'Sosyal medyayı referans almak'], correctIndex: 1, explain: 'Kısa bekleme, duygusal kararı filtreler.' },
+    { id: 'ps4', q: 'Başkasının kazancını görünce stratejiyi bozmak hangi probleme yakındır?', choices: ['Disiplin', 'Sürü psikolojisi', 'Likidite', 'Bileşik getiri'], correctIndex: 1, explain: 'Başkalarını kör taklit etmek sürü psikolojisidir.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateSafetyQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'sf1', q: 'Mesajla gelen banka linkinde en güvenli ilk adım nedir?', choices: ['Hemen tıklamak', 'Resmî uygulamadan doğrulamak', 'Şifreyi denemek', 'Linki arkadaşlara atmak'], correctIndex: 1, explain: 'Resmî kanal dışında şifre girilmez.' },
+    { id: 'sf2', q: '2FA neden önemlidir?', choices: ['Telefonu hızlandırır', 'Şifre çalınsa bile ek koruma sağlar', 'Komisyonu düşürür', 'Faizi azaltır'], correctIndex: 1, explain: 'İkinci doğrulama hesabı korur.' },
+    { id: 'sf3', q: 'Dolandırıcılıkta en sık kullanılan baskı tekniği nedir?', choices: ['Sakin açıklama', 'Aciliyet ve panik yaratma', 'Detaylı sözleşme', 'Uzun bekleme süresi'], correctIndex: 1, explain: 'Panik yaratıp düşünmeden hareket ettirmeye çalışırlar.' },
+    { id: 'sf4', q: 'Resmî kurumlar mesajla genelde ne istemez?', choices: ['Şifre/OTP kodu', 'Randevu teyidi', 'Bildirim okundu bilgisi', 'Çalışma saati bilgisi'], correctIndex: 0, explain: 'Şifre ve doğrulama kodu paylaşılmaz.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -214,7 +236,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: generateBasicsQuiz(), // Can be improved
+    quiz: generateBudgetQuiz(),
   },
   {
     id: 'credit',
@@ -431,7 +453,7 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         ],
       },
     ],
-    quiz: generatePsychSafetyQuiz(),
+    quiz: generatePsychologyQuiz(),
   },
   {
     id: 'safety',
@@ -454,6 +476,6 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         tips: ['Resmî kurumlar mesajla şifre istemez.'],
       },
     ],
-    quiz: generatePsychSafetyQuiz(),
+    quiz: generateSafetyQuiz(),
   },
 ];

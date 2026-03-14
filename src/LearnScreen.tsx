@@ -14,7 +14,7 @@ import {
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 
 import { LEARN_CATEGORIES } from './learn/content';
-import type { LearnCategory } from './learn/content';
+import type { LearnCategory, LearnCategoryId } from './learn/content';
 
 function buildItemIndex() {
   const map = new Map<string, { title: string; categoryId: string; categoryTitle: string }>();
@@ -69,9 +69,15 @@ function shuffleArray<T>(array: T[]): T[] {
   return out;
 }
 
+const LEARNING_PATH: LearnCategoryId[] = ['basics', 'budget', 'credit', 'investing', 'macro', 'psychology', 'safety'];
+
 export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
+  const [completedQuizIds, setCompletedQuizIds] = React.useState<LearnCategoryId[]>([]);
   const itemIndex = React.useMemo(() => buildItemIndex(), []);
+  const completedSet = React.useMemo(() => new Set(completedQuizIds), [completedQuizIds]);
+  const nextRecommendedId = LEARNING_PATH.find((id) => !completedSet.has(id));
+  const nextRecommended = nextRecommendedId ? categoryById(nextRecommendedId) : undefined;
 
   // Scroll to a focused item when we jump from quiz recommendations.
   // Must be top-level (hooks can't be conditional).
@@ -179,6 +185,22 @@ export function LearnScreen() {
               İpucu: Eksik kaldığın terimlere geri dönüp tekrar dene.
             </Typography>
           )}
+
+          <Box sx={{ mt: 2 }}>
+            <GlassCard>
+              <CardContent
+                onClick={() => {
+                  if (nextRecommended) setView({ kind: 'category', category: nextRecommended });
+                }}
+                sx={{ cursor: nextRecommended ? 'pointer' : 'default' }}
+              >
+                <Typography fontWeight={900}>🎯 Sıradaki öneri</Typography>
+                <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                  {nextRecommended ? `${nextRecommended.icon} ${nextRecommended.title} ile öğrenme akışına devam et.` : 'Temel öğrenme yolunu bitirdin. İstersen tekrar testi çözebilirsin.'}
+                </Typography>
+              </CardContent>
+            </GlassCard>
+          </Box>
         </Box>
       );
     }
@@ -252,6 +274,7 @@ export function LearnScreen() {
                       const nextIndex = view.index + 1;
                       if (nextIndex >= view.total) {
                         // End of quiz
+                        setCompletedQuizIds((prev) => (prev.includes(c.id) ? prev : [...prev, c.id]));
                         setView({
                           ...view,
                           index: nextIndex,
@@ -420,6 +443,23 @@ export function LearnScreen() {
         Kartlara tıkla → kategori içindeki terimler ve “taktik/ipuçları” açılır.
       </Typography>
 
+      <GlassCard>
+        <CardContent>
+          <Typography fontWeight={950}>Öğrenme yolu</Typography>
+          <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+            Önerilen sıra: Temeller → Bütçe → Kredi → Yatırım → Makro → Psikoloji → Güvenlik
+          </Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+            <Chip size="small" label={`Tamamlanan test: ${completedQuizIds.length}/${LEARNING_PATH.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+            {nextRecommended ? (
+              <Chip size="small" label={`Sıradaki: ${nextRecommended.title}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
+            ) : (
+              <Chip size="small" label="Ana öğrenme yolu tamamlandı" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} />
+            )}
+          </Stack>
+        </CardContent>
+      </GlassCard>
+
       <Stack spacing={1.5} sx={{ mt: 2 }}>
         {LEARN_CATEGORIES.map((c) => (
           <GlassCard key={c.id}>
@@ -438,9 +478,11 @@ export function LearnScreen() {
                   <Stack direction="row" spacing={1} sx={{ mt: 0.75 }}>
                     <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
                     <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                    {completedSet.has(c.id) ? <Chip size="small" label="Test tamam" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} /> : null}
+                    {nextRecommendedId === c.id ? <Chip size="small" label="Önerilen sıra" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} /> : null}
                   </Stack>
                 </Box>
-                <Chip size="small" label="AÇ" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                <Chip size="small" label={completedSet.has(c.id) ? 'TEKRAR AÇ' : 'AÇ'} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
               </Stack>
             </CardContent>
           </GlassCard>
