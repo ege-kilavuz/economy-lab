@@ -31,6 +31,10 @@ export default function App() {
   const [activeTags, setActiveTags] = React.useState<string[]>([]);
 
   const title = tab === 'learn' ? 'Öğren' : playView === 'sims' ? 'Simülasyonlar' : 'Oyun';
+  const playSubtitle =
+    playView === 'sims'
+      ? 'Kısa laboratuvarlar: tek kavrama odaklan, sonucu hemen gör.'
+      : '30 günlük telefon akışı: bütçe, borç, moral ve yatırım aynı yerde.';
 
   const pushEvent = React.useCallback((msg: string) => {
     setEvents((prev) => [msg, ...prev].slice(0, 12));
@@ -132,6 +136,17 @@ export default function App() {
               <LearnScreen />
             ) : (
               <>
+                <Box sx={{ mb: 1.5, borderRadius: 3, border: '1px solid rgba(255,255,255,0.08)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.5 }}>
+                  <Typography fontWeight={900}>Oyna modu</Typography>
+                  <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.78 }}>
+                    {playSubtitle}
+                  </Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                    <Chip size="small" label={playView === 'sims' ? 'Hızlı mod aktif' : 'Uzun mod aktif'} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
+                    <Chip size="small" label={summary ? `Aktif gün: ${summary.day}` : 'Henüz aktif oyun yok'} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                  </Stack>
+                </Box>
+
                 <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
                   <Button
                     variant={playView === 'sims' ? 'contained' : 'outlined'}
