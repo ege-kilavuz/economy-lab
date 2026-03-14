@@ -16,6 +16,7 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnCategoryId } from './learn/content';
 import { LEARNING_SCENARIOS } from './learn/scenarios';
+import { loadProgress, markQuizCompleted } from './ui/progress';
 
 function buildItemIndex() {
   const map = new Map<string, { title: string; categoryId: string; categoryTitle: string }>();
@@ -74,7 +75,7 @@ const LEARNING_PATH: LearnCategoryId[] = ['basics', 'budget', 'credit', 'investi
 
 export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
-  const [completedQuizIds, setCompletedQuizIds] = React.useState<LearnCategoryId[]>([]);
+  const [completedQuizIds, setCompletedQuizIds] = React.useState<LearnCategoryId[]>(() => loadProgress().completedQuizIds);
   const itemIndex = React.useMemo(() => buildItemIndex(), []);
   const completedSet = React.useMemo(() => new Set(completedQuizIds), [completedQuizIds]);
   const nextRecommendedId = LEARNING_PATH.find((id) => !completedSet.has(id));
@@ -275,7 +276,11 @@ export function LearnScreen() {
                       const nextIndex = view.index + 1;
                       if (nextIndex >= view.total) {
                         // End of quiz
-                        setCompletedQuizIds((prev) => (prev.includes(c.id) ? prev : [...prev, c.id]));
+                        setCompletedQuizIds((prev) => {
+                          const next = prev.includes(c.id) ? prev : [...prev, c.id];
+                          markQuizCompleted(c.id);
+                          return next;
+                        });
                         setView({
                           ...view,
                           index: nextIndex,
@@ -452,6 +457,11 @@ export function LearnScreen() {
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
             <Chip size="small" label={`Tamamlanan test: ${completedQuizIds.length}/${LEARNING_PATH.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+            <Chip
+              size="small"
+              label={completedQuizIds.length >= 3 ? 'Geri bildirim: ritim iyi gidiyor' : 'Geri bildirim: ilk 3 testi bitir'}
+              sx={{ bgcolor: completedQuizIds.length >= 3 ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.18)', color: 'white' }}
+            />
             {nextRecommended ? (
               <Chip size="small" label={`Sıradaki: ${nextRecommended.title}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
             ) : (

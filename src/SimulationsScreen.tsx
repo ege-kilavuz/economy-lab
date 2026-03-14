@@ -5,6 +5,7 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { InflationModule } from './modules/inflation';
 import { InterestModule } from './modules/interest';
 import { CentralBankModule } from './modules/centralBank';
+import { loadProgress, markSimulationOpened } from './ui/progress';
 
 type SimId = 'inflation' | 'interest' | 'central';
 
@@ -101,8 +102,14 @@ function SimCard({ sim, onOpen }: { sim: SimMeta; onOpen: () => void }) {
 
 export function SimulationsScreen() {
   const [selected, setSelected] = React.useState<SimId | null>(null);
+  const [progress, setProgress] = React.useState(() => loadProgress());
 
   const activeMeta = SIMS.find((s) => s.id === selected);
+
+  function openSimulation(id: SimId) {
+    setSelected(id);
+    setProgress(markSimulationOpened(id));
+  }
 
   if (selected) {
     return (
@@ -131,6 +138,14 @@ export function SimulationsScreen() {
       <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(96,165,250,0.12)', color: 'white', border: '1px solid rgba(96,165,250,0.24)' }}>
         <CardContent>
           <Typography fontWeight={950}>Hızlı seçim rehberi</Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+            <Chip size="small" label={`Açılan laboratuvar: ${progress.openedSimulationIds.length}/${SIMS.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+            <Chip
+              size="small"
+              label={progress.lastPlayedAt ? `Son oyun: ${new Date(progress.lastPlayedAt).toLocaleDateString('tr-TR')}` : 'Henüz oyun açılmadı'}
+              sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }}
+            />
+          </Stack>
           <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.88 }}>
             Yeni başlayan biri için önce Enflasyon → Faiz & Kredi → Merkez Bankası sırası en okunur akış oluyor.
           </Typography>
@@ -144,7 +159,7 @@ export function SimulationsScreen() {
 
       <Stack spacing={1.75} sx={{ mt: 2 }}>
         {SIMS.map((sim) => (
-          <SimCard key={sim.id} sim={sim} onOpen={() => setSelected(sim.id)} />
+          <SimCard key={sim.id} sim={sim} onOpen={() => openSimulation(sim.id)} />
         ))}
       </Stack>
     </Box>
