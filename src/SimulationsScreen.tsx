@@ -166,7 +166,7 @@ export function SimulationsScreen() {
     <Box sx={{ pt: 1 }}>
       <Typography variant="subtitle1" fontWeight={900}>🎯 Simülasyonlar</Typography>
       <Typography variant="body2" sx={{ opacity: 0.75, mt: 0.5 }}>
-        Hızlı, öğretmen sunumuna uygun mini laboratuvarlar.
+        Finansal okuryazarlık ve Merkez Bankası temalarını kısa, sınıf içi kullanıma uygun mini laboratuvarlarla gösterir.
       </Typography>
 
       <Card sx={{ mt: 2, borderRadius: 4, bgcolor: 'rgba(96,165,250,0.12)', color: 'white', border: '1px solid rgba(96,165,250,0.24)' }}>
@@ -188,7 +188,7 @@ export function SimulationsScreen() {
             />
           </Stack>
           <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.88 }}>
-            Yeni başlayan biri için önce Enflasyon → Faiz & Kredi → Merkez Bankası sırası en okunur akış oluyor.
+            Yeni başlayan biri için önce alım gücü ve bütçe mantığı, sonra kredi/yatırım, en sonda Merkez Bankası etkisi en okunur akış oluyor.
           </Typography>
           {teacherMode ? (
             <Typography variant="body2" sx={{ mt: 0.75, opacity: 0.82 }}>

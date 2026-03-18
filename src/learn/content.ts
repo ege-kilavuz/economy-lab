@@ -18,6 +18,11 @@ export type LearnItem = {
   qa?: { q: string; a: string }[];
   tips?: string[];
   warning?: string;
+  video?: {
+    title: string;
+    url: string;
+    source?: string;
+  };
 };
 
 export type LearnQuestion = {
@@ -72,16 +77,16 @@ function generateBasicsQuiz(): LearnQuestion[] {
 
 function generateStockPatternsQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
-    { id: 's1', q: 'Grafikte fitil (iğne) neyi gösterir?', choices: ['Hata var', 'Fiyat oraya gitti ama tutunamadı', 'Piyasa kapandı', 'Vergi oranı'], correctIndex: 1, explain: 'Fitil, reddedilen fiyatı anlatır.' },
-    { id: 's2', q: 'Doji görürsen en mantıklı hareket?', choices: ['Hemen alım yapmak', 'Kararsızlık için teyit beklemek', 'Tüm parayı yatırmak', 'Habere bakmamak'], correctIndex: 1, explain: 'Doji kararsızlık göstergesidir.' },
-    { id: 's3', q: 'Marubozu mumu ne söyler?', choices: ['Piyasa kararsız', 'Trend çok güçlü', 'Hacim düştü', 'Borsa tatil'], correctIndex: 1, explain: 'Fitilsiz gövde güçlü yönü gösterir.' },
-    { id: 's4', q: 'Çekiç mumunda alt fitil neden uzundur?', choices: ['Fiyat yanlış girildi', 'Satış geldi ama alıcılar toparladı', 'Zenginler öyle istedi', 'Hacim düşük'], correctIndex: 1, explain: 'Düşüşten güçlü dönüş sinyali olabilir.' },
-    { id: 's5', q: 'Trend ne demektir?', choices: ['Moda hisse', 'Fiyatın genel yönü', 'Hisse sayısı', 'Şirket adı'], correctIndex: 1, explain: 'Genel gidiş yönünü anlatır.' },
-    { id: 's6', q: 'Shooting Star nerede tehlike işareti olur?', choices: ['Düşüş dibinde', 'Yükseliş sonunda/dirençte', 'Yatay piyasada', 'Hafta başında'], correctIndex: 1, explain: 'Yukarıda satış baskısını gösterir.' },
-    { id: 's7', q: 'Yeşil mum neyi gösterir?', choices: ['Dolar kurunu', 'Kapanış açılıştan yüksek', 'Şirket kârı', 'Zarar'], correctIndex: 1, explain: 'Yeşil yükseliş demektir.' },
-    { id: 's8', q: 'Gravestone Doji ne mesaj verir?', choices: ['Her şey harika', 'Yukarı deneme reddedildi', 'Yeni rekor gelecek', 'Piyasa çok neşeli'], correctIndex: 1, explain: 'Üst fitil uzunsa zayıflık olabilir.' },
-    { id: 's9', q: 'Mum grafikleri neden kullanılır?', choices: ['Renkli diye', 'Fiyatı ve psikolojiyi hızlı okumak için', 'Matematik sorusu için', 'Daha pahalı olduğu için'], correctIndex: 1, explain: 'Fiyat hareketini özetler.' },
-    { id: 's10', q: 'Bir mumu doğru yorumlamak için ne gerekir?', choices: ['Sadece rengine bakmak', 'Bağlamı görmek (önceki mumlar/seviyeler)', 'Hemen işlem açmak', 'Arkadaşa sormak'], correctIndex: 1, explain: 'Tek mum tek başına yeterli olmaz.' },
+    { id: 's1', q: 'Hisse senedi alırken aslında neye ortak olursun?', choices: ['Bankaya', 'Şirkete', 'Devlete', 'Markete'], correctIndex: 1, explain: 'Hisse senedi, şirkete ortaklık payını temsil eder.' },
+    { id: 's2', q: 'Risk ve getiri ilişkisi genelde nasıldır?', choices: ['Yüksek getiri hep risksizdir', 'Risk arttıkça olası getiri de artabilir', 'Hiç ilişki yoktur', 'Sadece kriptoda vardır'], correctIndex: 1, explain: 'Yüksek getiri beklentisi çoğu zaman daha yüksek risk taşır.' },
+    { id: 's3', q: 'Borsada çeşitlendirme neden yapılır?', choices: ['Takibi zorlaştırmak için', 'Tek bir riske bağlı kalmamak için', 'Daha çok işlem ücreti ödemek için', 'Her gün al-sat yapmak için'], correctIndex: 1, explain: 'Çeşitlendirme, riskin tek bir varlıkta toplanmasını azaltır.' },
+    { id: 's4', q: 'Halka arz neyi ifade eder?', choices: ['Şirketin borcunu silmesini', 'Şirket paylarının yatırımcılara sunulmasını', 'Bankanın faiz indirmesini', 'Devletin vergi toplamasını'], correctIndex: 1, explain: 'Halka arzda şirket payları yatırımcılara açılır.' },
+    { id: 's5', q: 'Bir hisseye sadece sosyal medyada konuşuluyor diye girmek hangi riski artırır?', choices: ['Disiplini güçlendirir', 'Sürü psikolojisini ve plansız alımı artırır', 'Getiriyi garanti eder', 'Vergiyi azaltır'], correctIndex: 1, explain: 'Popülerlik tek başına sağlıklı yatırım gerekçesi değildir.' },
+    { id: 's6', q: 'Borsada ilk bakılması gerekenlerden biri hangisidir?', choices: ['Sadece forum yorumu', 'Şirket ve risk/getiri dengesi', 'Sadece logo rengi', 'Arkadaş tavsiyesi'], correctIndex: 1, explain: 'Karar verirken şirketin yapısı ve risk-getiri dengesi değerlendirilmelidir.' },
+    { id: 's7', q: 'Tek hisseye tüm parayı koymanın temel sakıncası nedir?', choices: ['Getiriyi düşürmesi', 'Riski tek noktada toplaması', 'Vergiyi otomatik artırması', 'Borsayı kapatması'], correctIndex: 1, explain: 'Tek varlığa yoğunlaşmak zarar ihtimalini büyütebilir.' },
+    { id: 's8', q: 'Yüksek getiri beklentisi olan hisse veya araçlar için hangisi doğrudur?', choices: ['Kesin kazandırır', 'Yüksek risk de barındırabilir', 'Asla değer kaybetmez', 'Sadece uzmanlar zarar eder'], correctIndex: 1, explain: 'Beklenen getiri arttıkça belirsizlik ve oynaklık da artabilir.' },
+    { id: 's9', q: 'Borsada bilinçli yatırımcı ne yapar?', choices: ['Tek söylentiyle karar verir', 'Bilgi toplar, riski değerlendirir', 'Her gün panikle işlem açar', 'Borçla sürekli alım yapar'], correctIndex: 1, explain: 'Bilinçli yatırım, veri ve planla hareket etmeyi gerektirir.' },
+    { id: 's10', q: 'Bir yatırım aracını değerlendirirken geçmiş performans için en sağlıklı yaklaşım hangisi?', choices: ['Geçmiş hep geleceği garanti eder', 'Geçmiş veri fikir verir ama garanti sağlamaz', 'Geçmişe hiç bakılmaz', 'Sadece son güne bakılır'], correctIndex: 1, explain: 'Geçmiş performans bilgi sağlar ama kesin sonuç sözü vermez.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -137,10 +142,11 @@ function generatePsychologyQuiz(): LearnQuestion[] {
 
 function generateSafetyQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
-    { id: 'sf1', q: 'Mesajla gelen banka linkinde en güvenli ilk adım nedir?', choices: ['Hemen tıklamak', 'Resmî uygulamadan doğrulamak', 'Şifreyi denemek', 'Linki arkadaşlara atmak'], correctIndex: 1, explain: 'Resmî kanal dışında şifre girilmez.' },
-    { id: 'sf2', q: '2FA neden önemlidir?', choices: ['Telefonu hızlandırır', 'Şifre çalınsa bile ek koruma sağlar', 'Komisyonu düşürür', 'Faizi azaltır'], correctIndex: 1, explain: 'İkinci doğrulama hesabı korur.' },
-    { id: 'sf3', q: 'Dolandırıcılıkta en sık kullanılan baskı tekniği nedir?', choices: ['Sakin açıklama', 'Aciliyet ve panik yaratma', 'Detaylı sözleşme', 'Uzun bekleme süresi'], correctIndex: 1, explain: 'Panik yaratıp düşünmeden hareket ettirmeye çalışırlar.' },
-    { id: 'sf4', q: 'Resmî kurumlar mesajla genelde ne istemez?', choices: ['Şifre/OTP kodu', 'Randevu teyidi', 'Bildirim okundu bilgisi', 'Çalışma saati bilgisi'], correctIndex: 0, explain: 'Şifre ve doğrulama kodu paylaşılmaz.' },
+    { id: 'sf1', q: 'Dijital bankacılıkta en güvenli giriş yolu hangisidir?', choices: ['Mesajla gelen link', 'Bankanın resmî uygulaması veya adresi', 'Sosyal medya DM’si', 'Forumdaki kısayol'], correctIndex: 1, explain: 'Banka işlemleri yalnızca resmî kanal üzerinden yapılmalıdır.' },
+    { id: 'sf2', q: 'Banka kartı ve hesap güvenliğinde 2FA neden önemlidir?', choices: ['Telefonu hızlandırır', 'Şifre ele geçse bile ek doğrulama sağlar', 'Komisyonu düşürür', 'Faizi siler'], correctIndex: 1, explain: 'Ek doğrulama, hesabın ele geçirilmesini zorlaştırır.' },
+    { id: 'sf3', q: 'FAST/EFT/havale işlemi yaparken en kritik kontrol nedir?', choices: ['Emoji seçmek', 'Alıcı bilgilerini doğrulamak', 'Ekran parlaklığını artırmak', 'Bildirim sesini açmak'], correctIndex: 1, explain: 'Yanlış alıcıya gönderim riskini azaltmak için alıcı bilgileri kontrol edilmelidir.' },
+    { id: 'sf4', q: 'Resmî kurumlar mesajla genelde ne istemez?', choices: ['Şifre/OTP kodu', 'Genel duyuru okumanı', 'Randevu teyidi', 'Çalışma saati bilgisi'], correctIndex: 0, explain: 'Şifre ve doğrulama kodu paylaşılmaz.' },
+    { id: 'sf5', q: 'Kredi kartı borcunu yönetirken en sağlıklı yaklaşım hangisidir?', choices: ['Sadece minimumu düşünmek', 'Harcamayı takip edip ödeme planı yapmak', 'Şifreyi paylaşmak', 'Sürekli yeni kart açmak'], correctIndex: 1, explain: 'Kart kullanımı ödeme planı ve harcama takibiyle sağlıklı yönetilir.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -150,8 +156,8 @@ function generateSafetyQuiz(): LearnQuestion[] {
 export const LEARN_CATEGORIES: LearnCategory[] = [
   {
     id: 'basics',
-    title: 'TEMELLER & FAİZ',
-    subtitle: 'Para nasıl erir, nasıl büyür?',
+    title: 'FİNANSAL OKURYAZARLIK TEMELLERİ',
+    subtitle: 'Para, alım gücü, faiz ve likiditeyi tanı.',
     icon: '🧠',
     items: [
       {
@@ -169,6 +175,11 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           { q: 'Reel gelir nedir?', a: 'Paranın satın alma gücüdür.' },
         ],
         tips: ['Alım gücünü korumak için tasarruf + bilinçli yatırım önemlidir.'],
+        video: {
+          title: 'Ekonomiyi Sağlıklı Yorumlama - Enflasyon',
+          url: 'https://finansalokuryazarlik.gov.tr/i/ekonomiyi-saglikli-yorumlama-enflasyon',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
         id: 'interest-basic',
@@ -220,6 +231,11 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           { q: 'Bu oranlar sabit mi?', a: 'Değil; ama birikimi sıfırlama.' },
         ],
         tips: ['Oranları durumuna göre esnetebilirsin; ama birikimi sıfırlama.'],
+        video: {
+          title: 'Bütçe Nasıl Oluşturulur?',
+          url: 'https://finansalokuryazarlik.gov.tr/i/butce-nasil-olusturulur',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
         id: 'emergency-fund',
@@ -234,14 +250,19 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         qa: [
           { q: 'Acil fon ne işe yarar?', a: 'Beklenmedik masrafları borçsuz kapatır.' },
         ],
+        video: {
+          title: 'Acil Durum Fonu',
+          url: 'https://finansalokuryazarlik.gov.tr/i/acil-durum-fonu',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateBudgetQuiz(),
   },
   {
     id: 'credit',
-    title: 'KREDİ & KARTLAR',
-    subtitle: 'Bankalarla aranı iyi tut.',
+    title: 'KREDİ',
+    subtitle: 'Borçlanma maliyeti, ödeme disiplini ve kredi notu.',
     icon: '💳',
     items: [
       {
@@ -257,6 +278,11 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           { q: 'Asgari ödeme borcu bitirir mi?', a: 'Hayır, borcu uzatır.' },
         ],
         tips: ['Mümkünse kart borcunu tamamen kapat.'],
+        video: {
+          title: 'Kredi Kartı Kullanımı ve Faizi',
+          url: 'https://finansalokuryazarlik.gov.tr/i/kredi-karti-kullanimi-ve-faizi',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
         id: 'credit-score',
@@ -270,14 +296,19 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         qa: [
           { q: 'Notu ne yükseltir?', a: 'Düzenli ve zamanında ödeme.' },
         ],
+        video: {
+          title: 'Kredi Notu',
+          url: 'https://finansalokuryazarlik.gov.tr/i/kredi-notu',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateCreditQuiz(),
   },
   {
     id: 'investing',
-    title: 'YATIRIM DÜNYASI',
-    subtitle: 'Para senin için çalışsın.',
+    title: 'YATIRIM',
+    subtitle: 'Getiri, risk ve düzenli birikim mantığı.',
     icon: '🚀',
     items: [
       {
@@ -293,6 +324,11 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           { q: 'DCA’nın amacı ne?', a: 'Fiyat stresini azaltmak.' },
         ],
         tips: ['Stresten kaçınmak için düzenli plan iş görür.'],
+        video: {
+          title: 'Nominal Getiri ve Reel Getiri',
+          url: 'https://finansalokuryazarlik.gov.tr/i/nominal-getiri-ve-reel-getiri',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
         id: 'diversification',
@@ -306,115 +342,137 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         qa: [
           { q: 'Çeşitlendirme ne sağlar?', a: 'Riski dağıtır.' },
         ],
+        video: {
+          title: 'Yatırım Fonları',
+          url: 'https://finansalokuryazarlik.gov.tr/i/yatirim-fonlari',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateInvestingQuiz(),
   },
   {
     id: 'stock-patterns',
-    title: 'MUMLAR & GRAFİKLER',
-    subtitle: 'Grafik okuma rehberi.',
+    title: 'BORSA',
+    subtitle: 'Hisse senedi, risk-getiri ve çeşitlendirme.',
     icon: '🕯️',
     items: [
       {
-        id: 'candle-intro',
-        title: 'MUM ÇUBUKLARI NEDİR?',
-        short: 'Fiyatın kısa özetini gösterir.',
+        id: 'stock-basic',
+        title: 'HİSSE SENEDİ NEDİR?',
+        short: 'Bir şirkete ortaklık payı.',
         body: [
-          'Mumlar, belirli bir sürede fiyatın açılış ve kapanışını gösterir.',
-          'Gövde ana hareketi, fitiller ise gidip geri dönen fiyatları anlatır.',
+          'Hisse senedi, bir şirketin paylarını temsil eder; alan kişi o şirkete ortak olur.',
+          'Bu yüzden hisse yatırımı yalnızca fiyat hareketi değil, şirketin geleceğiyle de ilgilidir.',
         ],
-        scenario: 'Bir mumda fiyat 10’dan 12’ye çıktıysa gövde büyür; 13’e gidip 12’ye dönerse üst fitil oluşur.',
+        scenario: 'Bir şirket büyür ve kârlılığını artırırsa yatırımcı ilgisi artabilir; ama her şirkette risk de vardır.',
         qa: [
-          { q: 'Fitil neyi anlatır?', a: 'Gidip geri dönen fiyatları.' },
+          { q: 'Hisse almak ne demektir?', a: 'Bir şirkete ortak olmak demektir.' },
         ],
+        video: {
+          title: 'Borsada Hisse Senedi İşlemleri',
+          url: 'https://finansalokuryazarlik.gov.tr/i/borsada-hisse-senedi-islemleri',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
-        id: 'doji-deep',
-        title: 'DOJİ',
-        short: 'Kararsızlık işareti.',
+        id: 'risk-return',
+        title: 'RİSK VE GETİRİ DENGESİ',
+        short: 'Yüksek getiri beklentisi, yüksek risk de taşıyabilir.',
         body: [
-          'Açılış ve kapanış çok yakındır. Artı (+) gibi görünür.',
-          'Alıcılar ve satıcılar dengededir. Tek başına kesin sinyal değildir.',
+          'Borsada daha yüksek getiri beklentisi genelde daha yüksek oynaklık ve belirsizlik anlamına gelir.',
+          'Bu yüzden sadece “çok kazandırır” cümlesiyle değil, risk tarafıyla birlikte düşünmek gerekir.',
         ],
-        scenario: 'Fiyat gün boyu gidip geldi ama kapanış açılışa çok yakınsa doji oluşur.',
+        scenario: 'Bir hisse kısa sürede çok yükselmiş olabilir; ama aynı hızla düşme riski de taşıyabilir.',
         qa: [
-          { q: 'Doji tek başına yeter mi?', a: 'Hayır, teyit gerekir.' },
+          { q: 'Yüksek getiri beklentisi neyi artırabilir?', a: 'Riski ve fiyat dalgalanmasını artırabilir.' },
         ],
+        video: {
+          title: 'Risk ve Getiri Dengesi',
+          url: 'https://finansalokuryazarlik.gov.tr/i/risk-ve-getiri-dengesi',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
-        id: 'hammer-deep',
-        title: 'ÇEKİÇ (HAMMER)',
-        short: 'Düşüşten dönüş ihtimali.',
+        id: 'diversification-borsa',
+        title: 'ÇEŞİTLENDİRME',
+        short: 'Tek hisseye bağlı kalma.',
         body: [
-          'Küçük gövde + altta uzun fitil.',
-          'Fiyat düşmüş ama alıcılar toparlamıştır. Destekte görülürse dikkat çekebilir.',
+          'Tüm parayı tek şirkete veya tek araca koymak riskin tek noktada toplanmasına yol açar.',
+          'Farklı şirketlere ve farklı yatırım araçlarına yayılmak, zararı sınırlamaya yardımcı olabilir.',
         ],
-        scenario: 'Fiyat 100’den 90’a sarktı ama gün sonu 98’e döndü → alt fitil uzar.',
+        scenario: 'Sadece bir hisse düşerse tüm portföy etkilenir; birkaç farklı araç varsa darbe daha sınırlı kalabilir.',
         qa: [
-          { q: 'Alt fitil uzunsa ne olabilir?', a: 'Dönüş ihtimali artar.' },
+          { q: 'Çeşitlendirme ne sağlar?', a: 'Tek bir varlığa bağlı riski azaltmaya yardımcı olur.' },
         ],
+        video: {
+          title: 'Yatırımda Çeşitlendirme Nedir?',
+          url: 'https://finansalokuryazarlik.gov.tr/i/yatirimda-cesitlendirme-nedir',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
       {
-        id: 'shooting-star-deep',
-        title: 'SHOOTING STAR',
-        short: 'Yükselişte yorulma işareti.',
+        id: 'ipo-basic',
+        title: 'HALKA ARZ',
+        short: 'Şirket paylarının yatırımcıya sunulması.',
         body: [
-          'Üstte uzun fitil, küçük gövde.',
-          'Yükseliş sonrası görülürse satış baskısını gösterebilir.',
+          'Halka arz, bir şirketin paylarını yatırımcıların alıp satabileceği şekilde piyasaya sunmasıdır.',
+          'Halka arz ilgi çekebilir; ama her halka arz otomatik olarak kazanç anlamına gelmez.',
         ],
-        scenario: 'Fiyat 100’den 115’e çıktı ama 102’ye indi → üst fitil uzun kalır.',
+        scenario: 'Yeni halka arz olan bir şirket yoğun ilgi görebilir; yine de şirketi ve riskleri anlamadan karar vermek sağlıklı değildir.',
         qa: [
-          { q: 'Nerede daha anlamlıdır?', a: 'Yükseliş sonunda.' },
+          { q: 'Halka arz ne demektir?', a: 'Şirket paylarının yatırımcılara açılması demektir.' },
         ],
-      },
-      {
-        id: 'marubozu-deep',
-        title: 'MARUBOZU',
-        short: 'Tek taraf baskın.',
-        body: [
-          'Fitil çok azdır; gövde güçlüdür.',
-          'Yeşilse alıcılar, kırmızıysa satıcılar baskındır.',
-        ],
-        scenario: 'Gün boyu sürekli yükselip yüksekten kapanırsa marubozu oluşur.',
-        qa: [
-          { q: 'Marubozu ne anlatır?', a: 'Tek taraf güçlüdür.' },
-        ],
+        video: {
+          title: 'Halka Arz',
+          url: 'https://finansalokuryazarlik.gov.tr/i/halka-arz',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateStockPatternsQuiz(),
   },
   {
     id: 'macro',
-    title: 'EKONOMİ VE MERKEZ BANKASI',
-    subtitle: 'Büyük resme odaklan.',
+    title: 'MERKEZ BANKASI & EKONOMİ',
+    subtitle: 'Merkez Bankasının rolü ve büyük resim.',
     icon: '🌍',
     items: [
       {
         id: 'cb-faiz',
-        title: 'MERKEZ BANKASI VE FAİZ',
-        short: 'Ekonomiyi soğutma/ısıtma düğmesi.',
+        title: 'MERKEZ BANKASI NEDİR?',
+        short: 'Bankaların bankası; ticari banka gibi çalışmaz.',
         body: [
-          'Faiz artarsa kredi almak pahalanır, harcama azalır.',
-          'Amaç çoğu zaman enflasyonu düşürmektir.',
+          'Merkez Bankası, bireylerin gidip hesap açtığı veya kredi kullandığı bir banka değildir; para politikasını şekillendiren temel kurumdur.',
+          'Banknot basmak, rezervleri yönetmek ve fiyat istikrarı için politika araçlarını kullanmak gibi görevleri vardır.',
         ],
-        scenario: 'Faiz yükselince kredi çekmek zorlaşır; insanlar harcamayı azaltır.',
+        scenario: 'Merkez Bankası doğrudan sana kredi vermez; ama aldığı kararlar kredi maliyetini ve ekonomideki dengeleri etkileyebilir.',
         qa: [
-          { q: 'Faiz artarsa ne olur?', a: 'Kredi pahalanır, harcama azalır.' },
+          { q: 'Merkez Bankasından kredi alabilir miyim?', a: 'Hayır; Merkez Bankası ticari banka gibi çalışmaz.' },
         ],
+        video: {
+          title: 'Merkez Bankası',
+          url: 'https://herkesicin.tcmb.gov.tr/wps/wcm/connect/ekonomi/hie/kategori?kategori=banka',
+          source: 'herkesicin.tcmb.gov.tr',
+        },
       },
       {
         id: 'growth-gdp',
-        title: 'EKONOMİK BÜYÜME (GSYH)',
-        short: 'Ülkenin toplam üretimi.',
+        title: 'POLİTİKA FAİZİ VE EKONOMİ',
+        short: 'Faiz kararı kredi, talep ve enflasyonu etkileyebilir.',
         body: [
-          'GSYH, bir ülkenin bir yılda ürettiği toplam değer demektir.',
-          'Büyüme artarsa iş fırsatları ve gelirler artabilir.',
+          'Politika faizindeki değişimler kredi maliyetleri, harcama eğilimi ve tasarruf davranışı üzerinde etkili olabilir.',
+          'Amaç çoğu zaman fiyat istikrarına katkı sağlamak ve ekonomideki aşırı ısınma veya zayıflama risklerini dengelemektir.',
         ],
-        scenario: 'Yeni fabrikalar açılırsa üretim artar, daha çok kişi iş bulabilir.',
+        scenario: 'Faiz yükselince kredi daha pahalı hâle gelebilir; bu da bazı harcamaların ertelenmesine yol açabilir.',
         qa: [
-          { q: 'Büyüme artınca ne olabilir?', a: 'İş ve gelir artabilir.' },
+          { q: 'Faiz kararı neden önemlidir?', a: 'Kredi maliyetini, talebi ve enflasyon görünümünü etkileyebilir.' },
         ],
+        video: {
+          title: 'Ekonomiyi Sağlıklı Yorumlama - Faiz Oranları',
+          url: 'https://finansalokuryazarlik.gov.tr/i/ekonomiyi-saglikli-yorumlama-faiz-oranlari',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateMacroQuiz(),
@@ -457,23 +515,64 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
   },
   {
     id: 'safety',
-    title: 'GÜVENLİK',
-    subtitle: 'Paranı çaldırma.',
+    title: 'BANKACILIK & DİJİTAL GÜVENLİK',
+    subtitle: 'Kartlar, transferler ve güvenli dijital işlemler.',
     icon: '🛡️',
     items: [
       {
-        id: 'phishing-deep',
-        title: 'OLTALAMA (PHISHING)',
-        short: 'Sahte link tuzağı.',
+        id: 'banking-basic',
+        title: 'BANKACILIK TEMELLERİ',
+        short: 'Kartlar, transferler ve dijital bankacılık günlük hayatın parçası.',
         body: [
-          'Dolandırıcılar banka/kargo gibi davranıp sahte link gönderir.',
-          'Şifre girersen hesap ele geçirilir. 2FA mutlaka açık olsun.',
+          'Bankalar tasarrufları değerlendirmek, ödeme yapmak ve para transferi gibi işlemleri kolaylaştırır.',
+          'Banka kartı, kredi kartı, para transferi ve mobil bankacılık günlük finans yönetiminin temel parçalarıdır.',
         ],
-        scenario: '“Kargonuz yolda” linki geldi; resmi uygulamadan kontrol et, linke tıklama.',
+        scenario: 'Fatura öderken, para transferi yaparken ve hesap hareketlerini izlerken bankacılık araçlarını kullanırsın.',
         qa: [
-          { q: 'Güvenli hareket ne?', a: 'Resmî uygulamadan kontrol etmek.' },
+          { q: 'Bankacılık neyi kolaylaştırır?', a: 'Ödeme, transfer ve hesap yönetimini kolaylaştırır.' },
         ],
-        tips: ['Resmî kurumlar mesajla şifre istemez.'],
+        video: {
+          title: 'Bankacılık Sistemi',
+          url: 'https://finansalokuryazarlik.gov.tr/i/bankacilik-sistemi',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
+      },
+      {
+        id: 'digital-banking-safety',
+        title: 'DİJİTAL BANKACILIKTA GÜVENLİK',
+        short: 'Sahte linke değil, resmî kanala git.',
+        body: [
+          'Dolandırıcılar banka veya kurum gibi davranıp sahte link gönderebilir.',
+          'İşlem yaparken sadece bankanın resmî uygulamasını veya doğrulanmış adresini kullanmak gerekir.',
+        ],
+        scenario: '“Hesabınız askıya alındı” mesajı gelirse linke tıklamak yerine bankanın uygulamasını açıp durumu oradan kontrol et.',
+        qa: [
+          { q: 'Güvenli ilk adım ne?', a: 'Resmî uygulama veya adres üzerinden kontrol etmektir.' },
+        ],
+        tips: ['Resmî kurumlar mesajla şifre veya OTP kodu istemez.'],
+        video: {
+          title: 'Dijital Bankacılıkta Güvenlik',
+          url: 'https://finansalokuryazarlik.gov.tr/i/dijital-bankacilikta-guvenlik',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
+      },
+      {
+        id: 'money-transfer-check',
+        title: 'PARA TRANSFERİNDE SON KONTROL',
+        short: 'FAST/EFT/havalede alıcıyı doğrula.',
+        body: [
+          'Para transferlerinde IBAN, alıcı adı ve tutar bilgisi dikkatle kontrol edilmelidir.',
+          'Hızlı işlem baskısı hata riskini artırır; birkaç saniyelik kontrol kaybı önleyebilir.',
+        ],
+        scenario: 'Aceleyle gönderim yaparken yanlış IBAN seçersen para başka kişiye gidebilir.',
+        qa: [
+          { q: 'Transferde en kritik kontrol ne?', a: 'Alıcı bilgilerini doğrulamaktır.' },
+        ],
+        video: {
+          title: 'Para Transferi',
+          url: 'https://finansalokuryazarlik.gov.tr/i/para-transferi',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
       },
     ],
     quiz: generateSafetyQuiz(),

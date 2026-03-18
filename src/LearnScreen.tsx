@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AppBar,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -12,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
+import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnCategoryId } from './learn/content';
@@ -69,6 +71,12 @@ function shuffleArray<T>(array: T[]): T[] {
     [out[i], out[j]] = [out[j], out[i]];
   }
   return out;
+}
+
+function openExternal(url: string) {
+  if (typeof window !== 'undefined') {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 }
 
 const LEARNING_PATH: LearnCategoryId[] = ['basics', 'budget', 'credit', 'investing', 'macro', 'psychology', 'safety'];
@@ -401,6 +409,35 @@ export function LearnScreen() {
                     </CardContent>
                   </Card>
                 ))}
+                {it.video ? (
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      bgcolor: 'rgba(168,85,247,0.12)',
+                      color: 'white',
+                      border: '1px solid rgba(168,85,247,0.22)',
+                    }}
+                  >
+                    <CardContent sx={{ py: 1.25 }}>
+                      <Typography variant="caption" sx={{ display: 'block', fontWeight: 900, mb: 0.5, color: '#c084fc' }}>
+                        🎥 Resmî video
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                        {it.video.title}
+                        {it.video.source ? ` · ${it.video.source}` : ''}
+                      </Typography>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        endIcon={<OpenInNewRounded />}
+                        onClick={() => openExternal(it.video!.url)}
+                        sx={{ fontWeight: 800 }}
+                      >
+                        Videoyu aç
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : null}
               </Stack>
             </Box>
           ))}
