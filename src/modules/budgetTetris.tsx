@@ -53,7 +53,7 @@ export function BudgetTetris() {
   const [running, setRunning] = React.useState(false);
   const [timeLeft, setTimeLeft] = React.useState(45); // seconds
   const [score, setScore] = React.useState(0);
-  const [tip, setTip] = React.useState('İpucu: Önce Zorunlular dolsun. Sonra acil fon ve hedef.');
+  const [tip, setTip] = React.useState('İpucu: Bütçe yaparken önce ihtiyaçları ayır, sonra acil fon ve hedeflere geç.');
 
   const [buckets, setBuckets] = React.useState<Bucket[]>([
     {
@@ -271,7 +271,7 @@ export function BudgetTetris() {
             <Chip size="small" label={`Skor ${score}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            45 saniye. Parayı doğru kutuya bırak. (Biraz daha yavaş ve daha az yoğun)
+            45 saniye. Parayı bütçe mantığına göre doğru kutuya bırak: önce ihtiyaçlar, sonra acil fon ve hedefler.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>

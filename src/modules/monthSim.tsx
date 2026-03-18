@@ -248,7 +248,7 @@ export function MonthSimModule({
               <AppIcon label="Bütçe" color="#34d399" emoji="🧩" onClick={() => setScreen('budget-tetris')} />
               <AppIcon label="Gürültü" color="#a78bfa" emoji="📰" onClick={() => setScreen('news-noise')} />
               <AppIcon label="Radar" color="#ef4444" emoji="🛡️" onClick={() => setScreen('scam-radar')} />
-              <AppIcon label="Mum" color="#fb7185" emoji="🕯️" onClick={() => setScreen('candle')} />
+              <AppIcon label="Borsa" color="#fb7185" emoji="📈" onClick={() => setScreen('candle')} />
               <AppIcon
                 label="Uyku"
                 color="#0ea5e9"
@@ -483,7 +483,7 @@ export function MonthSimModule({
 
   const CandleScreen = () => (
     <>
-      <Top title="Mum Oyunu" />
+      <Top title="Borsa Oyunu" />
       <Box sx={{ pt: 1 }}>
         <StatChips />
         <Box sx={{ mt: 2 }}>

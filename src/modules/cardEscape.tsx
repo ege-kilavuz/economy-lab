@@ -200,11 +200,11 @@ export function CardEscape() {
       <Card sx={{ borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.08)' }}>
         <CardContent>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography fontWeight={950}>Kredi Kartı Kaçışı</Typography>
+            <Typography fontWeight={950}>Kredi Kartı Karar Oyunu</Typography>
             <Chip size="small" label={`Skor ${state.score}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            10 tur (2–3 dk). Amaç: borcu büyütmeden ayı bitirmek.
+            10 tur (2–3 dk). Amaç: kredi kartı kullanımı, gerçek maliyet ve kredi notu mantığını hissederek öğrenmek.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
