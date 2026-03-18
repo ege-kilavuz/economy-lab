@@ -1,5 +1,8 @@
 import React from 'react';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
@@ -12,6 +15,7 @@ import {
 } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
+import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 
 import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategory, LearnCategoryId } from './learn/content';
@@ -82,6 +86,7 @@ const LEARNING_PATH: LearnCategoryId[] = ['basics', 'budget', 'credit', 'investi
 export function LearnScreen() {
   const [view, setView] = React.useState<LearnView>({ kind: 'list' });
   const [completedQuizIds, setCompletedQuizIds] = React.useState<LearnCategoryId[]>(() => loadProgress().completedQuizIds);
+  const [expandedScenarioId, setExpandedScenarioId] = React.useState<string | false>(LEARNING_SCENARIOS[0]?.id ?? false);
   const itemIndex = React.useMemo(() => buildItemIndex(), []);
   const completedSet = React.useMemo(() => new Set(completedQuizIds), [completedQuizIds]);
   const nextRecommendedId = LEARNING_PATH.find((id) => !completedSet.has(id));
@@ -523,57 +528,78 @@ export function LearnScreen() {
           <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
             İçerik başlıklarını sınıf içinde tartışmaya çevirmek için kısa vaka kartları.
           </Typography>
-          <Stack spacing={1.25} sx={{ mt: 1.5 }}>
+          <Stack spacing={1.1} sx={{ mt: 1.5 }}>
             {LEARNING_SCENARIOS.map((scenario) => {
               const category = categoryById(scenario.categoryId);
+              const expanded = expandedScenarioId === scenario.id;
               return (
-                <Box
+                <Accordion
                   key={scenario.id}
-                  sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.08)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.25 }}
+                  expanded={expanded}
+                  onChange={(_, isExpanded) => setExpandedScenarioId(isExpanded ? scenario.id : false)}
+                  disableGutters
+                  elevation={0}
+                  sx={{
+                    borderRadius: '16px !important',
+                    bgcolor: 'rgba(255,255,255,0.04)',
+                    color: 'white',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    '&:before': { display: 'none' },
+                    overflow: 'hidden',
+                  }}
                 >
-                  <Stack spacing={1}>
-                    <Box>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreRounded sx={{ color: 'white' }} />}
+                    sx={{
+                      px: 1.5,
+                      py: 0.25,
+                      '& .MuiAccordionSummary-content': { my: 1 },
+                    }}
+                  >
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
                       <Typography fontWeight={900}>{scenario.title}</Typography>
                       <Typography variant="body2" sx={{ mt: 0.35, opacity: 0.82 }}>
                         {scenario.summary}
                       </Typography>
+                      <Chip
+                        size="small"
+                        label={category ? `${category.icon} ${category.title}` : scenario.categoryId}
+                        sx={{
+                          mt: 1,
+                          bgcolor: 'rgba(96,165,250,0.22)',
+                          color: 'white',
+                          maxWidth: '100%',
+                          '& .MuiChip-label': {
+                            display: 'block',
+                            whiteSpace: 'normal',
+                            overflowWrap: 'anywhere',
+                            paddingTop: '4px',
+                            paddingBottom: '4px',
+                          },
+                          height: 'auto',
+                        }}
+                      />
                     </Box>
-                    <Chip
-                      size="small"
-                      label={category ? `${category.icon} ${category.title}` : scenario.categoryId}
-                      sx={{
-                        bgcolor: 'rgba(96,165,250,0.22)',
-                        color: 'white',
-                        alignSelf: 'flex-start',
-                        maxWidth: '100%',
-                        '& .MuiChip-label': {
-                          display: 'block',
-                          whiteSpace: 'normal',
-                          overflowWrap: 'anywhere',
-                          paddingTop: '4px',
-                          paddingBottom: '4px',
-                        },
-                        height: 'auto',
-                      }}
-                    />
-                  </Stack>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                    {scenario.prompt}
-                  </Typography>
-                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
-                    {scenario.check.map((item) => (
-                      <Chip key={item} size="small" label={item} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-                    ))}
-                  </Stack>
-                  {category ? (
-                    <Chip
-                      size="small"
-                      label="İlgili içeriği aç"
-                      onClick={() => setView({ kind: 'category', category })}
-                      sx={{ mt: 1.25, cursor: 'pointer', bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }}
-                    />
-                  ) : null}
-                </Box>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ px: 1.5, pt: 0, pb: 1.5 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      {scenario.prompt}
+                    </Typography>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                      {scenario.check.map((item) => (
+                        <Chip key={item} size="small" label={item} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                      ))}
+                    </Stack>
+                    {category ? (
+                      <Chip
+                        size="small"
+                        label="İlgili içeriği aç"
+                        onClick={() => setView({ kind: 'category', category })}
+                        sx={{ mt: 1.25, cursor: 'pointer', bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }}
+                      />
+                    ) : null}
+                  </AccordionDetails>
+                </Accordion>
               );
             })}
           </Stack>
