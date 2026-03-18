@@ -41,18 +41,18 @@ function cartesian<T, U>(a: T[], b: U[]): Array<[T, U]> {
 
 function expandNewsNoise(): NewsNoiseItem[] {
   const assets = [
-    'X Coin',
-    'BTC',
-    'ETH',
     'Altın',
     'Dolar',
     'Borsa',
-    'Gümüş',
-    'Petrol',
-    'Nasdaq',
     'BIST100',
-    'Yapay Zeka Hisseleri',
-    'Emlak Endeksi',
+    'Yatırım Fonu',
+    'Hisse Senedi',
+    'Vadeli Mevduat',
+    'BES',
+    'Devlet Tahvili',
+    'Gümüş',
+    'Konut Yatırımı',
+    'Sektör Endeksi',
   ] as const;
   const urgency = [
     'Hemen',

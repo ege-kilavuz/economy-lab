@@ -73,7 +73,7 @@ export function ScamRadarGame() {
             <Chip size="small" label={`Skor ${score}`} sx={{ bgcolor: 'rgba(239,68,68,0.16)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            10 tur. Amaç: “acele + belirsiz kimlik + link” tuzaklarını otomatik fark etmek.
+            10 tur. Amaç: bankacılık ve dijital güvenlikte resmî kanal dışı tuzakları hızlı fark etmek.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>

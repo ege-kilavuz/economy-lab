@@ -70,7 +70,7 @@ export function NewsNoiseGame() {
             <Chip size="small" label={`Skor ${score}`} sx={{ bgcolor: 'rgba(34,197,94,0.18)', color: 'white' }} />
           </Stack>
           <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            10 tur. Amaç: “Kaynak + kanıt + teşvik” filtrelerini refleks yapmak.
+            10 tur. Amaç: resmî veri, yöntem bilgisi ve söylenti arasındaki farkı hızlı ayırt etmek.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
