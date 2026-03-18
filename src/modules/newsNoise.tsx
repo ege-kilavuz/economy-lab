@@ -121,7 +121,7 @@ export function NewsNoiseGame() {
             </Stack>
 
             <Typography variant="caption" sx={{ display: 'block', mt: 1.25, opacity: 0.7 }}>
-              Not: “Emin değilim” bazen en doğru karardır. Özellikle kanıt yoksa.
+              Not: “Emin değilim” bazen en doğru karardır. Özellikle resmî veri, yöntem bilgisi veya açık kaynak yoksa.
             </Typography>
           </CardContent>
         </Card>

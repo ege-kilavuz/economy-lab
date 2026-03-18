@@ -32,12 +32,30 @@ const INITIAL_QUEST: QuestState = { title: 'Bugün dolabı 40% üstünde tut', h
 
 function questForDay(s: GameState): QuestState {
   const rng = mulberry32(s.seed + s.day * 777);
+
+  if (!s.rentPaid && s.day >= 5) {
+    return { title: 'Bugün kira planını çöz', hint: 'Kira gecikirse ay dengesi hızla bozulur.', done: false };
+  }
+
+  if (s.cardDebt >= 7000) {
+    return { title: 'Bugün kart borcunu azalt', hint: 'Borç baskısı büyümeden ödeme yapmak daha güvenlidir.', done: false };
+  }
+
+  if (s.fridge <= 35) {
+    return { title: 'Bugün dolabı 45% üstüne taşı', hint: 'İhtiyaç tarafı çok düşerse moral de etkilenir.', done: false };
+  }
+
+  if (s.cash < 600 && s.cardDebt > 0) {
+    return { title: 'Bugün en az 600 TL nakit tampon bırak', hint: 'Tamponsuz kalmak yeni harcamayı karta iter.', done: false };
+  }
+
   const pick = pickWeighted(rng, [
     { w: 1, v: { title: 'Bugün dolabı 40% üstünde tut', hint: 'Market yapmayı unutma.' } },
     { w: 1, v: { title: 'Bugün kart borcunu azalt', hint: 'Asgari bile ödesen puan alırsın.' } },
     { w: 1, v: { title: 'Bugün en az 500 TL nakit bırak', hint: 'Tüm parayı harcama.' } },
     { w: 1, v: { title: 'Bugün bir faturayı öde', hint: 'Gecikme cezası can yakar.' } },
     { w: 1, v: { title: 'Bugün moralini 65% üstünde tut', hint: 'Bazen küçük eğlence iyidir.' } },
+    { w: 1, v: { title: 'Bugün yatırımda tek varlığa yüklenme', hint: 'Çeşitlendirme bazen kazançtan önce riski yönetmektir.' } },
   ]);
   return { ...pick, done: false };
 }
@@ -47,15 +65,45 @@ function tryCompleteQuest(s: GameState) {
   if (q.done) return s;
 
   let ok = false;
-  if (q.title.includes('dolabı')) ok = s.fridge >= 40;
+  if (q.title.includes('45%')) ok = s.fridge >= 45;
+  else if (q.title.includes('dolabı')) ok = s.fridge >= 40;
   else if (q.title.includes('kart borcunu')) ok = s.cardDebt < 1 || s.log.some((l) => l.includes('Kredi kartı asgari') || l.includes('borcu kapatıldı'));
+  else if (q.title.includes('600 TL')) ok = s.cash >= 600;
   else if (q.title.includes('500 TL')) ok = s.cash >= 500;
+  else if (q.title.includes('kira planını')) ok = s.rentPaid;
   else if (q.title.includes('faturayı')) ok = Object.values(s.billsPaid).some(Boolean) || s.rentPaid;
   else if (q.title.includes('moralini')) ok = s.mood >= 65;
+  else if (q.title.includes('tek varlığa')) {
+    const assetTL =
+      s.holdings.gold * s.goldPrice +
+      s.holdings.stock * (s.stockIndex * 20) +
+      s.holdings.usd * s.usdTry +
+      s.holdings.btc * s.btcTry +
+      s.holdings.eth * s.ethTry;
+    const weights = [
+      s.holdings.gold * s.goldPrice,
+      s.holdings.stock * (s.stockIndex * 20),
+      s.holdings.usd * s.usdTry,
+      s.holdings.btc * s.btcTry,
+      s.holdings.eth * s.ethTry,
+    ];
+    const maxWeight = assetTL > 0 ? Math.max(...weights) / assetTL : 0;
+    ok = assetTL === 0 || maxWeight < 0.75;
+  }
 
   if (!ok) return s;
 
-  return logPush({ ...s, points: s.points + 10, quest: { ...s.quest, done: true } }, `Görev tamamlandı! +10 puan: ${q.title}`);
+  let next = { ...s, points: s.points + 10, quest: { ...s.quest, done: true } };
+
+  if (q.title.includes('kart borcunu')) {
+    next = { ...next, mood: clamp(next.mood + 2, 0, 100) };
+  } else if (q.title.includes('dolabı')) {
+    next = { ...next, mood: clamp(next.mood + 1, 0, 100) };
+  } else if (q.title.includes('nakit tampon')) {
+    next = { ...next, mood: clamp(next.mood + 1, 0, 100) };
+  }
+
+  return logPush(next, `Görev tamamlandı! +10 puan: ${q.title}`);
 }
 
 export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): GameState {
@@ -86,6 +134,7 @@ export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): Ga
     ethTry: 120000,
 
     policyRate: 45,
+    marketMood: 'neutral',
   };
 }
 
@@ -135,28 +184,32 @@ export function applyAction(
 
   switch (action) {
     case 'grocery': {
-      const cost = tl(b.groceryBase * (0.8 + (s0.fridge < 35 ? 0.6 : 0.2)));
+      const lowFridgeBoost = s0.fridge < 30 ? 0.75 : s0.fridge < 50 ? 0.4 : 0.15;
+      const cost = tl(b.groceryBase * (0.85 + lowFridgeBoost));
       const payment = pay(s, cost, useCard);
       if (!payment.ok) return payment.state;
 
+      const fridgeGain = s0.fridge < 30 ? 26 : s0.fridge < 50 ? 22 : 16;
+      const moodGain = s0.fridge < 30 ? 4 : 2;
       s = {
         ...payment.state,
-        fridge: clamp(payment.state.fridge + 20, 0, 100),
-        mood: clamp(payment.state.mood + 2, 0, 100),
+        fridge: clamp(payment.state.fridge + fridgeGain, 0, 100),
+        mood: clamp(payment.state.mood + moodGain, 0, 100),
       };
-      return logPush(s, `Market: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), dolap +20`);
+      return logPush(s, `Market: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), dolap +${fridgeGain}`);
     }
     case 'cinema': {
       const cost = b.cinema;
       const payment = pay(s, cost, useCard);
       if (!payment.ok) return payment.state;
 
+      const moodGain = s.cardDebt >= 8000 ? 8 : 12;
       s = {
         ...payment.state,
-        mood: clamp(payment.state.mood + 12, 0, 100),
+        mood: clamp(payment.state.mood + moodGain, 0, 100),
         energy: clamp(payment.state.energy - 5, 0, 100),
       };
-      return logPush(s, `Sinema: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), moral +12`);
+      return logPush(s, `Sinema: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), moral +${moodGain}`);
     }
     case 'lightsOff': {
       // tiny habit. increases energy/mood slightly, gives end-of-month bill reduction via daily flag? simplified to immediate cash-saving token.
@@ -205,12 +258,33 @@ export function applyAction(
       const cost = tl(amount * priceTL);
       if (s.cash < cost) return logPush(s, 'Alım için yeterli nakit yok.');
 
+      const assetTLBefore =
+        s.holdings.gold * s.goldPrice +
+        s.holdings.stock * (s.stockIndex * 20) +
+        s.holdings.usd * s.usdTry +
+        s.holdings.btc * s.btcTry +
+        s.holdings.eth * s.ethTry;
+      const projectedTotal = assetTLBefore + cost;
+      const projectedAssetValue = s.holdings[asset] * priceTL + cost;
+      const concentration = projectedTotal > 0 ? projectedAssetValue / projectedTotal : 0;
+
+      let moodDelta = 0;
+      let extraLog = '';
+      if (concentration >= 0.75) {
+        moodDelta = -2;
+        extraLog = ' · Uyarı: portföy tek varlıkta yoğunlaşıyor';
+      } else if (concentration <= 0.45 && projectedTotal >= 2000) {
+        moodDelta = 1;
+        extraLog = ' · Çeşitlendirme dengesi iyi görünüyor';
+      }
+
       s = {
         ...s,
         cash: s.cash - cost,
+        mood: clamp(s.mood + moodDelta, 0, 100),
         holdings: { ...s.holdings, [asset]: s.holdings[asset] + amount },
       };
-      return logPush(s, `Alım: ${asset} +${amount} ( -${cost.toLocaleString()} TL )`);
+      return logPush(s, `Alım: ${asset} +${amount} ( -${cost.toLocaleString()} TL )${extraLog}`);
     }
     case 'sellAsset': {
       const asset = opts?.asset;
@@ -241,14 +315,19 @@ export function applyAction(
     case 'payCardMin': {
       const minPay = tl(Math.max(200, s.cardDebt * 0.1));
       if (s.cash < minPay) return logPush(s, 'Asgari ödemeyi yapmak için nakit yok.');
-      s = { ...s, cash: s.cash - minPay, cardDebt: Math.max(0, s.cardDebt - minPay) };
+      s = {
+        ...s,
+        cash: s.cash - minPay,
+        cardDebt: Math.max(0, s.cardDebt - minPay),
+        mood: clamp(s.mood + 1, 0, 100),
+      };
       return logPush(s, `Kredi kartı asgari ödeme: -${minPay.toLocaleString()} TL`);
     }
     case 'payCardAll': {
       const amt = tl(s.cardDebt);
       if (amt <= 0) return logPush(s, 'Kart borcu yok.');
       if (s.cash < amt) return logPush(s, 'Kart borcunu kapatacak nakit yok.');
-      s = { ...s, cash: s.cash - amt, cardDebt: 0 };
+      s = { ...s, cash: s.cash - amt, cardDebt: 0, mood: clamp(s.mood + 4, 0, 100) };
       return logPush(s, `Kredi kartı borcu kapatıldı: -${amt.toLocaleString()} TL`);
     }
     default: {
@@ -274,7 +353,17 @@ export function nextDay(s0: GameState) {
   if (lifeEvent.message) s = logPush(s, lifeEvent.message);
 
   const news = getDailyPolicyNews(s);
-  if (news) s = logPush(s, `Haber: ${news}`);
+  if (news) {
+    let marketMood: GameState['marketMood'] = 'neutral';
+    const lower = news.toLowerCase();
+    if (lower.includes('enflasyon') || lower.includes('market fiyatları')) marketMood = 'inflation';
+    else if (lower.includes('kurda') || lower.includes('dolar')) marketMood = 'fx';
+    else if (lower.includes('kredi') || lower.includes('faiz')) marketMood = 'credit';
+    else if (lower.includes('borsada')) marketMood = 'equity';
+
+    s = { ...s, marketMood };
+    s = logPush(s, `Haber: ${news}`);
+  }
 
   s = updateDailyMarkets(s);
 

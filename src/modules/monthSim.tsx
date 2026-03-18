@@ -192,6 +192,8 @@ export function MonthSimModule({
       <Chip size="small" label={`Dolap: ${game.fridge}%`} />
       <Chip size="small" label={`Moral: ${game.mood}%`} color={game.mood < 45 ? 'error' : game.mood < 60 ? 'warning' : 'default'} />
       {game.mood < 45 ? <Chip size="small" color="error" label="Stresli" /> : null}
+      {game.cardDebt >= 8000 ? <Chip size="small" color="error" label="Borç baskısı" /> : null}
+      {game.fridge <= 35 ? <Chip size="small" color="warning" label="Dolap azalıyor" /> : null}
     </Stack>
   );
 
@@ -227,6 +229,29 @@ export function MonthSimModule({
               control={<Switch checked={useCard} onChange={(_, v) => setUseCard(v)} />}
               label={useCard ? 'Kart modu açık' : 'Nakit modu'}
             />
+
+            <Stack spacing={0.75} sx={{ mt: 1.25 }}>
+              <Typography variant="caption" sx={{ opacity: 0.78 }}>
+                Durum yorumu:
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9, color: 'rgba(255,255,255,0.92)' }}>
+                Görev odağı: {game.quest.title}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.88 }}>
+                {game.cardDebt >= 10000
+                  ? 'Kart borcu ciddi baskı oluşturuyor; yeni harcamalarda kart yerine ödeme/azaltma odaklı gitmek daha güvenli.'
+                  : game.cardDebt > 0
+                    ? 'Kart borcun var; ay sonu faiz baskısını azaltmak için asgari yerine mümkünse daha yüksek ödeme düşün.'
+                    : 'Kart borcun kontrol altında. Bu, bütçe ve birikim kararlarında alan açar.'}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.88 }}>
+                {game.fridge <= 30
+                  ? 'Dolap seviyesi düşük. Günlük yaşam konforu ve moral için market tarafını ihmal etmemek gerekiyor.'
+                  : game.fridge <= 55
+                    ? 'Dolap orta seviyede; plansız birkaç gün daha geçerse zorlayabilir.'
+                    : 'Dolap tarafı rahat; bu sana diğer kararlarda biraz esneklik sağlar.'}
+              </Typography>
+            </Stack>
 
             <Stack direction="row" spacing={1} sx={{ mt: 1.25 }}>
               <Button variant="outlined" onClick={() => setGame(newGame(difficulty))}>
@@ -297,6 +322,9 @@ export function MonthSimModule({
               <Button size="small" variant="outlined" onClick={() => act('payGas')}>Doğalgaz</Button>
               <Button size="small" variant="outlined" onClick={() => act('payInternet')}>İnternet</Button>
             </Stack>
+            <Typography variant="caption" sx={{ display: 'block', mt: 1.1, opacity: 0.72 }}>
+              Yorum: Zorunlu ödemeleri geciktirmek kısa vadede nakit bırakabilir ama ay sonu dengesini ve skoru bozar.
+            </Typography>
           </CardContent>
         </Card>
 
@@ -327,6 +355,9 @@ export function MonthSimModule({
             <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
               Dolabı doldurmak günlük performansını etkiler.
             </Typography>
+            <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.72 }}>
+              Market harcaması kısa vadede nakdi azaltır ama dolabı ve günlük dengeyi güçlendirir. Eğlence harcaması morali toparlayabilir; ancak borç baskısı varken öncelik değişebilir.
+            </Typography>
             <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
               <Button variant="contained" onClick={() => act('grocery')}>Market Yap</Button>
               <Button variant="outlined" onClick={() => act('cinema')}>Sinema</Button>
@@ -343,6 +374,13 @@ export function MonthSimModule({
     const price = holdingPriceTL(game, asset);
     const owned = game.holdings[asset];
     const value = owned * price;
+    const totalPortfolio =
+      game.holdings.gold * game.goldPrice +
+      game.holdings.usd * game.usdTry +
+      game.holdings.btc * game.btcTry +
+      game.holdings.eth * game.ethTry +
+      game.holdings.stock * (game.stockIndex * 20);
+    const weight = totalPortfolio > 0 ? value / totalPortfolio : 0;
 
     return (
       <Card sx={panelSx}>
@@ -352,6 +390,9 @@ export function MonthSimModule({
               <Typography fontWeight={900}>{holdingLabel(asset)}</Typography>
               <Typography variant="caption" sx={{ opacity: 0.75 }}>
                 Fiyat: {moneyTL(price)} · Eldeki: {owned} · Değer: {moneyTL(value)}
+              </Typography>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.35, opacity: 0.72 }}>
+                Portföy payı: %{Math.round(weight * 100)} {weight >= 0.75 ? '· yoğun risk' : weight >= 0.5 ? '· dikkat' : totalPortfolio > 0 ? '· dengeli' : ''}
               </Typography>
             </Box>
             <Chip size="small" label={asset.toUpperCase()} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
@@ -387,6 +428,15 @@ export function MonthSimModule({
         <Typography variant="body2" sx={{ mt: 1, opacity: 0.8, color: 'rgba(255,255,255,0.75)' }}>
           Kolay: daha stabil · Zor: daha volatil. (Kurgusal fiyatlar)
         </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.72, color: 'rgba(255,255,255,0.72)' }}>
+          Yorum: Yatırım tarafı kısa vadeli heyecan için değil, risk-getiri ve çeşitlendirme mantığını hissettirmek için var. Tüm nakdi tek araca yığmak ay sonu dengesini bozabilir.
+        </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mt: 0.55, opacity: 0.72, color: 'rgba(255,255,255,0.72)' }}>
+          Pratik kural: nakit tamponun zayıfsa önce ihtiyaç ve borç tarafını toparlamak, sonra yatırım düşünmek daha güvenli olur.
+        </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mt: 0.5, opacity: 0.72, color: 'rgba(255,255,255,0.72)' }}>
+          Öğrenme mantığı: yatırım tarafında tek amaç “en çok artanı kovalamak” değil; risk, çeşitlendirme ve nakit ihtiyacını birlikte düşünmektir.
+        </Typography>
 
         <Stack spacing={1.5} sx={{ mt: 2 }}>
           <AssetRow asset="usd" />
@@ -399,30 +449,74 @@ export function MonthSimModule({
     </>
   );
 
-  const NewsScreen = () => (
-    <>
-      <Top title="Haber" />
-      <Box sx={{ pt: 1 }}>
-        <StatChips />
-        <Card sx={{ mt: 2, ...panelSx }}>
-          <CardContent>
-            <Typography fontWeight={900}>Akış</Typography>
-            <Typography variant="caption" sx={{ opacity: 0.75 }}>
-              Haberler ve olaylar burada görünür. Piyasalar gün sonunda güncellenir.
-            </Typography>
-            <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
-            <Box>
-              {game.log.slice(0, 18).map((l: string, i: number) => (
-                <Typography key={i} variant="body2" sx={{ opacity: 0.85 }}>
-                  • {l}
-                </Typography>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-    </>
-  );
+  const NewsScreen = () => {
+    const marketValue =
+      game.holdings.gold * game.goldPrice +
+      game.holdings.usd * game.usdTry +
+      game.holdings.btc * game.btcTry +
+      game.holdings.eth * game.ethTry +
+      game.holdings.stock * (game.stockIndex * 20);
+
+    return (
+      <>
+        <Top title="Haber" />
+        <Box sx={{ pt: 1 }}>
+          <StatChips />
+
+          <Card sx={{ mt: 2, ...panelSx }}>
+            <CardContent>
+              <Typography fontWeight={900}>Günün ekonomik resmi</Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                <Chip size="small" label={`Faiz: ${game.policyRate.toFixed(1)}%`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+                <Chip size="small" label={`Dolar: ${game.usdTry.toFixed(2)} TL`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+                <Chip size="small" label={`Altın: ${Math.round(game.goldPrice).toLocaleString()} TL`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+                <Chip size="small" label={`Borsa endeksi: ${game.stockIndex.toFixed(1)}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+                <Chip size="small" label={`Portföy ≈ ${moneyTL(marketValue)}`} sx={{ bgcolor: 'rgba(96,165,250,0.20)', color: 'white' }} />
+                {game.marketMood && game.marketMood !== 'neutral' ? (
+                  <Chip
+                    size="small"
+                    label={
+                      game.marketMood === 'inflation'
+                        ? 'Tema: Enflasyon baskısı'
+                        : game.marketMood === 'fx'
+                          ? 'Tema: Kur hareketi'
+                          : game.marketMood === 'credit'
+                            ? 'Tema: Faiz / kredi baskısı'
+                            : 'Tema: Piyasa iştahı'
+                    }
+                    sx={{ bgcolor: 'rgba(245,158,11,0.18)', color: 'white' }}
+                  />
+                ) : null}
+              </Stack>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.9, opacity: 0.72 }}>
+                İpucu: Haberleri tek tek değil, nakit–borç–ihtiyaç dengesiyle birlikte okumak daha sağlıklıdır.
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ mt: 2, ...panelSx }}>
+            <CardContent>
+              <Typography fontWeight={900}>Akış</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.75 }}>
+                Haberler ve olaylar burada görünür. Piyasalar gün sonunda güncellenir.
+              </Typography>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.72 }}>
+                İpucu: Her haber tek başına işlem sinyali değildir; önce nakit, borç ve günlük ihtiyaç dengene bakmak daha güvenlidir.
+              </Typography>
+              <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+              <Box>
+                {game.log.slice(0, 18).map((l: string, i: number) => (
+                  <Typography key={i} variant="body2" sx={{ opacity: 0.85 }}>
+                    • {l}
+                  </Typography>
+                ))}
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </>
+    );
+  };
 
   const EndScreen = () => {
     const assetTL =
@@ -431,6 +525,32 @@ export function MonthSimModule({
       game.holdings.btc * game.btcTry +
       game.holdings.eth * game.ethTry +
       game.holdings.stock * (game.stockIndex * 20);
+
+    const strengths: string[] = [];
+    const risks: string[] = [];
+
+    if (game.rentPaid && Object.values(game.billsPaid).filter(Boolean).length >= 3) strengths.push('zorunlu ödemeleri büyük ölçüde kontrol ettin');
+    else risks.push('zorunlu ödemelerde açık bıraktın');
+
+    if (game.cardDebt <= 2000) strengths.push('kart borcunu düşük tuttun');
+    else if (game.cardDebt >= 8000) risks.push('kart borcu ay sonu dengesini zorladı');
+
+    if (game.fridge >= 50) strengths.push('ihtiyaç tarafını ihmal etmedin');
+    else if (game.fridge < 35) risks.push('dolap seviyesi çok düştü');
+
+    if (assetTL >= 3000) strengths.push('birikim / yatırım tarafında alan oluşturdun');
+    if (game.cash < 500) risks.push('nakit tamponun zayıf kaldı');
+
+    const portfolioValues = [
+      game.holdings.gold * game.goldPrice,
+      game.holdings.usd * game.usdTry,
+      game.holdings.btc * game.btcTry,
+      game.holdings.eth * game.ethTry,
+      game.holdings.stock * (game.stockIndex * 20),
+    ];
+    const maxWeight = assetTL > 0 ? Math.max(...portfolioValues) / assetTL : 0;
+    if (assetTL > 0 && maxWeight >= 0.75) risks.push('yatırım tarafında tek varlığa fazla yoğunlaştın');
+    else if (assetTL > 0 && maxWeight <= 0.45) strengths.push('yatırım tarafında çeşitlendirme mantığını korudun');
 
     return (
       <>
@@ -456,6 +576,9 @@ export function MonthSimModule({
               <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
                 Moral durumu: <b>{game.mood}%</b> {game.mood < 45 ? '— stres etkisiyle olaylar zorlaşır.' : ''}
               </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Dolap seviyesi: <b>{game.fridge}%</b> {game.fridge < 35 ? '— ihtiyaç tarafı zayıf kaldı.' : ''}
+              </Typography>
 
               <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
               <Typography variant="body2" sx={{ opacity: 0.9 }}>
@@ -465,6 +588,22 @@ export function MonthSimModule({
                     ? 'Kıl payı: bazı alanlarda açık var. Kart borcuna ve dolap planına dikkat.'
                     : 'Zorlu ay: borç/ödeme planı bozuldu. Önce zorunlular, sonra küçük eğlence.'}
               </Typography>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.9, opacity: 0.72 }}>
+                Ay sonu yorumu: iyi sonuç için tek bir doğru yok; ama genelde düzenli ödeme, kontrollü harcama ve acele yatırım kararlarından kaçınmak dengeyi güçlendirir.
+              </Typography>
+              <Stack spacing={0.75} sx={{ mt: 1.1 }}>
+                <Typography variant="caption" sx={{ opacity: 0.72 }}>Ay sonu analizi:</Typography>
+                {strengths.length ? (
+                  <Typography variant="body2" sx={{ opacity: 0.88 }}>
+                    Güçlü tarafların: {strengths.join(' · ')}.
+                  </Typography>
+                ) : null}
+                {risks.length ? (
+                  <Typography variant="body2" sx={{ opacity: 0.88 }}>
+                    Geliştirilecek taraflar: {risks.join(' · ')}.
+                  </Typography>
+                ) : null}
+              </Stack>
 
               <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                 <Button variant="contained" onClick={() => setGame(newGame(difficulty))}>

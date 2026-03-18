@@ -387,7 +387,7 @@ export function BudgetTetris() {
                 İstek: {money(buckets.find((b) => b.id === 'wants')?.saved ?? 0)}
               </Typography>
               <Typography variant="caption" sx={{ display: 'block', mt: 0.75, opacity: 0.7 }}>
-                Ders: Zorunlular dolmadan istekleri büyütmek kart/borç riskini artırır. Acil fon “kötü gün sigortasıdır”.
+                Ders: Bütçede önce ihtiyaçları ayırmak, sonra acil durumlar ve hedefler için pay bırakmak daha sağlıklı bir sıra oluşturur.
               </Typography>
             </Box>
           ) : null}

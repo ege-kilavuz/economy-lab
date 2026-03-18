@@ -522,6 +522,35 @@ export function LearnScreen() {
         </CardContent>
       </GlassCard>
 
+      <Stack spacing={1.5} sx={{ mt: 2 }}>
+        {LEARN_CATEGORIES.map((c) => (
+          <GlassCard key={c.id}>
+            <CardContent
+              onClick={() => setView({ kind: 'category', category: c })}
+              sx={{ cursor: 'pointer' }}
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography fontWeight={950}>
+                    {c.icon} {c.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
+                    {c.subtitle}
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 0.75 }}>
+                    <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                    <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                    {completedSet.has(c.id) ? <Chip size="small" label="Test tamam" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} /> : null}
+                    {nextRecommendedId === c.id ? <Chip size="small" label="Önerilen sıra" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} /> : null}
+                  </Stack>
+                </Box>
+                <Chip size="small" label={completedSet.has(c.id) ? 'TEKRAR AÇ' : 'AÇ'} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+              </Stack>
+            </CardContent>
+          </GlassCard>
+        ))}
+      </Stack>
+
       <GlassCard>
         <CardContent>
           <Typography fontWeight={950}>Senaryo kütüphanesi</Typography>
@@ -605,35 +634,6 @@ export function LearnScreen() {
           </Stack>
         </CardContent>
       </GlassCard>
-
-      <Stack spacing={1.5} sx={{ mt: 2 }}>
-        {LEARN_CATEGORIES.map((c) => (
-          <GlassCard key={c.id}>
-            <CardContent
-              onClick={() => setView({ kind: 'category', category: c })}
-              sx={{ cursor: 'pointer' }}
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Typography fontWeight={950}>
-                    {c.icon} {c.title}
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
-                    {c.subtitle}
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 0.75 }}>
-                    <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-                    <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-                    {completedSet.has(c.id) ? <Chip size="small" label="Test tamam" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} /> : null}
-                    {nextRecommendedId === c.id ? <Chip size="small" label="Önerilen sıra" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} /> : null}
-                  </Stack>
-                </Box>
-                <Chip size="small" label={completedSet.has(c.id) ? 'TEKRAR AÇ' : 'AÇ'} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-              </Stack>
-            </CardContent>
-          </GlassCard>
-        ))}
-      </Stack>
 
       <Typography variant="caption" sx={{ display: 'block', mt: 2, opacity: 0.65 }}>
         Not: İçerikler eğitim amaçlıdır; yatırım tavsiyesi değildir.

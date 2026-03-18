@@ -212,6 +212,7 @@ export function CardEscape() {
             <Chip size="small" label={`Nakit: ${money(state.cash)}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Borç: ${money(state.debt)}`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
             <Chip size="small" label={`Stres: ${state.stress}%`} sx={{ bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+            <Chip size="small" label={state.debt > 10000 ? 'Risk: yüksek borç' : state.debt > 7000 ? 'Risk: dikkat' : 'Risk: kontrollü'} sx={{ bgcolor: state.debt > 10000 ? 'rgba(239,68,68,0.2)' : state.debt > 7000 ? 'rgba(245,158,11,0.18)' : 'rgba(34,197,94,0.18)', color: 'white' }} />
           </Stack>
         </CardContent>
       </Card>
@@ -228,6 +229,9 @@ export function CardEscape() {
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, mt: 1 }}>
               {summary.text}
+            </Typography>
+            <Typography variant="caption" sx={{ display: 'block', mt: 0.9, opacity: 0.72 }}>
+              Öğrenme notu: kredi kartında asgari ödeme gecikmeyi önleyebilir ama toplam maliyeti azaltmanın en sağlıklı yolu borcu planlı biçimde yüksek oranda kapatmaktır.
             </Typography>
             <Button
               sx={{ mt: 1.5 }}

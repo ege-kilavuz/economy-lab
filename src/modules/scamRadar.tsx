@@ -127,7 +127,7 @@ export function ScamRadarGame() {
             </Stack>
 
             <Typography variant="caption" sx={{ display: 'block', mt: 1.25, opacity: 0.7 }}>
-              Not: Şüphedeysen “doğrula” veya “bekle” genelde en güvenlisidir.
+              Not: Banka, kamu kurumu veya ödeme sistemi gibi görünen mesajlarda en güvenli yol resmî uygulama ya da resmî numaradan doğrulamaktır.
             </Typography>
           </CardContent>
         </Card>

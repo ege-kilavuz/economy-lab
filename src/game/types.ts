@@ -40,6 +40,7 @@ export type GameState = {
   ethTry: number; // TL per ETH
 
   policyRate: number; // %
+  marketMood?: 'inflation' | 'fx' | 'credit' | 'equity' | 'neutral';
 };
 
 export type ActionId =

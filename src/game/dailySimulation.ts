@@ -21,8 +21,10 @@ export function applyDailyExpenses(s: GameState): GameState {
     mood -= 8;
     energy -= 6;
   } else if (fridge < 20) {
-    mood -= 2;
-    energy -= 1;
+    mood -= 4;
+    energy -= 2;
+  } else if (fridge < 40) {
+    mood -= 1;
   }
 
   const daily = 80;
@@ -48,22 +50,46 @@ export function updateDailyMarkets(s: GameState): GameState {
   const policyDelta = (rng() - 0.5) * 2 * b.policyRateVol;
   const policyRate = clamp(s.policyRate + policyDelta, 10, 80);
 
+  const rateTight = (policyRate - 40) / 100;
+  const mood = s.marketMood ?? 'neutral';
+
+  let goldBias = 0;
+  let stockBias = 0;
+  let usdBias = 0;
+  let btcBias = 0;
+  let ethBias = 0;
+
+  if (mood === 'inflation') {
+    goldBias += 0.006;
+    usdBias += 0.004;
+    stockBias -= 0.003;
+  } else if (mood === 'fx') {
+    usdBias += 0.007;
+    goldBias += 0.004;
+    stockBias -= 0.002;
+  } else if (mood === 'credit') {
+    stockBias -= 0.006;
+    btcBias -= 0.004;
+    ethBias -= 0.004;
+  } else if (mood === 'equity') {
+    stockBias += 0.006;
+    btcBias += 0.003;
+    ethBias += 0.003;
+  }
+
   const goldShock = (rng() - 0.5) * 2 * b.volatility.gold;
   const stockShock = (rng() - 0.5) * 2 * b.volatility.stocks;
-  const rateTight = (policyRate - 40) / 100;
-
-  const goldPrice = Math.max(500, s.goldPrice * (1 + goldShock + 0.002 * rateTight));
-  const stockIndex = Math.max(20, s.stockIndex * (1 + stockShock - 0.004 * rateTight));
-
   const fxShock = (rng() - 0.5) * 2 * (b.volatility.gold * 1.2);
-  const usdTry = Math.max(5, s.usdTry * (1 + fxShock + 0.001 * rateTight));
-
   const btcShock = (rng() - 0.5) * 2 * (b.volatility.stocks * 1.6);
   const ethShock = (rng() - 0.5) * 2 * (b.volatility.stocks * 1.4);
-  const btcTry = Math.max(50000, s.btcTry * (1 + btcShock));
-  const ethTry = Math.max(2000, s.ethTry * (1 + ethShock));
 
-  return { ...s, goldPrice, stockIndex, usdTry, btcTry, ethTry, policyRate };
+  const goldPrice = Math.max(500, s.goldPrice * (1 + goldShock + goldBias + 0.002 * rateTight));
+  const stockIndex = Math.max(20, s.stockIndex * (1 + stockShock + stockBias - 0.004 * rateTight));
+  const usdTry = Math.max(5, s.usdTry * (1 + fxShock + usdBias + 0.001 * rateTight));
+  const btcTry = Math.max(50000, s.btcTry * (1 + btcShock + btcBias));
+  const ethTry = Math.max(2000, s.ethTry * (1 + ethShock + ethBias));
+
+  return { ...s, goldPrice, stockIndex, usdTry, btcTry, ethTry, policyRate, marketMood: 'neutral' };
 }
 
 export function applyLifeEvent(s: GameState): { state: GameState; message: string | null } {
@@ -190,9 +216,10 @@ export function applyDailyPenalty(s: GameState): { state: GameState; message: st
   if (s.day === 20) {
     const unpaid = getUnpaidBills(s.billsPaid);
     if (unpaid.length > 0) {
+      const penalty = 200 + unpaid.length * 60;
       return {
-        state: { ...s, mood: clamp(s.mood - 6, 0, 100), cardDebt: s.cardDebt + 200 },
-        message: `Faturalar gecikiyor (${unpaid.join(', ')}): 200 TL ceza (karta).`,
+        state: { ...s, mood: clamp(s.mood - 6 - unpaid.length, 0, 100), cardDebt: s.cardDebt + penalty },
+        message: `Faturalar gecikiyor (${unpaid.join(', ')}): ${penalty} TL ceza (karta).`,
       };
     }
   }
