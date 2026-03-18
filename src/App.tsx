@@ -64,8 +64,19 @@ export default function App() {
       <Box sx={{ minHeight: '100vh', bgcolor: '#0b1220', color: 'white' }}>
         <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'rgba(11,18,32,0.92)', color: 'white' }}>
           <Toolbar sx={{ px: 1.5 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 950, flex: 1, textAlign: 'center' }}>
-              Finans & Ekonomi (Prototype) · {title}
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 950,
+                flex: 1,
+                textAlign: 'center',
+                fontSize: { xs: '0.95rem', sm: '1rem' },
+                lineHeight: 1.15,
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+              }}
+            >
+              Finans & Ekonomi · {title}
             </Typography>
           </Toolbar>
         </AppBar>

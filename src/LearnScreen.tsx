@@ -491,7 +491,7 @@ export function LearnScreen() {
     <Box sx={{ pt: 1 }}>
       <Top title="📚 Öğren" canBack={false} />
 
-      <Typography variant="body2" sx={{ mt: 1, color: 'rgba(255,255,255,0.75)' }}>
+      <Typography variant="body2" sx={{ mt: 1, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
         Kartlara tıkla → kategori içindeki terimler ve “taktik/ipuçları” açılır.
       </Typography>
 
@@ -531,7 +531,7 @@ export function LearnScreen() {
                   key={scenario.id}
                   sx={{ borderRadius: 3, border: '1px solid rgba(255,255,255,0.08)', bgcolor: 'rgba(255,255,255,0.04)', p: 1.25 }}
                 >
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
+                  <Stack spacing={1}>
                     <Box>
                       <Typography fontWeight={900}>{scenario.title}</Typography>
                       <Typography variant="body2" sx={{ mt: 0.35, opacity: 0.82 }}>
@@ -541,7 +541,20 @@ export function LearnScreen() {
                     <Chip
                       size="small"
                       label={category ? `${category.icon} ${category.title}` : scenario.categoryId}
-                      sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }}
+                      sx={{
+                        bgcolor: 'rgba(96,165,250,0.22)',
+                        color: 'white',
+                        alignSelf: 'flex-start',
+                        maxWidth: '100%',
+                        '& .MuiChip-label': {
+                          display: 'block',
+                          whiteSpace: 'normal',
+                          overflowWrap: 'anywhere',
+                          paddingTop: '4px',
+                          paddingBottom: '4px',
+                        },
+                        height: 'auto',
+                      }}
                     />
                   </Stack>
                   <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
