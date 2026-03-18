@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  AppBar,
   Box,
   Button,
   Card,
@@ -9,7 +8,6 @@ import {
   Divider,
   IconButton,
   Stack,
-  Toolbar,
   Typography,
 } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
@@ -99,21 +97,32 @@ export function LearnScreen() {
   }, [view]);
 
   const Top = ({ title, canBack }: { title: string; canBack: boolean }) => (
-    <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'transparent', color: 'white' }}>
-      <Toolbar sx={{ px: 1 }}>
-        {canBack ? (
-          <IconButton onClick={() => setView({ kind: 'list' })} sx={{ color: 'white' }}>
-            <ArrowBackRounded />
-          </IconButton>
-        ) : (
-          <Box sx={{ width: 44 }} />
-        )}
-        <Typography variant="subtitle1" sx={{ fontWeight: 950, flex: 1, textAlign: 'center' }}>
-          {title}
-        </Typography>
-        <Box sx={{ width: 44 }} />
-      </Toolbar>
-    </AppBar>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        minHeight: 44,
+        mb: 1,
+      }}
+    >
+      {canBack ? (
+        <IconButton onClick={() => setView({ kind: 'list' })} sx={{ color: 'white' }}>
+          <ArrowBackRounded />
+        </IconButton>
+      ) : null}
+      <Typography
+        variant="subtitle1"
+        sx={{
+          fontWeight: 950,
+          flex: 1,
+          textAlign: canBack ? 'left' : 'center',
+          pr: canBack ? 1 : 0,
+        }}
+      >
+        {title}
+      </Typography>
+    </Box>
   );
 
   if (view.kind === 'quiz') {
