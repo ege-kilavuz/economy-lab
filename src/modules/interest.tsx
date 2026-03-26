@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Slider, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Slider, Stack, Typography } from '@mui/material';
 import {
   Bar,
   BarChart,
@@ -22,16 +22,29 @@ function compoundGrowth(principal: number, annualRatePct: number, months: number
   return principal * Math.pow(1 + r, months);
 }
 
+const DEFAULTS = {
+  principal: 100000,
+  annualRatePct: 45,
+  months: 24,
+};
+
 export function InterestModule() {
-  const [principal, setPrincipal] = React.useState(100000);
-  const [annualRatePct, setAnnualRatePct] = React.useState(45);
-  const [months, setMonths] = React.useState(24);
+  const [principal, setPrincipal] = React.useState(DEFAULTS.principal);
+  const [annualRatePct, setAnnualRatePct] = React.useState(DEFAULTS.annualRatePct);
+  const [months, setMonths] = React.useState(DEFAULTS.months);
 
   const pay = monthlyPayment(principal, annualRatePct, months);
   const total = pay * months;
   const totalInterest = total - principal;
 
   const compound = compoundGrowth(principal, annualRatePct, months);
+
+  const stressLabel =
+    pay > principal * 0.06
+      ? 'Hissiyat: baskı yüksek — taksit yükü ağır.'
+      : pay > principal * 0.04
+        ? 'Hissiyat: dikkat — taksit yükü artıyor.'
+        : 'Hissiyat: yönetilebilir.';
 
   const bars = [
     { k: 'Anapara', v: principal },
@@ -49,7 +62,34 @@ export function InterestModule() {
           Aynı oran hem borçta maliyet, hem birikimde büyüme demek. Sayılarla görelim.
         </Typography>
 
+        <Box sx={{ mt: 1.5 }}>
+          <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800, display: 'block' }}>
+            Öğrenme hedefi
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Taksit ve toplam geri ödeme farkını görmek</Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Bileşik getiriyi sayılarla kıyaslamak</Typography>
+        </Box>
+
+        <Box sx={{ mt: 1 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setPrincipal(DEFAULTS.principal);
+                setAnnualRatePct(DEFAULTS.annualRatePct);
+                setMonths(DEFAULTS.months);
+              }}
+            >
+              Sıfırla
+            </Button>
+          </Stack>
+        </Box>
+
         <Stack spacing={2} sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800 }}>
+            Simülasyon girdileri
+          </Typography>
           <Box>
             <Typography fontWeight={600}>Anapara (TL): {principal.toLocaleString()}</Typography>
             <Slider value={principal} min={1000} max={500000} step={1000} onChange={(_, v) => setPrincipal(v as number)} />
@@ -72,6 +112,9 @@ export function InterestModule() {
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
           Faiz maliyeti yaklaşık <b>{Math.round(totalInterest).toLocaleString()} TL</b>.
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+          {stressLabel}
         </Typography>
       </Paper>
 

@@ -1,4 +1,4 @@
-export type ModuleId = 'inflation' | 'interest' | 'central-bank';
+export type ModuleId = 'month-sim';
 
 export type ModuleMeta = {
   id: ModuleId;

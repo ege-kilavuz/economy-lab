@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Slider, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Slider, Stack, Typography } from '@mui/material';
 import {
   CartesianGrid,
   Line,
@@ -48,10 +48,16 @@ function simulate(params: {
   return points;
 }
 
+const DEFAULTS = {
+  policyRate: 35,
+  supplyShock: 5,
+  demand: 0,
+};
+
 export function CentralBankModule() {
-  const [policyRate, setPolicyRate] = React.useState(35);
-  const [supplyShock, setSupplyShock] = React.useState(5);
-  const [demand, setDemand] = React.useState(0);
+  const [policyRate, setPolicyRate] = React.useState(DEFAULTS.policyRate);
+  const [supplyShock, setSupplyShock] = React.useState(DEFAULTS.supplyShock);
+  const [demand, setDemand] = React.useState(DEFAULTS.demand);
 
   const data = simulate({ policyRate, supplyShock, demand });
   const last = data[data.length - 1] || data[0];
@@ -63,6 +69,15 @@ export function CentralBankModule() {
         ? 'Dengeye yaklaşan bir görünüm var; trade-off hâlâ devam ediyor.'
         : 'Enflasyon yüksek kalıyor; faiz/demand/supply dengesi zor.';
 
+  const feeling =
+    last.unemployment > 14
+      ? 'Hissiyat: iş güvencesi zayıf — tüketim isteği düşer.'
+      : last.inflation > 40
+        ? 'Hissiyat: fiyat baskısı yüksek — güven azalır.'
+        : last.growth < 0
+          ? 'Hissiyat: durgunluk — risk algısı artar.'
+          : 'Hissiyat: temkinli iyimserlik.';
+
   return (
     <Stack spacing={2}>
       <Paper sx={{ p: 2 }}>
@@ -73,7 +88,34 @@ export function CentralBankModule() {
           Faiz kararının etkilerini "trade-off" olarak gör. (Bu bir eğitim modeli, gerçek hayatta daha karmaşıktır.)
         </Typography>
 
+        <Box sx={{ mt: 1.5 }}>
+          <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800, display: 'block' }}>
+            Öğrenme hedefi
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Faiz kararının enflasyon/işsizlik/büyümeye etkisini gözlemlemek</Typography>
+          <Typography variant="caption" sx={{ opacity: 0.7, display: 'block' }}>• Arz ve talep şoklarını ayırt etmek</Typography>
+        </Box>
+
+        <Box sx={{ mt: 1 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setPolicyRate(DEFAULTS.policyRate);
+                setSupplyShock(DEFAULTS.supplyShock);
+                setDemand(DEFAULTS.demand);
+              }}
+            >
+              Sıfırla
+            </Button>
+          </Stack>
+        </Box>
+
         <Stack spacing={2} sx={{ mt: 2 }}>
+          <Typography variant="caption" sx={{ opacity: 0.75, fontWeight: 800 }}>
+            Simülasyon girdileri
+          </Typography>
           <Box>
             <Typography fontWeight={600}>Politika faizi: {policyRate}%</Typography>
             <Slider value={policyRate} min={0} max={80} step={1} onChange={(_, v) => setPolicyRate(v as number)} />
@@ -95,6 +137,7 @@ export function CentralBankModule() {
           Enflasyon: <b>{last.inflation.toFixed(1)}%</b> · İşsizlik: <b>{last.unemployment.toFixed(1)}%</b> · Büyüme: <b>{last.growth.toFixed(1)}%</b>
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>{summary}</Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>{feeling}</Typography>
       </Paper>
 
       <Paper sx={{ p: 2 }}>
