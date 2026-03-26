@@ -115,6 +115,7 @@ export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): Ga
     fridge: 55,
     mood: 60,
     energy: 60,
+    discipline: 55,
 
     holdings: { gold: 0, stock: 0, usd: 0, btc: 0, eth: 0 },
 
@@ -195,6 +196,7 @@ export function applyAction(
         ...payment.state,
         fridge: clamp(payment.state.fridge + fridgeGain, 0, 100),
         mood: clamp(payment.state.mood + moodGain, 0, 100),
+        discipline: clamp(payment.state.discipline + 1, 0, 100),
       };
       return logPush(s, `Market: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), dolap +${fridgeGain}`);
     }
@@ -208,12 +210,13 @@ export function applyAction(
         ...payment.state,
         mood: clamp(payment.state.mood + moodGain, 0, 100),
         energy: clamp(payment.state.energy - 5, 0, 100),
+        discipline: clamp(payment.state.discipline - 1, 0, 100),
       };
       return logPush(s, `Sinema: -${cost.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'}), moral +${moodGain}`);
     }
     case 'lightsOff': {
       // tiny habit. increases energy/mood slightly, gives end-of-month bill reduction via daily flag? simplified to immediate cash-saving token.
-      s = { ...s, mood: clamp(s.mood + 1, 0, 100) };
+      s = { ...s, mood: clamp(s.mood + 1, 0, 100), discipline: clamp(s.discipline + 2, 0, 100) };
       return logPush(s, `Tasarruf: ışıkları kapattın. (+1 moral)`);
     }
     case 'payRent': {
@@ -320,6 +323,7 @@ export function applyAction(
         cash: s.cash - minPay,
         cardDebt: Math.max(0, s.cardDebt - minPay),
         mood: clamp(s.mood + 1, 0, 100),
+        discipline: clamp(s.discipline + 2, 0, 100),
       };
       return logPush(s, `Kredi kartı asgari ödeme: -${minPay.toLocaleString()} TL`);
     }
@@ -327,7 +331,7 @@ export function applyAction(
       const amt = tl(s.cardDebt);
       if (amt <= 0) return logPush(s, 'Kart borcu yok.');
       if (s.cash < amt) return logPush(s, 'Kart borcunu kapatacak nakit yok.');
-      s = { ...s, cash: s.cash - amt, cardDebt: 0, mood: clamp(s.mood + 4, 0, 100) };
+      s = { ...s, cash: s.cash - amt, cardDebt: 0, mood: clamp(s.mood + 4, 0, 100), discipline: clamp(s.discipline + 4, 0, 100) };
       return logPush(s, `Kredi kartı borcu kapatıldı: -${amt.toLocaleString()} TL`);
     }
     default: {
@@ -392,6 +396,7 @@ export function scoreEndOfMonth(s: GameState) {
 
   score += clamp(Math.round(s.fridge / 5), 0, 20);
   score += clamp(Math.round(s.mood / 5), 0, 20);
+  score += clamp(Math.round(s.discipline / 6), 0, 16);
 
   // debt penalty
   score -= Math.round(clamp(s.cardDebt / 1000, 0, 80));

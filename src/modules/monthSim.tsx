@@ -126,7 +126,7 @@ export function MonthSimModule({
   }, [finished]);
 
   const lastTopRef = React.useRef<string | null>(null);
-  const prevSnapRef = React.useRef({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge });
+  const prevSnapRef = React.useRef({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge, discipline: game.discipline });
 
   function diffText(label: string, diff: number, unit = '') {
     if (diff === 0) return null;
@@ -145,15 +145,16 @@ export function MonthSimModule({
       diffText('Kart', game.cardDebt - prev.cardDebt, ' TL'),
       diffText('Moral', game.mood - prev.mood, '%'),
       diffText('Dolap', game.fridge - prev.fridge, '%'),
+      diffText('Disiplin', game.discipline - prev.discipline, '%'),
     ].filter(Boolean);
 
     lastTopRef.current = top;
-    prevSnapRef.current = { cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge };
+    prevSnapRef.current = { cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, fridge: game.fridge, discipline: game.discipline };
 
     const suffix = parts.length ? ` (${parts.join(', ')})` : '';
     const tag = categoryForLog(top);
     onEvent?.(`[${tag}] ${top}${suffix}`);
-  }, [game.log, game.cash, game.cardDebt, game.mood, game.fridge, onEvent]);
+  }, [game.log, game.cash, game.cardDebt, game.mood, game.fridge, game.discipline, onEvent]);
 
   React.useEffect(() => {
     onSummary?.({ cash: game.cash, cardDebt: game.cardDebt, mood: game.mood, day: game.day });
@@ -191,6 +192,7 @@ export function MonthSimModule({
       />
       <Chip size="small" label={`Dolap: ${game.fridge}%`} />
       <Chip size="small" label={`Moral: ${game.mood}%`} color={game.mood < 45 ? 'error' : game.mood < 60 ? 'warning' : 'default'} />
+      <Chip size="small" label={`Disiplin: ${game.discipline}%`} color={game.discipline < 40 ? 'error' : game.discipline < 60 ? 'warning' : 'default'} />
       {game.mood < 45 ? <Chip size="small" color="error" label="Stresli" /> : null}
       {game.cardDebt >= 8000 ? <Chip size="small" color="error" label="Borç baskısı" /> : null}
       {game.fridge <= 35 ? <Chip size="small" color="warning" label="Dolap azalıyor" /> : null}
@@ -578,6 +580,9 @@ export function MonthSimModule({
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
                 Dolap seviyesi: <b>{game.fridge}%</b> {game.fridge < 35 ? '— ihtiyaç tarafı zayıf kaldı.' : ''}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
+                Finansal disiplin: <b>{game.discipline}%</b> {game.discipline < 40 ? '— günlük kararlar çok dağınık kaldı.' : ''}
               </Typography>
 
               <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />

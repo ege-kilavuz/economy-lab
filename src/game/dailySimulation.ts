@@ -14,30 +14,36 @@ export function applyDailyExpenses(s: GameState): GameState {
   let fridge = s.fridge - 6;
   let mood = s.mood;
   let energy = s.energy;
+  let discipline = s.discipline;
   let cash = s.cash;
 
   if (fridge < 0) {
     fridge = 0;
     mood -= 8;
     energy -= 6;
+    discipline -= 2;
   } else if (fridge < 20) {
     mood -= 4;
     energy -= 2;
+    discipline -= 1;
   } else if (fridge < 40) {
     mood -= 1;
   }
 
-  const daily = 80;
+  const stressSpend = s.cardDebt >= 8000 ? 25 : s.cardDebt >= 4000 ? 10 : 0;
+  const lowMoodSpend = s.mood < 45 ? 15 : 0;
+  const daily = 80 + stressSpend + lowMoodSpend;
   if (cash >= daily) {
     cash -= daily;
-    return { ...s, fridge, mood: clamp(mood, 0, 100), energy: clamp(energy, 0, 100), cash };
+    return { ...s, fridge, mood: clamp(mood, 0, 100), energy: clamp(energy, 0, 100), discipline: clamp(discipline, 0, 100), cash };
   }
 
   return {
     ...s,
     fridge,
-    mood: clamp(mood, 0, 100),
+    mood: clamp(mood - 1, 0, 100),
     energy: clamp(energy, 0, 100),
+    discipline: clamp(discipline - 2, 0, 100),
     cardDebt: s.cardDebt + (daily - cash),
     cash: 0,
   };

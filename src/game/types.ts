@@ -19,6 +19,7 @@ export type GameState = {
   fridge: number; // 0..100
   mood: number; // 0..100
   energy: number; // 0..100
+  discipline: number; // 0..100
 
   holdings: Record<HoldingId, number>; // amounts (gold grams, stock units, usd dollars, coins)
 
