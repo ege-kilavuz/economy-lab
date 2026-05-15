@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button, Card, CardContent, Divider, Stack, Typography } from '@mui/material';
 import type { GameState, ActionId, HoldingId } from '../types';
 import { balanceFor } from '../balance';
@@ -8,10 +7,9 @@ interface Props {
   game: GameState;
   onAction: (action: ActionId, opts?: { amount?: number; asset?: HoldingId }) => void;
   onBack: () => void;
-  useCard: boolean;
 }
 
-export function BankScreen({ game, onAction, onBack, useCard }: Props) {
+export function BankScreen({ game, onAction, onBack }: Props) {
   const b = balanceFor(game.difficulty);
 
   return (

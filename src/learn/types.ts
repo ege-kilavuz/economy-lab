@@ -1,4 +1,4 @@
-import type { LearnCategory, LearnCategoryId } from './content';
+import type { LearnCategory } from './content';
 
 export type LearnView =
   | { kind: 'list' }

@@ -1,8 +1,7 @@
 import React from 'react';
 import { PhoneFrame } from '../ui/PhoneFrame';
-import type { Difficulty, GameState, HoldingId, ActionId } from './types';
-import { applyAction, newGame, nextDay, scoreEndOfMonth } from './engine';
-import { balanceFor } from './balance';
+import type { Difficulty, HoldingId, ActionId } from './types';
+import { applyAction, newGame, nextDay } from './engine';
 import { categoryForLog } from './screens/helpers';
 import { HomeScreen } from './screens/HomeScreen';
 import { BankScreen } from './screens/BankScreen';

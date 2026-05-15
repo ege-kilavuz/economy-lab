@@ -1,4 +1,3 @@
-import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, CardContent, Chip, Stack, Typography } from '@mui/material';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import type { LearnView } from './types';

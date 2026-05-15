@@ -1,5 +1,4 @@
 import React from 'react';
-import { LEARN_CATEGORIES } from './learn/content';
 import type { LearnCategoryId } from './learn/content';
 import { LEARNING_SCENARIOS } from './learn/scenarios';
 import { loadProgress, markQuizCompleted } from './ui/progress';

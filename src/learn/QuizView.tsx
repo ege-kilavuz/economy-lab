@@ -1,8 +1,6 @@
-import React from 'react';
 import { Box, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 import type { LearnView } from './types';
-import { GlassCard, categoryById, LearnTop, shuffleArray } from './LearnHelpers';
-import { markQuizCompleted } from '../ui/progress';
+import { GlassCard, categoryById, LearnTop } from './LearnHelpers';
 import type { LearnCategoryId } from './content';
 
 interface Props {

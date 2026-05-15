@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { GameState, ActionId, HoldingId } from '../types';
 import { Top, StatChips, panelSx } from './helpers';

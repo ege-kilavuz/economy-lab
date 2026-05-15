@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Button,
@@ -14,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import type { Difficulty, GameState } from '../types';
-import { balanceFor } from '../balance';
 import { Top, StatChips, panelSx, diffLabel } from './helpers';
 import { AppIcon } from '../../ui/AppIcon';
 

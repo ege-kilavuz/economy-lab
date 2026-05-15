@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppBar, Box, Chip, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import type { Difficulty, GameState, HoldingId } from '../types';

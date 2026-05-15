@@ -1,7 +1,6 @@
-import React from 'react';
 import { Box, Button, Card, CardContent, Divider, Stack, Typography } from '@mui/material';
 import type { Difficulty, GameState } from '../types';
-import { newGame, scoreEndOfMonth } from '../engine';
+import { scoreEndOfMonth } from '../engine';
 import { Top, panelSx, moneyTL, diffLabel } from './helpers';
 
 interface Props {

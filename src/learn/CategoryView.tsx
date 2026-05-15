@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
 import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 import type { LearnView } from './types';

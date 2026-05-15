@@ -1,7 +1,6 @@
-import React from 'react';
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { GameState, ActionId, HoldingId } from '../types';
-import { Top, StatChips, panelSx, moneyTL } from './helpers';
+import { Top, StatChips, panelSx } from './helpers';
 
 interface Props {
   game: GameState;

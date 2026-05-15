@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, Card, CardContent, IconButton, Typography } from '@mui/material';
+import { Box, Card, IconButton, Typography } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { LEARN_CATEGORIES } from './content';
 import type { LearnCategory, LearnCategoryId } from './content';
