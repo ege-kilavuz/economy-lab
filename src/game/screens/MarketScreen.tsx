@@ -6,7 +6,6 @@ interface Props {
   game: GameState;
   onAction: (action: ActionId, opts?: { amount?: number; asset?: HoldingId }) => void;
   onBack: () => void;
-  useCard: boolean;
 }
 
 export function MarketScreen({ game, onAction, onBack }: Props) {

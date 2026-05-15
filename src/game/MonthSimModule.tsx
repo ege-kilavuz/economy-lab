@@ -95,10 +95,10 @@ export function MonthSimModule({ onEvent, onSummary }: Props) {
         />
       )}
       {screen === 'bank' && (
-        <BankScreen game={game} onAction={act} onBack={() => setScreen('home')} useCard={useCard} />
+        <BankScreen game={game} onAction={act} onBack={() => setScreen('home')} />
       )}
       {screen === 'market' && (
-        <MarketScreen game={game} onAction={act} onBack={() => setScreen('home')} useCard={useCard} />
+        <MarketScreen game={game} onAction={act} onBack={() => setScreen('home')} />
       )}
       {screen === 'invest' && (
         <InvestScreen game={game} onAction={act} onBack={() => setScreen('home')} />
