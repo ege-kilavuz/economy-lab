@@ -17,7 +17,7 @@ type SimMeta = {
   inputs: string[];
   minutes: number;
   level: 'Başlangıç' | 'Orta';
-  format: 'Grafik' | 'Karar deneyi' | 'Hızlı karşılaştırma';
+  format: 'Grafik' | 'Karar deneyi' | 'Hızlı karşılaştırma' | 'Simülasyon';
   bestFor: string;
   teacherPrompts: string[];
   debrief: string;
@@ -62,6 +62,19 @@ const SIMS: SimMeta[] = [
     bestFor: 'Sınıfta neden-sonuç tartışması açmak için',
     teacherPrompts: ['Faiz artışı kime iyi, kime zor gelebilir?', 'Arz şoku ile talep şokunda aynı karar işe yarar mı?'],
     debrief: 'Kapanış: makro politikada tek tuşla herkes kazanmaz; her kararın bedeli ve hedefi vardır.',
+  },
+  {
+    id: 'bes',
+    title: 'BES — Bireysel Emeklilik',
+    short: 'Devlet katkısı %30 — erken başlayan biriktirir, geç başlayan koşar.',
+    goals: ['Devlet katkısının birikime etkisini görmek', 'Erken başlamanın bileşik getiri gücünü anlamak'],
+    inputs: ['Aylık katkı', 'Vade (yıl)', 'Yıllık getiri', 'Devlet katkısı'],
+    minutes: 5,
+    level: 'Başlangıç',
+    format: 'Simülasyon',
+    bestFor: 'Gençlere BES\'in mantığını anlatmak için',
+    teacherPrompts: ['Devlet katkısı olmasa ne fark ederdi?', '10 yıl ile 20 yıl arasındaki fark neden bu kadar büyük?'],
+    debrief: 'Kapanış: BES sadece birikim değil, devlet desteğiyle hızlanan bir bileşik getiri aracıdır.',
   },
 ];
 
@@ -158,6 +171,7 @@ export function SimulationsScreen() {
         {selected === 'inflation' && <InflationModule />}
         {selected === 'interest' && <InterestModule />}
         {selected === 'central' && <CentralBankModule />}
+        {selected === 'bes' && <BESModule />}
       </Box>
     );
   }
