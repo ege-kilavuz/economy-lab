@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Button, Chip, Stack, TextField, Typography } from '@mui/material';
 import { fetchLeaderboard, submitScore, type ScoreEntry } from '../utils/leaderboard';
-import { panelSx } from './screens/helpers';
+import { panelSx } from '../game/screens/helpers';
 
 interface Props {
   endScore: number;
