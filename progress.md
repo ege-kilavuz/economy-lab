@@ -136,19 +136,19 @@
 
 ## 4. 💡 Önerilen Geliştirmeler
 
-### 4.1 🐛 Kritik Hatalar (Önce Bunlar)
-- [ ] **Kredi kartı faiz oranları düşürülmeli** — Easy: %3.5, Normal: %4.5, Hard: %6 (gerçekçi olmayan faizler yanlış öğrenmeye yol açar)
-- [ ] **Asgari ödeme oranı yükseltilmeli** — Oyunda %10, gerçekte %20-30. Gençler asgari ödeme tuzağını yanlış öğrenebilir
+### 4.1 🐛 Kritik Hatalar (Önce Bunlar) ✅ DÜZELTİLDİ
+- [x] **Kredi kartı faiz oranları düşürüldü** — Easy: %3.5, Normal: %4.5, Hard: %5.5 ✅
+- [x] **Asgari ödeme oranı yükseltildi** — %10 → %25 (min 200→500 TL) ✅
 
 ### 4.2 📱 Yeni Özellikler
-- [ ] **50/30/20 Göstergesi** — MonthSim'de oyuncunun harcamalarını 50/30/20 kuralına göre analiz eden bir panel
-- [ ] **Vergi Kesintisi** — Her ay maaştan %15-20 SGK/GV kesintisi. Oyuncuya "brüt/net" farkını göster
-- [ ] **Kira Artışı** — 6. ayda veya yılbaşında kira artışı (TÜFE oranında)
-- [ ] **BES (Bireysel Emeklilik)** — Devlet katkısı %30 ile basit BES simülasyonu
+- [x] **50/30/20 Göstergesi** — Ay sonu raporunda progress bar ile ✅
+- [x] **Vergi Kesintisi** — Brüt/net maaş gösterimi, %20 SGK+GV ✅
+- [x] **Kira Artışı** — Her 10 günde %5, max +%30 ✅
+- [x] **BES (Bireysel Emeklilik)** — Devlet katkısı %30 simülasyonu ✅
 - [ ] **Enflasyon Muhasebesi** — Ay sonu raporunda "reel kaybın" TL cinsinden gösterimi
 
 ### 4.3 🎯 Oyunlaştırma İyileştirmeleri
-- [ ] **Başarı Rozetleri (Badges):** "İlk 1000 TL birikim", "Tüm faturalar ödendi", "Borsadan kâr et" gibi
+- [x] **Başarı Rozetleri (Badges):** 10 rozet eklendi (Borçsuz Ay, Yatırımcı, Fatura Müdürü vs.) ✅
 - [ ] **Liderlik Tablosu:** Sınıf içi karşılaştırma (local storage)
 - [ ] **Haftalık Challenge:** "Bu ay sadece nakit kullan" veya "Hiç kart borcu taşıma"
 - [ ] **Animasyonlar / Ses Efektleri:** Harcama yapınca para sayma sesi, görev tamamlayınca konfeti
@@ -180,38 +180,38 @@
 
 | Boyut | Puan (1-10) | Not |
 |---|---|---|
-| **Finansal doğruluk** | 7/10 | Kredi kartı faizleri hariç iyi. Asgari ödeme oranı düzeltilmeli |
+| **Finansal doğruluk** | 9/10 ✅ | Kredi kartı faizleri düzeltildi, asgari ödeme güncellendi, vergi kesintisi eklendi |
 | **Eğlence değeri** | 8/10 | MonthSim ve mini oyunlar başarılı. Grafikler etkileyici |
-| **Öğreticilik** | 8/10 | Konseptler doğru, quiz sistemi iyi. Senaryo kütüphanesi güzel |
+| **Öğreticilik** | 9/10 ✅ | BES modülü eklendi, 50/30/20 analizi, başarı rozetleri |
 | **Gençlere uygunluk** | 8/10 | Dil gençlere hitap ediyor. Mobil telefonda telefon simülasyonu yaratıcı |
-| **Kapsam** | 7/10 | Vergi, BES, kira artışı gibi önemli konular eksik |
-| **Performans** | 7/10 | 891 KB tek bundle, code-splitting ile düşürülebilir |
-| **Teknik kalite (kod)** | 7/10 | Refactoring sonrası daha iyi, halen iyileştirilecek alanlar var |
+| **Kapsam** | 8/10 ✅ | Vergi, BES, kira artışı eklendi. İngilizce desteği kaldı |
+| **Performans** | 7/10 | 903 KB tek bundle, code-splitting ile düşürülebilir |
+| **Teknik kalite (kod)** | 8/10 ✅ | Refactoring yapıldı, utility'ler ayrıştırıldı, dead code temizlendi |
 
-**Genel:** 7.5/10 — Teknofest sunumu için yeterli. Kritik hatalar düzeltilirse 8.5+
+**Genel:** 8.5/10 🚀 — Teknofest sunumu için hazır. Eksikler: İngilizce, code-splitting
 
 ---
 
 ## 6. 🎯 Öncelikli Yapılacaklar (MVP)
 
 ```
-Acil (Şimdi):
-└── Kredi kartı faiz oranlarını düzelt
-└── Asgari ödeme oranını güncelle
+Acil (Şimdi): ✅
+✅ └── Kredi kartı faiz oranlarını düzelt
+✅ └── Asgari ödeme oranını güncelle
 
-Kısa Vade (Bu Hafta):
-└── 50/30/20 göstergesi ekle
-└── Vergi kesintisi mekaniği ekle
-└── Başarı rozetleri
+Kısa Vade (Bu Hafta): ✅
+✅ └── 50/30/20 göstergesi ekle
+✅ └── Vergi kesintisi mekaniği ekle
+✅ └── Başarı rozetleri
 
 Orta Vade:
-└── BES modülü
-└── Kira artışı mekaniği
-└── İngilizce dil desteği
-└── PWA
+✅ └── BES modülü (Bireysel Emeklilik Sistemi)
+✅ └── Kira artışı mekaniği
+✅ └── PWA (GitHub Pages için)
+⬜ └── İngilizce dil desteği
 
 Uzun Vade:
-└── Liderlik tablosu
-└── Offline destek
-└── Code-splitting + performans
+⬜ └── Liderlik tablosu
+⬜ └── Offline destek
+⬜ └── Code-splitting + performans
 ```
