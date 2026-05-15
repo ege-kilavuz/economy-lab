@@ -30,8 +30,6 @@ jobs:
 
       - name: Build web app
         run: npm run build
-        env:
-          GITHUB_ACTIONS: 'true'
 
       - name: Sync Capacitor
         run: npx cap sync android
