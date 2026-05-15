@@ -13,13 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
-        id: setup-java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -38,14 +31,12 @@ jobs:
         run: npx cap sync android
 
       - name: Build APK
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.path }}
         run: |
           cd android
           chmod +x gradlew
-          echo "Using JAVA_HOME=$JAVA_HOME"
-          ./gradlew --stop 2>/dev/null || true
-          ./gradlew assembleDebug --no-daemon
+          echo "Using Java:"
+          java -version 2>&1
+          ./gradlew assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
