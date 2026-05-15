@@ -145,7 +145,7 @@
 - [x] **Vergi Kesintisi** — Brüt/net maaş gösterimi, %20 SGK+GV ✅
 - [x] **Kira Artışı** — Her 10 günde %5, max +%30 ✅
 - [x] **BES (Bireysel Emeklilik)** — Devlet katkısı %30 simülasyonu ✅
-- [ ] **Enflasyon Muhasebesi** — Ay sonu raporunda "reel kaybın" TL cinsinden gösterimi
+- [x] **Enflasyon Muhasebesi** — Ay sonu raporunda reel kayıp TL cinsinden gösteriliyor ✅
 
 ### 4.3 🎯 Oyunlaştırma İyileştirmeleri
 - [x] **Başarı Rozetleri (Badges):** 10 rozet eklendi (Borçsuz Ay, Yatırımcı, Fatura Müdürü vs.) ✅
