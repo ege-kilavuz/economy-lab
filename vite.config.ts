@@ -28,5 +28,39 @@ export default defineConfig({
   base,
   build: {
     target: 'es2015',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // React ecosystem
+          if (id.includes('node_modules/react') || id.includes('node_modules/scheduler')) {
+            return 'vendor-react';
+          }
+          // MUI + emotion
+          if (id.includes('node_modules/@mui') || id.includes('node_modules/@emotion')) {
+            return 'vendor-ui';
+          }
+          // Charts
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'vendor-charts';
+          }
+          // Game engine
+          if (id.includes('/src/game/') && !id.includes('/screens/')) {
+            return 'game-engine';
+          }
+          // Game screens
+          if (id.includes('/src/game/screens/')) {
+            return 'game-screens';
+          }
+          // Learn content
+          if (id.includes('/src/learn/')) {
+            return 'learn-content';
+          }
+          // Modules (simulations)
+          if (id.includes('/src/modules/')) {
+            return 'sim-modules';
+          }
+        },
+      },
+    },
   },
 })

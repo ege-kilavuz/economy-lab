@@ -166,12 +166,12 @@
 - [x] **Karanlık mod:** Zaten karanlık tema, iyi ✅
 - [ ] **Loading skeleton** — Veri yüklenirken boş ekran yerine iskelet
 - [ ] **Tutorial / Onboarding:** İlk açılışta "şöyle oynanır" adımı
-- [ ] **Dil seçeneği:** İngilizce ekleme (Teknofest uluslararası olabilir)
+- ~~[ ] **Dil seçeneği:** İngilizce ekleme~~ (gerek yok)
 
 ### 4.6 🌐 Teknik
-- [ ] **Code-splitting:** `build.rollupOptions.output.manualChunks` ile bundle boyutunu küçült (şu an 903 KB tek JS dosyası)
+- [x] **Code-splitting:** 903 KB → 8 chunk'a bölündü (vendor-react, vendor-ui, vendor-charts, game-engine, game-screens, learn-content, sim-modules, index) ✅
 - [x] **PWA:** GitHub Pages için aktif (APK'da devre dışı) ✅
-- [ ] **Offline destek:** Service worker + cache
+- ~~[ ] **Offline destek:** Service worker + cache~~ (gerek yok)
 - [ ] **LocalStorage → IndexedDB:** Daha büyük veriler için
 
 ---
@@ -185,10 +185,10 @@
 | **Öğreticilik** | 9/10 ✅ | BES modülü eklendi, 50/30/20 analizi, başarı rozetleri |
 | **Gençlere uygunluk** | 8/10 | Dil gençlere hitap ediyor. Mobil telefonda telefon simülasyonu yaratıcı |
 | **Kapsam** | 8/10 ✅ | Vergi, BES, kira artışı eklendi. İngilizce desteği kaldı |
-| **Performans** | 7/10 | 903 KB tek bundle, code-splitting ile düşürülebilir |
+| **Performans** | 8/10 ✅ | 903 KB → 8 chunk'a bölündü (paralel yüklenebilir) |
 | **Teknik kalite (kod)** | 8/10 ✅ | Refactoring yapıldı, utility'ler ayrıştırıldı, dead code temizlendi |
 
-**Genel:** 8.5/10 🚀 — Teknofest sunumu için hazır. Eksikler: İngilizce, code-splitting
+**Genel:** 9/10 🏆 — Teknofest sunumu için hazır!
 
 ---
 
@@ -210,9 +210,9 @@ Orta Vade: ✅
 ✅ └── PWA (GitHub Pages için)
 ✅ └── Online Liderlik Tablosu (Cloudflare Workers)
 
-⬜ └── İngilizce dil desteği
+~~⬜ └── İngilizce dil desteği~~ (gerek yok)
 
 Uzun Vade:
-⬜ └── Offline destek
-⬜ └── Code-splitting + performans
+~~⬜ └── Offline destek~~ (gerek yok)
+✅ └── Code-splitting (903 KB → 8 chunk'a bölündü)
 ```
