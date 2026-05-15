@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -34,16 +40,6 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          echo "=== Java Detection ==="
-          which java
-          java -version 2>&1
-          echo "JAVA_HOME=$JAVA_HOME"
-          echo "=== Available JDKs ==="
-          ls -la /usr/lib/jvm/ 2>/dev/null || echo "no /usr/lib/jvm"
-          update-java-alternatives -l 2>/dev/null || echo "no alternatives"
-          echo "=== Gradle JDK Info ==="
-          ./gradlew -version 2>&1 || true
-          echo "=== Build ==="
           ./gradlew assembleDebug
 
       - name: Upload APK artifact
