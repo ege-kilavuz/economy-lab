@@ -38,12 +38,13 @@ jobs:
         run: npx cap sync android
 
       - name: Build APK
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.path }}
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          # Use JDK 17 explicitly (setup-java sets JAVA_HOME)
+          export JAVA_HOME="${{ steps.setup-java.outputs.path }}"
+          echo "Using JAVA_HOME=$JAVA_HOME"
+          ./gradlew assembleDebug -Dorg.gradle.java.home="$JAVA_HOME"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
