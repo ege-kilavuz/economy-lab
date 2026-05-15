@@ -101,6 +101,8 @@ function tryCompleteQuest(s: GameState) {
 
 export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): GameState {
   const b = balanceFor(difficulty);
+  const grossSalary = Math.round(b.startingCash / 0.8);
+  const taxAmount = grossSalary - b.startingCash;
   return {
     day: 1,
     cash: b.startingCash,
@@ -116,7 +118,7 @@ export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): Ga
     billsPaid: { ...INITIAL_BILLS },
     difficulty,
     seed,
-    log: [`Oyun başladı (${difficulty}). Maaş yattı: ${b.startingCash.toLocaleString()} TL`],
+    log: [`Oyun başladı (${difficulty}). Brüt maaş: ${grossSalary.toLocaleString()} TL | SGK+GV kesintisi: -${taxAmount.toLocaleString()} TL | Net: ${b.startingCash.toLocaleString()} TL`],
 
     points: 0,
     quest: { ...INITIAL_QUEST },
@@ -309,7 +311,7 @@ export function applyAction(
       return logPush(s, `Satış: ${asset} -${amount} ( +${gain.toLocaleString()} TL )`);
     }
     case 'payCardMin': {
-      const minPay = tl(Math.max(200, s.cardDebt * 0.1));
+      const minPay = tl(Math.max(500, s.cardDebt * 0.25));
       if (s.cash < minPay) return logPush(s, 'Asgari ödemeyi yapmak için nakit yok.');
       s = {
         ...s,
