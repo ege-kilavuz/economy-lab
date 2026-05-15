@@ -3,7 +3,7 @@ import { Box, Button, Card, CardContent, Chip, Divider, LinearProgress, Stack, T
 import type { Difficulty, GameState } from '../types';
 import { scoreEndOfMonth } from '../engine';
 import { analyzeBudget } from '../../utils/budgetAnalysis';
-import { checkAchievements, getAchievements, unlockAchievement } from '../../utils/achievements';
+import { checkAchievements, unlockAchievement } from '../../utils/achievements';
 import { Top, panelSx, moneyTL, diffLabel } from './helpers';
 
 interface Props {

@@ -48,13 +48,11 @@ export function unlockAchievement(id: string): Achievement[] {
 }
 
 export function checkAchievements(game: { cash: number; cardDebt: number; mood: number; discipline: number; difficulty: string; holdings: Record<string, number>; billsPaid: Record<string, boolean> }): Achievement[] {
-  let changed = false;
   let current = getAchievements();
 
   function tryUnlock(id: string) {
     if (!current.find(a => a.id === id)?.unlocked) {
       current = unlockAchievement(id);
-      changed = true;
     }
   }
 
