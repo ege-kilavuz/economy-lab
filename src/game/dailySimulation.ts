@@ -1,14 +1,7 @@
+import { clamp, tl } from '../utils/math';
 import { balanceFor } from './balance';
 import { pickWeighted, mulberry32 } from './rng';
 import type { BillId, BillsState, GameState } from './types';
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function tl(n: number) {
-  return Math.round(n);
-}
 
 export function applyDailyExpenses(s: GameState): GameState {
   let fridge = s.fridge - 6;

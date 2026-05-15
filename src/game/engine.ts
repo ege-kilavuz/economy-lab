@@ -1,4 +1,5 @@
 import type { ActionId, BillId, BillsState, Difficulty, GameState, HoldingId, QuestState } from './types';
+import { clamp, tl } from '../utils/math';
 import { balanceFor } from './balance';
 import {
   applyDailyExpenses,
@@ -8,14 +9,6 @@ import {
   updateDailyMarkets,
 } from './dailySimulation';
 import { mulberry32, pickWeighted } from './rng';
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function tl(n: number) {
-  return Math.round(n);
-}
 
 function logPush(s: GameState, msg: string) {
   return { ...s, log: [msg, ...s.log].slice(0, 120) };
