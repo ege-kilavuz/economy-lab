@@ -4,6 +4,8 @@ import type { Difficulty, GameState } from '../types';
 import { scoreEndOfMonth } from '../engine';
 import { analyzeBudget } from '../../utils/budgetAnalysis';
 import { checkAchievements, unlockAchievement } from '../../utils/achievements';
+import { calculateInflationImpact } from '../../utils/inflationImpact';
+import { LeaderboardPanel } from '../../ui/LeaderboardPanel';
 import { Top, panelSx, moneyTL, diffLabel } from './helpers';
 
 interface Props {
@@ -15,6 +17,7 @@ interface Props {
 export function EndScreen({ game, onRestart, onBack }: Props) {
   const endScore = scoreEndOfMonth(game);
   const budget = analyzeBudget(game);
+  const inflation = calculateInflationImpact(game);
   const [achievements, setAchievements] = React.useState(() => checkAchievements(game));
 
   // Unlock first-day on mount
@@ -125,6 +128,26 @@ export function EndScreen({ game, onRestart, onBack }: Props) {
 
               <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
 
+              <Typography fontWeight={900} sx={{ mb: 1, fontSize: '0.95rem' }}>📉 Enflasyonun Cebine Etkisi</Typography>
+              <Stack spacing={0.5}>
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                  {game.day > 0
+                    ? `${game.day} günde enflasyon paramızdan <b>~${inflation.lossTL.toLocaleString()} TL</b> götürdü.`
+                    : 'Henüz yeterli veri yok.'}
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                  Cebindeki {moneyTL(inflation.nominalCash)}'nin reel değeri: ~{moneyTL(inflation.realCash)}
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                  {game.day > 0 ? `30 gün önceki 100 TL, bugün sadece ~${inflation.start100ValueNow} TL ediyor.` : ''}
+                </Typography>
+                <Typography variant="caption" sx={{ display: 'block', mt: 0.5, opacity: 0.6 }}>
+                  Tahmini aylık enflasyon: %3. Gerçek enflasyon daha yüksek/düşük olabilir.
+                </Typography>
+              </Stack>
+
+              <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+
               <Typography fontWeight={900} sx={{ mb: 1, fontSize: '0.95rem' }}>🏆 Başarı Rozetleri</Typography>
               <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
                 {achievements.filter(a => a.unlocked).length === 0 ? (
@@ -180,6 +203,9 @@ export function EndScreen({ game, onRestart, onBack }: Props) {
                   </Typography>
                 ) : null}
               </Stack>
+
+              <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+              <LeaderboardPanel endScore={endScore} difficulty={game.difficulty} day={game.day} />
 
               <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                 <Button variant="contained" onClick={() => onRestart(game.difficulty)}>
