@@ -17,7 +17,7 @@ import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 
 // PhoneFrame is used only inside the game module
 import { LearnScreen } from './LearnScreen';
-import { MonthSimModule } from './modules/monthSim';
+import { MonthSimModule } from './game/MonthSimModule';
 import { SimulationsScreen } from './SimulationsScreen';
 
 type RootTab = 'learn' | 'play';
