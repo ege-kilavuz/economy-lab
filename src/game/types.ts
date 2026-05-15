@@ -23,6 +23,7 @@ export type GameState = {
 
   holdings: Record<HoldingId, number>; // amounts (gold grams, stock units, usd dollars, coins)
 
+  currentRent: number; // current monthly rent (may increase over time)
   rentPaid: boolean;
   billsPaid: BillsState;
   difficulty: Difficulty;

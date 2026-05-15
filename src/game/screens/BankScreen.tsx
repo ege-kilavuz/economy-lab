@@ -33,7 +33,7 @@ export function BankScreen({ game, onAction, onBack }: Props) {
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
               {!game.rentPaid ? (
                 <Button variant="outlined" size="small" onClick={() => onAction('payRent')}>
-                  Kira öde ({moneyTL(b.rent)})
+                  Kira öde ({moneyTL(game.currentRent || b.rent)})
                 </Button>
               ) : null}
               {!game.billsPaid.dues ? (
@@ -78,6 +78,7 @@ export function BankScreen({ game, onAction, onBack }: Props) {
               {game.rentPaid ? '✅ Kira ödendi' : '❌ Kira ödenmedi'} · 
               Faturalar: {Object.values(game.billsPaid).filter(Boolean).length}/4 ödendi · 
               Kart: {game.cardDebt > 0 ? `${moneyTL(game.cardDebt)} borç` : '✅ temiz'}
+              {game.currentRent > b.rent ? ` · Kira enflasyonla ${moneyTL(game.currentRent - b.rent)} arttı` : ''}
             </Typography>
           </CardContent>
         </Card>

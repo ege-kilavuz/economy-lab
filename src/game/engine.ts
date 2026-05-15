@@ -114,6 +114,7 @@ export function newGame(difficulty: Difficulty, seed = Date.now() % 1000000): Ga
 
     holdings: { gold: 0, stock: 0, usd: 0, btc: 0, eth: 0 },
 
+    currentRent: b.rent,
     rentPaid: false,
     billsPaid: { ...INITIAL_BILLS },
     difficulty,
@@ -216,12 +217,13 @@ export function applyAction(
     }
     case 'payRent': {
       if (s.rentPaid) return logPush(s, 'Kira zaten ödendi.');
-      const payment = pay(s, b.rent, useCard);
+      const rentAmount = s.currentRent || b.rent;
+      const payment = pay(s, rentAmount, useCard);
       if (!payment.ok) return payment.state;
 
       return logPush(
         { ...payment.state, rentPaid: true },
-        `Kira ödendi: ${b.rent.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'})`
+        `Kira ödendi: ${rentAmount.toLocaleString()} TL (${payment.chargedTo === 'card' ? 'kart' : 'nakit'})`
       );
     }
     case 'payDues': {
@@ -345,6 +347,18 @@ export function nextDay(s0: GameState) {
     const interest = tl(s.cardDebt * b.cardMonthlyRate);
     s = { ...s, cardDebt: s.cardDebt + interest };
     s = logPush(s, `Ay sonu kart faizi işlendi: +${interest.toLocaleString()} TL`);
+  }
+
+  // Rent increases by ~5% of base rent every 10 days (simulates inflation)
+  if (s.day > 0 && s.day % 10 === 0) {
+    const b = balanceFor(s.difficulty);
+    const maxRent = Math.round(b.rent * 1.3);
+    if (s.currentRent < maxRent) {
+      const increase = Math.round(b.rent * 0.05);
+      const newRent = Math.min(s.currentRent + increase, maxRent);
+      s = { ...s, currentRent: newRent };
+      s = logPush(s, `🏠 Enflasyon kira artışı: +${increase.toLocaleString()} TL (güncel: ${newRent.toLocaleString()} TL)`);
+    }
   }
 
   const lifeEvent = applyLifeEvent(s);
