@@ -149,7 +149,7 @@
 
 ### 4.3 🎯 Oyunlaştırma İyileştirmeleri
 - [x] **Başarı Rozetleri (Badges):** 10 rozet eklendi (Borçsuz Ay, Yatırımcı, Fatura Müdürü vs.) ✅
-- [ ] **Liderlik Tablosu:** Sınıf içi karşılaştırma (local storage)
+- [x] **Liderlik Tablosu:** Cloudflare Workers + KV ile online sıralama ✅
 - [ ] **Haftalık Challenge:** "Bu ay sadece nakit kullan" veya "Hiç kart borcu taşıma"
 - [ ] **Animasyonlar / Ses Efektleri:** Harcama yapınca para sayma sesi, görev tamamlayınca konfeti
 - [ ] **Konsept İlerleme Çubuğu:** Her öğrenme kategorisinde % kaç tamamlandı
@@ -163,14 +163,14 @@
 
 ### 4.5 🎨 UI/UX İyileştirmeleri
 - [ ] **Mobil öncelikli dokunuş:** Butonlar biraz küçük kalabilir, genişlet
-- [ ] **Karanlık mod:** Zaten karanlık tema, iyi ✅
+- [x] **Karanlık mod:** Zaten karanlık tema, iyi ✅
 - [ ] **Loading skeleton** — Veri yüklenirken boş ekran yerine iskelet
 - [ ] **Tutorial / Onboarding:** İlk açılışta "şöyle oynanır" adımı
 - [ ] **Dil seçeneği:** İngilizce ekleme (Teknofest uluslararası olabilir)
 
 ### 4.6 🌐 Teknik
-- [ ] **Code-splitting:** `build.rollupOptions.output.manualChunks` ile bundle boyutunu küçült (şu an 891 KB tek JS dosyası)
-- [ ] **PWA:** Telefonda "ana ekrana ekle" desteği
+- [ ] **Code-splitting:** `build.rollupOptions.output.manualChunks` ile bundle boyutunu küçült (şu an 903 KB tek JS dosyası)
+- [x] **PWA:** GitHub Pages için aktif (APK'da devre dışı) ✅
 - [ ] **Offline destek:** Service worker + cache
 - [ ] **LocalStorage → IndexedDB:** Daha büyük veriler için
 
@@ -204,14 +204,15 @@ Kısa Vade (Bu Hafta): ✅
 ✅ └── Vergi kesintisi mekaniği ekle
 ✅ └── Başarı rozetleri
 
-Orta Vade:
+Orta Vade: ✅
 ✅ └── BES modülü (Bireysel Emeklilik Sistemi)
 ✅ └── Kira artışı mekaniği
 ✅ └── PWA (GitHub Pages için)
+✅ └── Online Liderlik Tablosu (Cloudflare Workers)
+
 ⬜ └── İngilizce dil desteği
 
 Uzun Vade:
-⬜ └── Liderlik tablosu
 ⬜ └── Offline destek
 ⬜ └── Code-splitting + performans
 ```
