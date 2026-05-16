@@ -17,7 +17,11 @@ export function categoryById(id: string): LearnCategory | undefined {
   return LEARN_CATEGORIES.find((c) => c.id === id);
 }
 
-export const LEARNING_PATH: LearnCategoryId[] = ['basics', 'budget', 'credit', 'investing', 'macro', 'psychology', 'safety'];
+export const LEARNING_PATH: LearnCategoryId[] = [
+  'basics', 'budget', 'credit', 'investing', 'stock-patterns',
+  'macro', 'tax', 'credit-score', 'crypto', 'global-economy',
+  'psychology', 'safety',
+];
 
 export function GlassCard({ children }: { children: React.ReactNode }) {
   return (

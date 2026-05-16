@@ -152,13 +152,13 @@
 - [x] **Liderlik Tablosu:** Cloudflare Workers + KV ile online sıralama ✅
 - [ ] **Haftalık Challenge:** "Bu ay sadece nakit kullan" veya "Hiç kart borcu taşıma"
 - [ ] **Animasyonlar / Ses Efektleri:** Harcama yapınca para sayma sesi, görev tamamlayınca konfeti
-- [ ] **Konsept İlerleme Çubuğu:** Her öğrenme kategorisinde % kaç tamamlandı
+- [x] **Konsept İlerleme Çubuğu:** Her kategoride % bar + genel ilerleme çubuğu + içerik okuma takibi ✅
 
 ### 4.4 📚 Öğrenme İçeriği Genişletme
-- [ ] **Vergi Kategorisi:** KDV, stopaj, GV, BES katkısı — Türkiye'de gençlerin bilmesi gereken temel vergiler
-- [ ] **Kripto Bilinçlendirme:** BTC/ETH sadece yatırım aracı değil, riskleri de anlatılmalı
-- [ ] **Sendikasyon / Kredi Notu:** Kredi notu nasıl yükselir/düşer, Findeks vb.
-- [ ] **Küresel Ekonomi:** Döviz kuru etkisi, ithalat/ihracat dengesi
+- [x] **Vergi Kategorisi:** KDV, stopaj, GV, BES katkısı — 3 içerik, 6 soru ✅
+- [x] **Kripto Bilinçlendirme:** BTC/ETH, volatilite, güvenlik — 3 içerik, 5 soru ✅
+- [x] **Sendikasyon / Kredi Notu:** Findeks, not yükseltme, kara liste — 3 içerik, 5 soru ✅
+- [x] **Küresel Ekonomi:** Döviz kuru, ithalat/ihracat, krizler — 3 içerik, 5 soru ✅
 - [ ] **Sürdürülebilirlik:** Yeşil yatırım, etik tüketim
 
 ### 4.5 🎨 UI/UX İyileştirmeleri

@@ -7,7 +7,11 @@ export type LearnCategoryId =
   | 'stock-patterns'
   | 'macro'
   | 'psychology'
-  | 'safety';
+  | 'safety'
+  | 'tax'
+  | 'crypto'
+  | 'credit-score'
+  | 'global-economy';
 
 export type LearnItem = {
   id: string;
@@ -136,6 +140,51 @@ function generatePsychologyQuiz(): LearnQuestion[] {
     { id: 'ps2', q: 'Kayıptan kaçınma hangi davranışta görülür?', choices: ['Zarar kesip plana dönmek', 'Zarardaki pozisyonu “belki döner” diye sonsuza dek tutmak', 'Portföyü çeşitlendirmek', 'Acil fon ayırmak'], correctIndex: 1, explain: 'Zararı kabullenmeyi ertelemek, kayıptan kaçınmadır.' },
     { id: 'ps3', q: 'Yatırımda yoğun heyecan hissediyorsan en sağlıklı kısa aksiyon ne olabilir?', choices: ['Hemen tüm parayla girmek', '24 saat bekleyip planı tekrar okumak', 'Daha fazla borçlanmak', 'Sosyal medyayı referans almak'], correctIndex: 1, explain: 'Kısa bekleme, duygusal kararı filtreler.' },
     { id: 'ps4', q: 'Başkasının kazancını görünce stratejiyi bozmak hangi probleme yakındır?', choices: ['Disiplin', 'Sürü psikolojisi', 'Likidite', 'Bileşik getiri'], correctIndex: 1, explain: 'Başkalarını kör taklit etmek sürü psikolojisidir.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateTaxQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 't1', q: 'KDV\'nin açılımı nedir?', choices: ['Katma Değer Vergisi', 'Kamu Dağıtım Varlığı', 'Kredi Değerleme Verisi', 'Kurumsal Denetim Varlığı'], correctIndex: 0, explain: 'KDV, mal ve hizmetlerin her aşamasında eklenen değere uygulanan dolaylı vergidir.' },
+    { id: 't2', q: 'Gelir vergisinde “dilim” ne demektir?', choices: ['Vergi borcunu taksitlendirmek', 'Artan gelirle yükselen vergi oranı', 'Ödeme tarihini ertelemek', 'Muafiyet süresi'], correctIndex: 1, explain: 'Türkiye\'de artan oranlı vergi dilimleri vardır; kazandıkça daha yüksek oran uygulanır.' },
+    { id: 't3', q: 'BES\'te devlet katkısı ne kadardır?', choices: ['%10', '%20', '%30', '%50'], correctIndex: 2, explain: 'Devlet katkısı oranı %30\'dur (belirli limitlere kadar).' },
+    { id: 't4', q: 'Stopaj vergisi kim tarafından kesilir?', choices: ['Alıcı tarafından', 'Ödemeyi yapan tarafından kaynakta', 'Banka tarafından', 'Noter tarafından'], correctIndex: 1, explain: 'Stopaj, ödeme yapılırken kaynakta kesilen vergidir.' },
+    { id: 't5', q: 'Kira geliri için hangisi doğrudur?', choices: ['Hiç vergi ödenmez', 'Belirli bir istisna tutarına kadar vergi alınmaz', 'Her kuruşu vergilendirilir', 'Sadece ticari kiralar vergiye tabidir'], correctIndex: 1, explain: 'Konut kira gelirinde yıllık istisna tutarı bulunur (2025: 33.000 TL).' },
+    { id: 't6', q: 'Mağazadan aldığın ürünün fişinde KDV oranı nerede yazar?', choices: ['Sadece barkodda', 'Fişin alt kısmında ayrı satırda', 'Hiç yazmaz', 'Sadece online alışverişte'], correctIndex: 1, explain: 'KDV tutarı fişte ayrıca gösterilir. Temel gıdada %1, çoğu üründe %10, lükste %20.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateCryptoQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'cr1', q: 'Kripto paranın temel özelliği nedir?', choices: ['Merkez bankası tarafından basılır', 'Merkeziyetsiz ve blokzincir üzerinde çalışır', 'Her ülkenin resmî para birimidir', 'Fiziksel olarak cüzdanda taşınır'], correctIndex: 1, explain: 'Kripto paralar merkezi bir otoriteye bağlı olmadan çalışır.' },
+    { id: 'cr2', q: 'Kripto yatırımında en büyük risk nedir?', choices: ['Düşük getiri', 'Aşırı volatilite ve düzenleme belirsizliği', 'Banka garantisi olmaması', 'Kullanımının yasak olması'], correctIndex: 1, explain: 'Kripto fiyatları çok hızlı değişebilir ve düzenlemeler ülkeden ülkeye farklılık gösterir.' },
+    { id: 'cr3', q: 'Soğuk cüzdan (cold wallet) ne işe yarar?', choices: ['İnternet bağlantısı olmadan kriptoları güvenle saklamak', 'Kripto madenciliği yapmak', 'Anlık al-sat yapmak', 'Kredi çekmek'], correctIndex: 0, explain: 'Soğuk cüzdan çevrimdışı olduğu için hacker saldırılarına karşı daha güvenlidir.' },
+    { id: 'cr4', q: 'Kripto borsalarında hangi güvenlik önlemi en önemlisidir?', choices: ['Reklamlara güvenmek', '2FA (iki faktörlü doğrulama) ve güçlü şifre', 'Telefon numarasını gizlemek', 'Sık sık şifre değiştirmek'], correctIndex: 1, explain: '2FA ek bir güvenlik katmanı sağlar.' },
+    { id: 'cr5', q: 'BTC\'nin toplam arzı neden sınırlıdır (21 milyon)?', choices: ['Hükümet kararıyla', 'Protokol koduyla sabitlenmiştir, enflasyonu önler', 'Madenler tükendiği için', 'Bankalar anlaştığı için'], correctIndex: 1, explain: 'Sınırlı arz, kıtlık yaratarak değer koruma aracı olmasını sağlar.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateCreditScoreQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'cs1', q: 'Kredi notu hangi amaçla kullanılır?', choices: ['Hangi okula gideceğini belirler', 'Bankaların kredi/kart başvurunda riskini değerlendirmesi için', 'Telefon faturanı düşürmek için', 'Pasaport almak için'], correctIndex: 1, explain: 'Kredi notu, geri ödeme güvenilirliğinin sayısal göstergesidir.' },
+    { id: 'cs2', q: 'Findeks notu kaç aralığındadır?', choices: ['0-100', '0-500', '0-1900', '0-10000'], correctIndex: 2, explain: 'Findeks kredi notu 0-1900 aralığındadır; yüksek not daha iyidir.' },
+    { id: 'cs3', q: 'Hangisi kredi notunu en çok düşürür?', choices: ['Yeni hesap açmak', 'Faturaları geciktirmek ve borcu ödememek', 'Bordro hesabı kullanmak', 'Birikim yapmak'], correctIndex: 1, explain: 'Ödeme düzensizliği kredi notunu en olumsuz etkileyen faktördür.' },
+    { id: 'cs4', q: 'Kredi notunu yükseltmek için en etkili yöntem hangisidir?', choices: ['Hiç kredi kullanmamak', 'Faturaları düzenli ödeyip kredi kartı borcunu zamanında kapatmak', 'Sürekli yeni kredi başvurusu yapmak', 'Tüm kartları iptal etmek'], correctIndex: 1, explain: 'Düzenli ödeme alışkanlığı notu istikrarlı şekilde yükseltir.' },
+    { id: 'cs5', q: 'Kredi notu sorgulama hangi sıklıkta ücretsiz yapılabilir?', choices: ['Ayda 1 kez', 'Yılda 2 kez (Findeks)', 'Haftada 1 kez', 'Sınırsız'], correctIndex: 1, explain: 'Findeks yılda 2 kez ücretsiz rapor hakkı verir.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateGlobalEconomyQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'g1', q: 'Döviz kuru neden dalgalanır?', choices: ['Hava durumuna göre', 'Arz-talep, faiz farkı ve ekonomik beklentilere göre', 'Sadece seçim zamanı', 'Hiç değişmez'], correctIndex: 1, explain: 'Kur, piyasa dinamikleri ve beklentilerle sürekli değişir.' },
+    { id: 'g2', q: 'İthalat artarsa ne olur?', choices: ['Döviz ihtiyacı artar, TL değer kaybedebilir', 'Her şey ucuzlar', 'İşsizlik biter', 'Borsa düşer'], correctIndex: 0, explain: 'Çok ithalat döviz talebini artırır, bu da yerel parayı zayıflatabilir.' },
+    { id: 'g3', q: 'Cari denge neyi gösterir?', choices: ['Bütçe açığını', 'Ülkeye giren ve çıkan döviz miktarını (ithalat-ihracat farkı)', 'Enflasyon oranını', 'Faiz oranını'], correctIndex: 1, explain: 'Cari denge, bir ülkenin dış ticaret dengesini gösterir.' },
+    { id: 'g4', q: 'Küresel ekonomik kriz Türkiye\'yi nasıl etkiler?', choices: ['Hiç etkilemez', 'Sermaye çıkışı, kur artışı ve talep daralması yaşanabilir', 'Herkes zengin olur', 'Sadece borsayı etkiler'], correctIndex: 1, explain: 'Küresel krizler gelişmekte olan ülkeleri daha sert etkiler.' },
+    { id: 'g5', q: 'TCMB faiz artırınca döviz kuruna kısa vadede etkisi ne olur?', choices: ['Kur yükselir', 'Kur düşebilir (TL cazip hale gelir)', 'Hiç etkisi olmaz', 'Her şey ücretsiz olur'], correctIndex: 1, explain: 'Yüksek faiz TL varlıkları cazip kılarak kur baskısını azaltabilir.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -512,6 +561,200 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
       },
     ],
     quiz: generatePsychologyQuiz(),
+  },
+  {
+    id: 'tax',
+    title: 'VERGİ OKUR YAZARLIĞI',
+    subtitle: 'KDV, stopaj, gelir vergisi ve BES — Türkiye\'de gençlerin bilmesi gerekenler.',
+    icon: '🏛️',
+    items: [
+      {
+        id: 'kdv',
+        title: 'KDV (KATMA DEĞER VERGİSİ)',
+        short: 'Aldığın her şeyin içinde var.',
+        body: [
+          'KDV, mal ve hizmetlerin her aşamasında eklenen değere uygulanan dolaylı vergidir.',
+          'Türkiye\'de üç ana KDV oranı var: %1 (temel gıda), %10 (çoğu ürün), %20 (lüks tüketim).',
+          'Fişlerde ayrı satırda gösterilir — her alışverişinde vergi ödersin.',
+        ],
+        scenario: '1.000 TL\'lik bir telefon aldın. KDV %20 ise telefonun KDV\'siz fiyatı 833 TL, KDV tutarı 167 TL\'dir.',
+        qa: [{ q: 'KDV\'yi kim öder?', a: 'Son tüketici öder, işletme devlete yatırır.' }],
+        tips: ['KDV oranlarına dikkat et: temel gıdada %1, elektronikte %20.', 'Fiş almak vergini ödemenin kanıtıdır, aynı zamanda bütçe takibinde işe yarar.'],
+      },
+      {
+        id: 'income-tax',
+        title: 'GELİR VERGİSİ & STOPAJ',
+        short: 'Kazandıkça devlete pay.',
+        body: [
+          'Gelir vergisi, bireylerin kazançları üzerinden alınan vergidir.',
+          'Türkiye\'de artan oranlı dilim sistemi var: %15\'ten başlar, %40\'a kadar çıkar.',
+          'Stopaj: Maaşından işveren tarafından kesilip devlete yatırılır — sen hiçbir şey yapmazsın.',
+        ],
+        scenario: 'Aylık 25.000 TL brüt maaş alıyorsan, stopaj + SGK kesintisi sonrası eline ~20.000 TL net geçer.',
+        qa: [{ q: 'Stopaj kim tarafından kesilir?', a: 'İşveren maaşından keser, devlete yatırır.' }],
+        tips: ['Brüt ve net maaş arasındaki farkın büyük kısmı vergi ve SGK kesintisidir.', 'Kira geliri, freelance kazanç da beyanname gerektirebilir.'],
+        video: { title: 'Gelir Vergisi Dilimleri 2025', url: 'https://www.gib.gov.tr/', source: 'gib.gov.tr' },
+      },
+      {
+        id: 'bes-tax',
+        title: 'BES & VERGİ AVANTAJI',
+        short: 'Devlet katkısı %30, üstelik vergi avantajlı.',
+        body: [
+          'Bireysel Emeklilik Sistemi\'nde (BES) devlet katkısı %30\'dur (belirli limitlere kadar).',
+          'Ödediğin BES katkı payı gelir vergisi matrahından düşülebilir.',
+          'Devlet katkısı + vergi avantajı + bileşik getiri = uzun vadede ciddi fark.',
+        ],
+        scenario: 'Ayda 1.000 TL BES\'e yatırırsan: 1.000 TL sen + 300 TL devlet = 1.300 TL/ay birikir. Yıllık %15 getiriyle 10 yılda ~350.000 TL.',
+        qa: [{ q: 'BES\'ten erken çıkarsam ne olur?', a: 'Devlet katkısının bir kısmı geri alınır, %15 stopaj uygulanır.' }],
+        tips: ['Mümkün olduğunca erken başla — bileşik getiri zamanla katlanır.', 'En az 10 yıl kalmayı hedefle, yoksa devlet katkısı geri alınabilir.'],
+      },
+    ],
+    quiz: generateTaxQuiz(),
+  },
+  {
+    id: 'crypto',
+    title: 'KRİPTO BİLİNÇLENDİRME',
+    subtitle: 'Fırsat mı risk mi? Kriptoyu anla, bilinçli karar ver.',
+    icon: '₿',
+    items: [
+      {
+        id: 'crypto-basics',
+        title: 'KRİPTO NEDİR?',
+        short: 'Merkeziyetsiz dijital para.',
+        body: [
+          'Kripto para, merkezi bir otoriteye bağlı olmayan, blokzincir teknolojisiyle çalışan dijital varlıktır.',
+          'Bitcoin (BTC) ilk ve en bilinen örnektir. Ethereum (ETH) akıllı sözleşmeleriyle farklılaşır.',
+          'Kriptoların toplam arzı genelde sınırlıdır (BTC: 21 milyon). Potansiyel enflasyon koruması sağlar.',
+        ],
+        scenario: '1 BTC 2020\'de 80.000 TL iken 2025\'te 3.000.000 TL\'ye çıktı — ama arada %70 düştüğü günler de oldu.',
+        qa: [{ q: 'Kripto yatırım aracı mı, para birimi mi?', a: 'Her ikisi de — ama Türkiye\'de daha çok yatırım aracı olarak görülür.' }],
+        tips: ['Sadece kaybetmeyi göze alabildiğin kadar kripto al.', 'Anlamadığın bir projeye asla yatırım yapma.'],
+      },
+      {
+        id: 'crypto-risk',
+        title: 'VOLATİLİTE & RİSK',
+        short: 'Fiyatı bir günde %20 düşebilir.',
+        body: [
+          'Kripto piyasası geleneksel piyasalardan 5-10 kat daha oynaktır (volatil).',
+          'Haber, regülasyon veya büyük yatırımcı hareketleriyle fiyat saatler içinde %20-30 değişebilir.',
+          'Kaldıraçlı işlemler hem kazancı hem kaybı katlar — amatörlerden uzak durması önerilir.',
+        ],
+        scenario: '1.000 dolar BTC aldın. Ertesi gün bir ülke kriptoyu yasakladı haberine portföyün 700 dolar oldu. Panik satışı yaparsan zarar kalıcı olur.',
+        qa: [{ q: 'Volatilite kötü mü?', a: 'Yüksek getiri potansiyeli = yüksek kayıp riski. İkisi beraber gelir.' }],
+        tips: ['DCA (düzenli alım) volatiliteyi dener.', 'Kaldıraçlı işlemlerden uzak dur — amatör için kumar gibidir.'],
+      },
+      {
+        id: 'crypto-security',
+        title: 'GÜVENLİK & CÜZDANLAR',
+        short: 'Anahtarlar sana ait değilse, kripto sana ait değil.',
+        body: [
+          'Kripto güvenliğinde en kritik kural: "Not your keys, not your coins."',
+          'Soğuk cüzdan (çevrimdışı) — uzun süreli saklama için en güvenli yöntemdir.',
+          '2FA, güçlü şifre ve phishing koruması hayati önem taşır.',
+        ],
+        scenario: 'Bir borsada 10.000 dolarlık ETH tutuyordun. Borsa hacklendi ve tüm fonlar çalındı — soğuk cüzdanda olsaydı güvendeydi.',
+        qa: [{ q: 'Borsa mı cüzdan mı daha güvenli?', a: 'Cüzdan (özellikle soğuk cüzdan) çok daha güvenli ama kullanımı daha zahmetli.' }],
+        tips: ['Büyük miktarlar için soğuk cüzdan kullan.', 'Kimseyle özel anahtarını paylaşma — "destek" bahanesiyle gelen mesajlara inanma.'],
+      },
+    ],
+    quiz: generateCryptoQuiz(),
+  },
+  {
+    id: 'credit-score',
+    title: 'KREDİ NOTU',
+    subtitle: 'Finansal dünyadaki karnen.',
+    icon: '📊',
+    items: [
+      {
+        id: 'score-basics',
+        title: 'KREDİ NOTU NEDİR?',
+        short: 'Bankaların sana güven puanı.',
+        body: [
+          'Kredi notu, bir bireyin borç ödeme geçmişine göre hesaplanan sayısal puandır.',
+          'Türkiye\'de en yaygını Findeks\'tir. Not aralığı 0-1900\'dür.',
+          'Yüksek not = düşük faiz, kolay kredi. Düşük not = kredi alamama veya yüksek faiz.',
+        ],
+        scenario: 'Findeks notu 1500+ olan Ali, ihtiyaç kredisini %3 faizle alırken notu 800 olan Ayşe aynı krediye %6 faiz ödedi.',
+        qa: [{ q: 'Kredi notu nereden sorgulanır?', a: 'Findeks (KKB) üzerinden, yılda 2 kez ücretsiz.' }],
+        tips: ['Yılda 2 kez ücretsiz Findeks raporun al — kendini takip et.', 'Notun sadece kredi değil, cep telefonu sözleşmesinde bile etkili olabilir.'],
+      },
+      {
+        id: 'score-improve',
+        title: 'NOT NASIL YÜKSELİR?',
+        short: 'Düzenli ödeme, düşük risk.',
+        body: [
+          'Kredi notunu yükselten en önemli faktör: tüm faturaları ve borçları zamanında ödemek.',
+          'Kredi kartı limitinin %30\'undan fazlasını kullanmamak notu olumlu etkiler.',
+          'Sık sık kredi başvurusu yapmak notu düşürür — her başvuru bir sorgu demektir.',
+        ],
+        scenario: 'Ali her ay kredi kartı borcunu full ödüyor, limitinin %20\'sini kullanıyor. Findeks notu 1600. Ayşe limiti sonuna kadar kullanıyor, bazen asgari ödüyor. Notu 900.',
+        qa: [{ q: 'Kredi notu ne kadar sürede yükselir?', a: '3-6 ay düzenli ödemeyle belirgin artış görülür.' }],
+        tips: ['Limitini gereksiz yere yükseltme — yüksek limit görünür risk demek.', 'Asgari ödeme hayat kurtarır ama notuna zarar verir, full ödemeye çalış.'],
+      },
+      {
+        id: 'score-findeks',
+        title: 'FİNDEKS & KAYITLAR',
+        short: 'Tüm finansal geçmişin bir yerde.',
+        body: [
+          'Kredi Kayıt Bürosu (KKB), tüm bankalardan gelen verileri toplar ve Findeks notunu hesaplar.',
+          'Kara liste: 90 gün gecikmiş borçlar, protestolu çekler, icra kayıtları.',
+          'Kara listedekiler yeni kredi/kart alamaz — temizlenmek için borcu ödeyip 1 yıl beklemen gerekir.',
+        ],
+        scenario: 'Ali\'nin 3 yıl önce ödemediği bir kredi kartı borcu icraya verilmiş. Borcu kapattıktan sonra Findeks\'teki olumsuz kayıt 5 yıl daha görünmeye devam eder.',
+        qa: [{ q: 'Kara listeden nasıl çıkılır?', a: 'Borcu kapat, 1 yıl düzenli ödeme yap, kayıt zamanla silinir.' }],
+        tips: ['E-devlet üzerinden KKB raporunu da sorgulayabilirsin.', 'Kefil olmak da notunu etkiler — kefil olduğun kişi ödemezse senin notun düşer.'],
+        warning: 'Başkasına kefil olmak finansal intihar olabilir. Çok güvendiğin biri bile olsa riski hesapla.',
+      },
+    ],
+    quiz: generateCreditScoreQuiz(),
+  },
+  {
+    id: 'global-economy',
+    title: 'KÜRESEL EKONOMİ',
+    subtitle: 'Dünyada olan biten cebini nasıl etkiliyor?',
+    icon: '🌐',
+    items: [
+      {
+        id: 'forex',
+        title: 'DÖVİZ KURU',
+        short: 'Başka paranın TL karşısındaki fiyatı.',
+        body: [
+          'Döviz kuru, bir ülke parasının başka bir ülke parası cinsinden değeridir.',
+          'Kur, arz-talep, faiz farkları, enflasyon ve jeopolitik risklerle dalgalanır.',
+          'TL değer kaybedince ithalat pahalanır, yurtdışı tatili hayal olur.',
+        ],
+        scenario: '1 USD = 35 TL iken yurtdışından 100 dolarlık bir ürün almak 3.500 TL. Dolar 40 TL olursa aynı ürün 4.000 TL.',
+        qa: [{ q: 'Kim döviz artışından zarar görür?', a: 'İthalatçılar, yurtdışı borcu olanlar, akaryakıt tüketicileri.' }],
+        tips: ['Döviz ihtiyacın varsa ani alışveriş yapma, dalgalanmayı takip et.', 'Anlık kur yerine ortalama kura bakmak daha sağlıklıdır.'],
+      },
+      {
+        id: 'trade-balance',
+        title: 'İTHALAT & İHRACAT DENGESİ',
+        short: 'Ülke ne kadar üretiyor, ne kadar tüketiyor?',
+        body: [
+          'İhracat: ülkenin sattığı mal ve hizmetler. İthalat: ülkenin satın aldıkları.',
+          'İthalat > İhracat = cari açık. Ülke dışarıdan daha fazla döviz bulmak zorunda kalır.',
+          'Cari açık finansmanı için sıcak para (yabancı yatırım) gerekir, o da faiz ve güven ister.',
+        ],
+        scenario: 'Türkiye enerjinin %70\'ini ithal ediyor. Dolar yükselince enerji faturası artar, bu da üretim maliyetlerine → market fiyatlarına yansır.',
+        qa: [{ q: 'Cari açık neden kötüdür?', a: 'Sürdürülemez hale gelirse kriz riski doğar.' }],
+        tips: ['Yerli üretimi desteklemek cari açığı azaltır — "yerli malı" sadece slogan değil.'],
+      },
+      {
+        id: 'global-crises',
+        title: 'KÜRESEL KRİZLER & TÜRKİYE',
+        short: 'Amerika\'da kelebek kanat çırpar, Türkiye\'de fırtına kopar.',
+        body: [
+          'Küresel krizler (2008 Mortgage Krizi, 2020 Covid, 2023 küresel enflasyonu) Türkiye\'yi daha sert etkiler.',
+          'Gelişmekte olan ülkeler kriz anında "sermaye kaçışı" yaşar: yabancı yatırımcı parasını çeker.',
+          'Türkiye\'nin kırılganlığı: cari açık, döviz bağımlılığı, yüksek enflasyon.',
+        ],
+        scenario: 'ABD faiz artırınca yabancı yatırımcı TL varlıklarını satıp dolara geçer. TL değer kaybeder, enflasyon artar, hayat pahalanır.',
+        qa: [{ q: 'Türkiye krizlere karşı ne yapabilir?', a: 'Rezerv biriktirmek, yerli üretimi artırmak, mali disiplin.' }],
+        tips: ['Küresel haberlere kayıtsız kalma — ABD\'de olan biten senin cebini de etkiler.', 'Kriz dönemlerinde panik satışı yapma, fırsat da doğabilir.'],
+      },
+    ],
+    quiz: generateGlobalEconomyQuiz(),
   },
   {
     id: 'safety',

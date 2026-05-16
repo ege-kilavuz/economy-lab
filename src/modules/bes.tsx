@@ -58,7 +58,6 @@ const DEFAULTS = {
   govtMatch: 30,
 };
 
-function tl(n: number) { return Math.round(n); }
 
 export function BESModule() {
   const [monthly, setMonthly] = React.useState(DEFAULTS.monthly);

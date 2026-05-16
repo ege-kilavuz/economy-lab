@@ -5,9 +5,10 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import { InflationModule } from './modules/inflation';
 import { InterestModule } from './modules/interest';
 import { CentralBankModule } from './modules/centralBank';
+import { BESModule } from './modules/bes';
 import { loadProgress, markSimulationOpened } from './ui/progress';
 
-type SimId = 'inflation' | 'interest' | 'central';
+type SimId = 'inflation' | 'interest' | 'central' | 'bes';
 
 type SimMeta = {
   id: SimId;

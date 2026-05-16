@@ -1,14 +1,16 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, CardContent, Chip, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, CardContent, Chip, LinearProgress, Stack, Typography } from '@mui/material';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import type { LearnView } from './types';
-import { GlassCard, categoryById, LEARNING_PATH, LearnTop } from './LearnHelpers';
+import { GlassCard, categoryById, LearnTop } from './LearnHelpers';
 import { LEARN_CATEGORIES } from './content';
 import { LEARNING_SCENARIOS } from './scenarios';
 import type { LearnCategoryId } from './content';
+import { getCategoryProgress } from '../ui/progress';
 
 interface Props {
   completedQuizIds: LearnCategoryId[];
   completedSet: Set<LearnCategoryId>;
+  openedItemIds: string[];
   nextRecommendedId: string | undefined;
   nextRecommended: { icon: string; title: string } | undefined;
   expandedScenarioId: string | false;
@@ -16,7 +18,35 @@ interface Props {
   onScenarioToggle: (id: string) => void;
 }
 
-export function ListView({ completedQuizIds, completedSet, nextRecommendedId, nextRecommended, expandedScenarioId, onSetView, onScenarioToggle }: Props) {
+function ProgressBar({ value, color }: { value: number; color?: string }) {
+  const barColor = color || (value >= 80 ? '#22c55e' : value >= 40 ? '#60a5fa' : '#f59e0b');
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <LinearProgress
+        variant="determinate"
+        value={Math.min(value, 100)}
+        sx={{
+          flex: 1,
+          height: 6,
+          borderRadius: 3,
+          bgcolor: 'rgba(255,255,255,0.1)',
+          '& .MuiLinearProgress-bar': { bgcolor: barColor, borderRadius: 3 },
+        }}
+      />
+      <Typography variant="caption" sx={{ minWidth: 36, textAlign: 'right', fontWeight: 800, color: barColor }}>
+        {value}%
+      </Typography>
+    </Box>
+  );
+}
+
+export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, nextRecommended, expandedScenarioId, onSetView, onScenarioToggle }: Props) {
+  const totalItems = LEARN_CATEGORIES.reduce((sum, c) => sum + c.items.length, 0);
+  const totalRead = LEARN_CATEGORIES.reduce((sum, c) => sum + c.items.filter(it => openedItemIds.includes(it.id)).length, 0);
+  const totalQuizDone = completedQuizIds.length;
+  const totalQuiz = LEARN_CATEGORIES.length;
+  const overallPct = Math.round(((totalRead / totalItems) * 0.5 + (totalQuizDone / totalQuiz) * 0.5) * 100);
+
   return (
     <Box sx={{ pt: 1 }}>
       <LearnTop title="📚 Öğren" canBack={false} onBack={() => {}} />
@@ -31,38 +61,58 @@ export function ListView({ completedQuizIds, completedSet, nextRecommendedId, ne
           <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.85 }}>
             Önerilen sıra: Temeller → Bütçe → Kredi → Yatırım → Makro → Psikoloji → Güvenlik
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
-            <Chip size="small" label={`Tamamlanan test: ${completedQuizIds.length}/${LEARNING_PATH.length}`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-            <Chip size="small" label={completedQuizIds.length >= 3 ? 'Geri bildirim: ritim iyi gidiyor' : 'Geri bildirim: ilk 3 testi bitir'} sx={{ bgcolor: completedQuizIds.length >= 3 ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.18)', color: 'white' }} />
-            {nextRecommended ? (
-              <Chip size="small" label={`Sıradaki: ${nextRecommended.title}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
-            ) : (
-              <Chip size="small" label="Ana öğrenme yolu tamamlandı" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} />
-            )}
-          </Stack>
+          <Box sx={{ mt: 1.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+              <Typography variant="caption" fontWeight={800}>Genel ilerleme</Typography>
+              <Typography variant="caption" fontWeight={800}>{overallPct}%</Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={overallPct}
+              sx={{ height: 8, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { bgcolor: overallPct >= 80 ? '#22c55e' : overallPct >= 40 ? '#60a5fa' : '#f59e0b', borderRadius: 4 } }}
+            />
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1.5 }}>
+              <Chip size="small" label={`📖 ${totalRead}/${totalItems} içerik okundu`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+              <Chip size="small" label={`🧪 ${completedQuizIds.length}/${totalQuiz} test tamam`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+              <Chip size="small" label={completedQuizIds.length >= 3 ? 'Geri bildirim: ritim iyi gidiyor' : 'Geri bildirim: ilk 3 testi bitir'} sx={{ bgcolor: completedQuizIds.length >= 3 ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.18)', color: 'white' }} />
+              {nextRecommended ? (
+                <Chip size="small" label={`Sıradaki: ${nextRecommended.icon} ${nextRecommended.title}`} sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
+              ) : (
+                <Chip size="small" label="Ana öğrenme yolu tamamlandı 🎉" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} />
+              )}
+            </Stack>
+          </Box>
         </CardContent>
       </GlassCard>
 
       <Stack spacing={1.5} sx={{ mt: 2 }}>
-        {LEARN_CATEGORIES.map((c) => (
-          <GlassCard key={c.id}>
-            <CardContent onClick={() => onSetView({ kind: 'category', category: c })} sx={{ cursor: 'pointer' }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Typography fontWeight={950}>{c.icon} {c.title}</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>{c.subtitle}</Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 0.75 }}>
-                    <Chip size="small" label={`${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-                    <Chip size="small" label={`${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-                    {completedSet.has(c.id) ? <Chip size="small" label="Test tamam" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white' }} /> : null}
-                    {nextRecommendedId === c.id ? <Chip size="small" label="Önerilen sıra" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} /> : null}
-                  </Stack>
-                </Box>
-                <Chip size="small" label={completedSet.has(c.id) ? 'TEKRAR AÇ' : 'AÇ'} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-              </Stack>
-            </CardContent>
-          </GlassCard>
-        ))}
+        {LEARN_CATEGORIES.map((c) => {
+          const catItemIds = c.items.map(it => it.id);
+          const { readCount, quizDone, totalPct } = getCategoryProgress(c.id, catItemIds, openedItemIds, completedQuizIds);
+          const barColor = totalPct >= 80 ? '#22c55e' : totalPct >= 40 ? '#60a5fa' : '#f59e0b';
+          return (
+            <GlassCard key={c.id}>
+              <CardContent onClick={() => onSetView({ kind: 'category', category: c })} sx={{ cursor: 'pointer' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography fontWeight={950}>{c.icon} {c.title}</Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>{c.subtitle}</Typography>
+                    <Box sx={{ mt: 1, mb: 0.75 }}>
+                      <ProgressBar value={totalPct} color={barColor} />
+                    </Box>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                      <Chip size="small" label={`📖 ${readCount}/${c.items.length} içerik`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', height: 22 }} />
+                      <Chip size="small" label={`🧪 ${c.quiz.length} soru`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', height: 22 }} />
+                      {quizDone ? <Chip size="small" label="✅ Test tamam" sx={{ bgcolor: 'rgba(34,197,94,0.2)', color: 'white', height: 22 }} /> : null}
+                      {nextRecommendedId === c.id ? <Chip size="small" label="🎯 Önerilen sıra" sx={{ bgcolor: 'rgba(96,165,250,0.22)', color: 'white', height: 22 }} /> : null}
+                    </Stack>
+                  </Box>
+                  <Chip size="small" label={totalPct >= 100 ? '👍 İNCELENDİ' : 'AÇ'} sx={{ ml: 1, flexShrink: 0, bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                </Stack>
+              </CardContent>
+            </GlassCard>
+          );
+        })}
       </Stack>
 
       <GlassCard>
