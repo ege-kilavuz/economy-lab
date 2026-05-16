@@ -113,4 +113,36 @@
 - Commitler:
   - `4c0cd10` `economy-lab: batch 7 add teacher mode prompts`
 - Sıradaki batch:
-  - Tüm mevcut batch'ler tamamlandı
+  - Batch 8
+
+## Batch 8 — Mobil-öncelikli ana ekran + WebView altyapısı
+- Yapılanlar:
+  - App.tsx: React.lazy + Suspense ile code-splitting, ScreenFallback (Skeleton) eklendi.
+  - Splash ekranı: `index.html` içinde CSS animasyonlu loading bar.
+  - Hata yönetimi: main.tsx'te ErrorBoundary + global error/promise yakalama.
+  - main.tsx: ErrorBoundary ile sarmalanmış StrictMode render.
+  - vite.config.ts: `strip-crossorigin` eklendi (WebView uyumluluk), modulePreload kapalı.
+  - capacitor.config.ts: androidScheme http, hostname 127.0.0.1.
+  - Android: Capacitor BridgeActivity → raw WebView (assets/public/ sunumu, back gesture, portrait kilidi).
+  - Android: doğrudan keystore imzalama, minSdk 24, targetSdk 35.
+  - Android: dark tema, WebView layout, cleartext traffic izni.
+  - Android: Capacitor plugin referansları temizlendi (settings.gradle, build.gradle).
+  - progress.md: loading skeleton ve code-splitting ✅ olarak işaretlendi.
+- **Yarım kalan düzeltmeler (bu batch):**
+  - App.tsx: `activeTags` state shadowing hatası düzeltildi — chip'ler artık çalışıyor.
+  - App.tsx: `visibleEvents` artık `activeTags`'e göre filtreliyor.
+  - App.tsx: özet çipleri (nakit/kart/moral/gün) geri eklendi.
+  - App.tsx: butonlar `fullWidth` + min 44px touch hedefi (mobile-first).
+  - App.tsx: bottom nav seçili renklendirme.
+- Ana dosyalar:
+  - `src/App.tsx`
+  - `src/main.tsx`
+  - `index.html`
+  - `vite.config.ts`
+  - `capacitor.config.ts`
+  - `android/` (tüm yapılandırma)
+  - `progress.md`
+- Doğrulama:
+  - `npm run build`
+- Commit:
+  - `(pending)`

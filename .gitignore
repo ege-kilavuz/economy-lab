@@ -26,3 +26,8 @@ android/*.keystore
 *.njsproj
 *.sln
 *.sw?
+
+# Keystore (release signing)
+android/keystore.properties
+android/app/*.keystore
+android/app/*.keystore.*

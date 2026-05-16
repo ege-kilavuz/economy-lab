@@ -1,13 +1,41 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>econ-lab-proto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Ekonomi Laboratuvarı</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; background: #0b1220; }
+      #splash {
+        display: flex; align-items: center; justify-content: center;
+        height: 100dvh; width: 100%;
+        animation: splash-fade 0.3s ease-out;
+      }
+      .splash-content { text-align: center; }
+      .splash-logo { font-size: 48px; margin-bottom: 12px; }
+      .splash-title { color: #fff; font-family: system-ui; font-size: 18px; font-weight: 700; margin-bottom: 20px; letter-spacing: 0.5px; }
+      .splash-bar {
+        width: 160px; height: 3px; margin: 0 auto;
+        background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+      }
+      .splash-bar-fill {
+        height: 100%; width: 30%; background: #60a5fa; border-radius: 2px;
+        animation: splash-load 1.2s ease-in-out infinite;
+      }
+      @keyframes splash-load {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(400%); }
+      }
+      @keyframes splash-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div id="splash"><div class="splash-content"><div class="splash-logo">🧪</div><div class="splash-title">Ekonomi Laboratuvarı</div><div class="splash-bar"><div class="splash-bar-fill"></div></div></div></div></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

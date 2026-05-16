@@ -162,9 +162,13 @@
 - [ ] **Sürdürülebilirlik:** Yeşil yatırım, etik tüketim
 
 ### 4.5 🎨 UI/UX İyileştirmeleri
-- [ ] **Mobil öncelikli dokunuş:** Butonlar biraz küçük kalabilir, genişlet
+- [x] **Mobil öncelikli dokunuş:** Butonlar `fullWidth`, min 44px touch hedefi, responsive font ✅
+- [x] **Oyun aktivite akışı:** Etiket filtresi (harcama/gelir/fatura/yatırım/kriz/başarı) düzeltildi ✅
+- [x] **Özet bilgi çipleri:** Aktif oyun durumu (nakit/kart/moral/gün) geri eklendi ✅
 - [x] **Karanlık mod:** Zaten karanlık tema, iyi ✅
-- [ ] **Loading skeleton** — Veri yüklenirken boş ekran yerine iskelet
+- [x] **Loading skeleton:** Splash ekranı (animasyonlu bar) + React.lazy Suspense fallback ✅
+- [x] **Code-splitting:** React.lazy ile öğren/simülasyon/oyun sayfaları ayrı chunk'lara bölündü ✅
+- [ ] **Release build:** APK imzalı, ProGuard, 3.4 MB 📦
 - [ ] **Tutorial / Onboarding:** İlk açılışta "şöyle oynanır" adımı
 - ~~[ ] **Dil seçeneği:** İngilizce ekleme~~ (gerek yok)
 

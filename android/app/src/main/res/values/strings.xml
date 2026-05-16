@@ -1,7 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ekonomi Laboratuvarı</string>
-    <string name="title_activity_main">Ekonomi Laboratuvarı</string>
-    <string name="package_name">com.egekilavuz.economylab</string>
-    <string name="custom_url_scheme">com.egekilavuz.economylab</string>
 </resources>
