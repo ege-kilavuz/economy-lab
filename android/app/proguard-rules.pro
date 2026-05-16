@@ -33,6 +33,9 @@
 # Ignore remaining warnings (safe for WebView-only apps)
 -ignorewarnings
 
+# Keep AndroidX WebKit for WebViewAssetLoader
+-keep class androidx.webkit.** { *; }
+
 # Dont warn about missing referenced classes (common with lite WebView builds)
 -dontwarn android.webkit.**
 -dontwarn com.google.android.material.**
