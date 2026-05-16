@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 const repoName = 'economy-lab'
 const isGithubPages = process.env.GITHUB_ACTIONS === 'true'
-const base = isGithubPages ? `/${repoName}/` : '/'
+const base = isGithubPages ? `/${repoName}/` : './'
 
 const pwa = isGithubPages ? VitePWA({
   registerType: 'autoUpdate',
