@@ -23,29 +23,10 @@ const pwa = isGithubPages ? VitePWA({
   workbox: { globPatterns: ['**/*.{js,css,html,svg}'] },
 }) : null
 
-function stripCrossorigin(): import('vite').Plugin {
-  return {
-    name: 'strip-crossorigin',
-    transformIndexHtml(html) {
-      return html.replace(/ crossorigin/g, '').replace(/<link rel="modulepreload".*?>/g, '');
-    },
-  };
-}
-
 export default defineConfig({
-  plugins: [react(), stripCrossorigin(), pwa].filter(Boolean),
+  plugins: [react(), pwa].filter(Boolean),
   base,
   build: {
     target: 'es2015',
-    modulePreload: false,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('/src/learn/')) return 'learn';
-          if (id.includes('/src/modules/')) return 'sims';
-          if (id.includes('/src/game/')) return 'game';
-        },
-      },
-    },
   },
 })

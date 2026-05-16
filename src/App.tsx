@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import {
   AppBar,
   BottomNavigation,
@@ -9,7 +9,6 @@ import {
   Container,
   CssBaseline,
   Fade,
-  Skeleton,
   Stack,
   Toolbar,
   Typography,
@@ -17,27 +16,14 @@ import {
 import SchoolRounded from '@mui/icons-material/SchoolRounded';
 import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 
+import { LearnScreen } from './LearnScreen';
 import { MonthSimModule } from './game/MonthSimModule';
-
-const LearnScreen = React.lazy(() => import('./LearnScreen').then(m => ({ default: m.LearnScreen })));
-const SimulationsScreen = React.lazy(() => import('./SimulationsScreen').then(m => ({ default: m.SimulationsScreen })));
+import { SimulationsScreen } from './SimulationsScreen';
 
 type RootTab = 'learn' | 'play';
 type PlayView = 'month' | 'sims';
 
 const TAGS = ['harcama', 'gelir', 'fatura', 'yatırım', 'kriz', 'başarı'] as const;
-
-function ScreenFallback() {
-  return (
-    <Box sx={{ px: 2, pb: 2 }}>
-      <Skeleton variant="rounded" height={44} sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.08)' }} />
-      <Skeleton variant="rounded" height={180} sx={{ mb: 1.5, bgcolor: 'rgba(255,255,255,0.06)' }} />
-      <Skeleton variant="rounded" height={80} sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.06)' }} />
-      <Skeleton variant="rounded" height={80} sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.06)' }} />
-      <Skeleton variant="rounded" height={80} sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.06)' }} />
-    </Box>
-  );
-}
 
 export default function App() {
   const [tab, setTab] = React.useState<RootTab>('learn');
@@ -158,9 +144,7 @@ export default function App() {
             <Fade in key={tab}>
               <Box>
                 {tab === 'learn' ? (
-                  <Suspense fallback={<ScreenFallback />}>
-                    <LearnScreen />
-                  </Suspense>
+                  <LearnScreen />
                 ) : (
                   <>
                     {/* Oyna modu description */}
@@ -212,9 +196,7 @@ export default function App() {
                     <Fade in key={playView}>
                       <Box>
                         {playView === 'sims' ? (
-                          <Suspense fallback={<ScreenFallback />}>
-                            <SimulationsScreen />
-                          </Suspense>
+                          <SimulationsScreen />
                         ) : (
                           <MonthSimModule
                             onEvent={pushEvent}
