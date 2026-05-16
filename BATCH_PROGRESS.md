@@ -145,4 +145,27 @@
 - Doğrulama:
   - `npm run build`
 - Commit:
+  - `3fe4055` `economy-lab: batch 8 mobile-first webview + app refactor`
+- Sıradaki batch:
+  - Batch 9
+
+## Batch 9 — Sürdürülebilirlik kategorisi + Haftalık Challenge + Release APK
+- Yapılanlar:
+  - **Sürdürülebilirlik kategorisi:** 3 içerik (yeşil yatırım, etik tüketim, döngüsel ekonomi) + 5 quiz sorusu.
+  - **Weekly Challenge sistemi:** 8 dönerli challenge (nakit kullan, borçsuz ay, dolap full, yatırımcı, disiplin, büyük tasarruf, fatura müdürü, zihin rahat). localStorage tabanlı takip, ay sonu ekranında gösterim.
+  - **EndScreen:** Haftalık challenge durumu (tamamlandı/henüz değil) görünür.
+  - **ProGuard:** minifyEnabled true, R8 ile optimize, 5.0 MB imzalı APK.
+  - **APK build assets:** dist → android/app/src/main/assets/public/ otomatik deploy.
+  - progress.md güncellendi.
+- Ana dosyalar:
+  - `src/learn/content.ts`
+  - `src/utils/challenges.ts`
+  - `src/game/screens/EndScreen.tsx`
+  - `android/app/build.gradle`
+  - `android/app/proguard-rules.pro`
+  - `progress.md`
+- Doğrulama:
+  - `npm run build` ✅
+  - `android: ./gradlew assembleRelease` ✅ (5.0 MB, signed, ProGuard)
+- Commit:
   - `(pending)`

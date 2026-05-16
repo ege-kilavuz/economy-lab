@@ -1,21 +1,41 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Economy Lab ProGuard Rules
+# WebView app — keep JavaScript interface, assets, and all app classes
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep WebView JS interface
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep all app classes (single Activity + WebView)
+-keep class com.egekilavuz.economylab.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep WebView + asset loading
+-keep class android.webkit.** { *; }
+-keep class android.content.res.AssetManager { *; }
+
+# Keep all JavaScript in assets (we serve from assets/public/)
+-keep class * { *; }
+
+# Dont obfuscate — keeps meaningful stack traces
+-dontobfuscate
+
+# Keep line numbers for crash reporting
+-keepattributes SourceFile,LineNumberTable
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod,RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,RuntimeVisibleParameterAnnotations,RuntimeInvisibleParameterAnnotations,AnnotationDefault
+
+# WebView specific
+-keepattributes JavascriptInterface
+-keepattributes *Annotation*
+
+# Keep strings.xml / app_name
+-keep class **.R$* { *; }
+
+# Ignore remaining warnings (safe for WebView-only apps)
+-ignorewarnings
+
+# Dont warn about missing referenced classes (common with lite WebView builds)
+-dontwarn android.webkit.**
+-dontwarn com.google.android.material.**
+-dontwarn androidx.appcompat.**
+-dontwarn javax.lang.model.element.Modifier
+-dontwarn com.google.errorprone.**

@@ -5,6 +5,7 @@ import { scoreEndOfMonth } from '../engine';
 import { analyzeBudget } from '../../utils/budgetAnalysis';
 import { checkAchievements, unlockAchievement } from '../../utils/achievements';
 import { calculateInflationImpact } from '../../utils/inflationImpact';
+import { getWeeklyChallenge, checkWeeklyChallenge } from '../../utils/challenges';
 import { LeaderboardPanel } from '../../ui/LeaderboardPanel';
 import { Top, panelSx, moneyTL, diffLabel } from './helpers';
 
@@ -19,6 +20,8 @@ export function EndScreen({ game, onRestart, onBack }: Props) {
   const budget = analyzeBudget(game);
   const inflation = calculateInflationImpact(game);
   const [achievements, setAchievements] = React.useState(() => checkAchievements(game));
+  const weeklyChallenge = getWeeklyChallenge();
+  const [challengeResult, setChallengeResult] = React.useState(() => checkWeeklyChallenge(game));
 
   // Unlock first-day on mount
   React.useEffect(() => {
@@ -26,6 +29,7 @@ export function EndScreen({ game, onRestart, onBack }: Props) {
     setAchievements(updated);
     const recheck = checkAchievements(game);
     setAchievements(recheck);
+    setChallengeResult(checkWeeklyChallenge(game));
   }, []);
 
   const strengths: string[] = [];
@@ -177,6 +181,27 @@ export function EndScreen({ game, onRestart, onBack }: Props) {
                   ))}
                 </Stack>
               )}
+
+              <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
+
+              <Typography fontWeight={900} sx={{ mb: 1, fontSize: '0.95rem' }}>📅 Haftalık Challenge</Typography>
+              <Box sx={{ borderRadius: 3, border: `1px solid ${challengeResult.justCompleted ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.08)'}`, bgcolor: challengeResult.justCompleted ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)', p: 1.5, mb: 1 }}>
+                <Typography variant="body2" fontWeight={700}>
+                  {weeklyChallenge.emoji} {weeklyChallenge.title}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.78, display: 'block', mt: 0.5 }}>
+                  {weeklyChallenge.description}
+                </Typography>
+                <Chip
+                  size="small"
+                  label={challengeResult.justCompleted ? '✅ Tamamlandı!' : '❌ Henüz tamamlanmadı'}
+                  sx={{
+                    mt: 1,
+                    bgcolor: challengeResult.justCompleted ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.08)',
+                    color: 'white',
+                  }}
+                />
+              </Box>
 
               <Divider sx={{ my: 1.5, borderColor: 'rgba(255,255,255,0.12)' }} />
               <Typography variant="body2" sx={{ opacity: 0.9 }}>

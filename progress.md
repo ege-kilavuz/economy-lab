@@ -150,7 +150,7 @@
 ### 4.3 🎯 Oyunlaştırma İyileştirmeleri
 - [x] **Başarı Rozetleri (Badges):** 10 rozet eklendi (Borçsuz Ay, Yatırımcı, Fatura Müdürü vs.) ✅
 - [x] **Liderlik Tablosu:** Cloudflare Workers + KV ile online sıralama ✅
-- [ ] **Haftalık Challenge:** "Bu ay sadece nakit kullan" veya "Hiç kart borcu taşıma"
+- [x] **Haftalık Challenge:** 8 dönerli challenge sistemi, localStorage takibi, ay sonu ekranında gösterim ✅
 - [ ] **Animasyonlar / Ses Efektleri:** Harcama yapınca para sayma sesi, görev tamamlayınca konfeti
 - [x] **Konsept İlerleme Çubuğu:** Her kategoride % bar + genel ilerleme çubuğu + içerik okuma takibi ✅
 
@@ -159,7 +159,7 @@
 - [x] **Kripto Bilinçlendirme:** BTC/ETH, volatilite, güvenlik — 3 içerik, 5 soru ✅
 - [x] **Sendikasyon / Kredi Notu:** Findeks, not yükseltme, kara liste — 3 içerik, 5 soru ✅
 - [x] **Küresel Ekonomi:** Döviz kuru, ithalat/ihracat, krizler — 3 içerik, 5 soru ✅
-- [ ] **Sürdürülebilirlik:** Yeşil yatırım, etik tüketim
+- [x] **Sürdürülebilirlik:** Yeşil yatırım, etik tüketim, döngüsel ekonomi — 3 içerik, 5 soru ✅
 
 ### 4.5 🎨 UI/UX İyileştirmeleri
 - [x] **Mobil öncelikli dokunuş:** Butonlar `fullWidth`, min 44px touch hedefi, responsive font ✅
@@ -168,8 +168,8 @@
 - [x] **Karanlık mod:** Zaten karanlık tema, iyi ✅
 - [x] **Loading skeleton:** Splash ekranı (animasyonlu bar) + React.lazy Suspense fallback ✅
 - [x] **Code-splitting:** React.lazy ile öğren/simülasyon/oyun sayfaları ayrı chunk'lara bölündü ✅
-- [ ] **Release build:** APK imzalı, ProGuard, 3.4 MB 📦
-- [ ] **Tutorial / Onboarding:** İlk açılışta "şöyle oynanır" adımı
+- [x] **Release build:** APK imzalı, ProGuard (R8 minify), **5.0 MB** 📦 ✅
+- ~~[ ] **Tutorial / Onboarding:** İlk açılışta "şöyle oynanır" adımı~~ (gerek yok)
 - ~~[ ] **Dil seçeneği:** İngilizce ekleme~~ (gerek yok)
 
 ### 4.6 🌐 Teknik
@@ -188,11 +188,11 @@
 | **Eğlence değeri** | 8/10 | MonthSim ve mini oyunlar başarılı. Grafikler etkileyici |
 | **Öğreticilik** | 9/10 ✅ | BES modülü eklendi, 50/30/20 analizi, başarı rozetleri |
 | **Gençlere uygunluk** | 8/10 | Dil gençlere hitap ediyor. Mobil telefonda telefon simülasyonu yaratıcı |
-| **Kapsam** | 8/10 ✅ | Vergi, BES, kira artışı eklendi. İngilizce desteği kaldı |
+| **Kapsam** | 9/10 ✅ | Vergi, BES, kira artışı, sürdürülebilirlik eklendi |
 | **Performans** | 8/10 ✅ | 903 KB → 8 chunk'a bölündü (paralel yüklenebilir) |
 | **Teknik kalite (kod)** | 8/10 ✅ | Refactoring yapıldı, utility'ler ayrıştırıldı, dead code temizlendi |
 
-**Genel:** 9/10 🏆 — Teknofest sunumu için hazır!
+**Genel:** 9.5/10 🏆 — Mobil APK hazır, challenge sistemi aktif, sürdürülebilirlik kategorisi eklendi!
 
 ---
 
