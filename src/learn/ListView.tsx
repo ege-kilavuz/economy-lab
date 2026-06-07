@@ -40,7 +40,7 @@ function MiniProgress({ value }: { value: number }) {
   );
 }
 
-export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, nextRecommended, expandedScenarioId, onSetView, onScenarioToggle }: Props) {
+export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId: _nextRecommendedId, nextRecommended, expandedScenarioId, onSetView, onScenarioToggle }: Props) {
   const totalItems = LEARN_CATEGORIES.reduce((sum, c) => sum + c.items.length, 0);
   const totalRead = LEARN_CATEGORIES.reduce((sum, c) => sum + c.items.filter(it => openedItemIds.includes(it.id)).length, 0);
   const totalQuizDone = completedQuizIds.length;
@@ -78,11 +78,11 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
         </CardContent>
       </GlassCard>
 
-      {/* ── 2-COLUMN SQUARE CARD GRID ── */}
+      {/* ── 3-COLUMN GRID ── */}
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: { xs: 1, sm: 1.5 },
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: { xs: 0.75, sm: 1 },
         mt: 2,
       }}>
         {LEARN_CATEGORIES.map((c) => {
@@ -100,16 +100,17 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
                 justifyContent: 'center',
                 textAlign: 'center',
                 aspectRatio: '3 / 2',
-                borderRadius: 4,
+                borderRadius: 3,
                 bgcolor: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                p: { xs: 1.5, sm: 2 },
+                p: { xs: 0.75, sm: 1 },
+                minWidth: 0,
                 '&:hover': {
                   bgcolor: 'rgba(255,255,255,0.1)',
                   borderColor: 'rgba(255,255,255,0.18)',
-                  transform: 'translateY(-2px)',
+                  transform: 'translateY(-1px)',
                 },
                 '&:active': {
                   transform: 'translateY(0)',
@@ -118,7 +119,7 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
               }}
             >
               {/* Icon */}
-              <Typography sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem' }, lineHeight: 1, mb: 0.5 }}>
+              <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' }, lineHeight: 1, mb: 0.25 }}>
                 {c.icon}
               </Typography>
 
@@ -126,9 +127,9 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
               <Typography
                 fontWeight={900}
                 sx={{
-                  fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                  lineHeight: 1.3,
-                  mb: 0.5,
+                  fontSize: { xs: '0.55rem', sm: '0.6rem' },
+                  lineHeight: 1.2,
+                  mb: 0.25,
                   maxWidth: '100%',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -146,11 +147,11 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
                 variant="caption"
                 sx={{
                   opacity: 0.72,
-                  fontSize: { xs: '0.6rem', sm: '0.65rem' },
-                  lineHeight: 1.3,
-                  mb: 0.75,
+                  fontSize: { xs: '0.45rem', sm: '0.5rem' },
+                  lineHeight: 1.2,
+                  mb: 0.25,
                   display: '-webkit-box',
-                  WebkitLineClamp: 2,
+                  WebkitLineClamp: 1,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                 }}
@@ -158,22 +159,19 @@ export function ListView({ completedQuizIds, openedItemIds, nextRecommendedId, n
                 {c.subtitle}
               </Typography>
 
-              {/* Mini chip: progress or recommended */}
-              <Stack direction="row" spacing={0.5} justifyContent="center" flexWrap="wrap" useFlexGap>
-                <Chip
-                  size="small"
-                  label={totalPct >= 100 ? '✅ Tamam' : `${totalPct}%`}
-                  sx={{
-                    height: 20,
-                    fontSize: '0.6rem',
-                    bgcolor: totalPct >= 100 ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.1)',
-                    color: totalPct >= 100 ? '#22c55e' : 'white',
-                  }}
-                />
-                {nextRecommendedId === c.id && (
-                  <Chip size="small" label="🎯" sx={{ height: 20, fontSize: '0.6rem', bgcolor: 'rgba(96,165,250,0.22)', color: 'white' }} />
-                )}
-              </Stack>
+              {/* Mini progress chip */}
+              <Chip
+                size="small"
+                label={totalPct >= 100 ? '✅' : `${totalPct}%`}
+                sx={{
+                  height: 16,
+                  fontSize: '0.5rem',
+                  minWidth: 0,
+                  bgcolor: totalPct >= 100 ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.1)',
+                  color: totalPct >= 100 ? '#22c55e' : 'white',
+                  '& .MuiChip-label': { px: 0.5 },
+                }}
+              />
             </Box>
           );
         })}

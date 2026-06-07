@@ -100,7 +100,7 @@ const SIM_BORDERS: Record<SimId, string> = {
   bes: 'rgba(168,85,247,0.25)',
 };
 
-function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; onOpen: () => void; teacherMode: boolean; progress: { openedSimulationIds: string[] } }) {
+function SimCardSquare({ sim, onOpen, progress }: { sim: SimMeta; onOpen: () => void; progress: { openedSimulationIds: string[] } }) {
   const opened = progress.openedSimulationIds.includes(sim.id);
   return (
     <Box
@@ -117,11 +117,12 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
         border: `1px solid ${SIM_BORDERS[sim.id]}`,
         cursor: 'pointer',
         transition: 'all 0.15s ease',
-        p: { xs: 1.5, sm: 2 },
+        p: { xs: 0.75, sm: 1 },
+        minWidth: 0,
         '&:hover': {
           bgcolor: SIM_COLORS[sim.id].replace('0.15', '0.25'),
           borderColor: SIM_BORDERS[sim.id].replace('0.25', '0.4'),
-          transform: 'translateY(-2px)',
+          transform: 'translateY(-1px)',
         },
         '&:active': {
           transform: 'translateY(0)',
@@ -129,7 +130,7 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
       }}
     >
       {/* Icon */}
-      <Typography sx={{ fontSize: { xs: '2rem', sm: '2.5rem' }, lineHeight: 1, mb: 0.75 }}>
+      <Typography sx={{ fontSize: { xs: '1.4rem', sm: '1.8rem' }, lineHeight: 1, mb: 0.25 }}>
         {SIM_ICONS[sim.id]}
       </Typography>
 
@@ -137,9 +138,9 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
       <Typography
         fontWeight={900}
         sx={{
-          fontSize: { xs: '0.7rem', sm: '0.8rem' },
-          lineHeight: 1.3,
-          mb: 0.5,
+          fontSize: { xs: '0.55rem', sm: '0.6rem' },
+          lineHeight: 1.2,
+          mb: 0.25,
           maxWidth: '100%',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -157,11 +158,11 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
         variant="caption"
         sx={{
           opacity: 0.72,
-          fontSize: { xs: '0.55rem', sm: '0.6rem' },
-          lineHeight: 1.3,
-          mb: 0.75,
+          fontSize: { xs: '0.45rem', sm: '0.5rem' },
+          lineHeight: 1.2,
+          mb: 0.25,
           display: '-webkit-box',
-          WebkitLineClamp: 2,
+          WebkitLineClamp: 1,
           WebkitBoxOrient: 'vertical',
           overflow: 'hidden',
         }}
@@ -170,35 +171,14 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
       </Typography>
 
       {/* Chips row */}
-      <Stack direction="row" spacing={0.5} justifyContent="center" flexWrap="wrap" useFlexGap>
-        <Chip size="small" label={`${sim.minutes}dk`} sx={{ height: 20, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
-        <Chip size="small" label={sim.level} sx={{ height: 20, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+      <Stack direction="row" spacing={0.25} justifyContent="center" flexWrap="wrap" useFlexGap>
+        <Chip size="small" label={`${sim.minutes}dk`} sx={{ height: 14, fontSize: '0.45rem', bgcolor: 'rgba(255,255,255,0.12)', color: 'white', '& .MuiChip-label': { px: 0.4 } }} />
         {opened ? (
-          <Chip size="small" label="✓" sx={{ height: 20, fontSize: '0.6rem', bgcolor: 'rgba(34,197,94,0.2)', color: '#22c55e' }} />
+          <Chip size="small" label="✓" sx={{ height: 14, fontSize: '0.45rem', bgcolor: 'rgba(34,197,94,0.2)', color: '#22c55e', '& .MuiChip-label': { px: 0.4 } }} />
         ) : (
-          <Chip size="small" label="Yeni" sx={{ height: 20, fontSize: '0.6rem', bgcolor: 'rgba(96,165,250,0.22)', color: '#60a5fa' }} />
+          <Chip size="small" label="Yeni" sx={{ height: 14, fontSize: '0.45rem', bgcolor: 'rgba(96,165,250,0.22)', color: '#60a5fa', '& .MuiChip-label': { px: 0.4 } }} />
         )}
       </Stack>
-
-      {/* Teacher mode: mini prompt preview */}
-      {teacherMode && (
-        <Typography
-          variant="caption"
-          sx={{
-            mt: 0.5,
-            opacity: 0.65,
-            fontSize: '0.5rem',
-            lineHeight: 1.2,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            maxWidth: '100%',
-          }}
-        >
-          💡 {sim.teacherPrompts[0]}
-        </Typography>
-      )}
     </Box>
   );
 }
@@ -280,11 +260,11 @@ export function SimulationsScreen() {
       {/* ── 2-COLUMN SQUARE CARD GRID ── */}
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: { xs: 1, sm: 1.5 },
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: { xs: 0.75, sm: 1 },
       }}>
         {SIMS.map((sim) => (
-          <SimCardSquare key={sim.id} sim={sim} teacherMode={teacherMode} progress={progress} onOpen={() => openSimulation(sim.id)} />
+          <SimCardSquare key={sim.id} sim={sim} progress={progress} onOpen={() => openSimulation(sim.id)} />
         ))}
       </Box>
     </Box>
