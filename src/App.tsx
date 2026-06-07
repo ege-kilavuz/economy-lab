@@ -13,6 +13,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+import { StatusBar, Style as StatusBarStyle } from '@capacitor/status-bar';
 import SchoolRounded from '@mui/icons-material/SchoolRounded';
 import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 
@@ -59,12 +60,22 @@ export default function App() {
     );
   }
 
+    React.useEffect(() => {
+    // Native status bar: transparent bg + light icons for notch support
+    (async () => {
+      try {
+        await StatusBar.setStyle({ style: StatusBarStyle.Dark });
+        await StatusBar.setBackgroundColor({ color: '#0b1220' });
+      } catch { /* web fallback */ }
+    })();
+  }, []);
+
   const showActivity = summary !== null || tab === 'play';
 
   return (
     <>
       <CssBaseline />
-      <Box sx={{ bgcolor: '#0b1220', color: 'white', minHeight: '100dvh' }}>
+      <Box sx={{ bgcolor: '#0b1220', color: 'white', minHeight: '100dvh', overflowX: 'hidden', pt: 'env(safe-area-inset-top, 0px)' }}>
         {/* ─── HEADER ─── */}
         <AppBar position="sticky" sx={{ bgcolor: 'rgba(15,23,42,0.92)', borderBottom: '1px solid rgba(255,255,255,0.08)' }} elevation={0}>
           <Toolbar sx={{ minHeight: { xs: 48, sm: 56 } }}>
