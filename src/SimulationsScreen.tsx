@@ -111,7 +111,7 @@ function SimCardSquare({ sim, onOpen, teacherMode, progress }: { sim: SimMeta; o
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        aspectRatio: '1 / 1',
+        aspectRatio: '3 / 2',
         borderRadius: 4,
         bgcolor: SIM_COLORS[sim.id],
         border: `1px solid ${SIM_BORDERS[sim.id]}`,
