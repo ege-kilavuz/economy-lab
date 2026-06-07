@@ -103,6 +103,9 @@ function generateInvestingQuiz(): LearnQuestion[] {
     { id: 'i3', q: 'Hisse senedi alırken aslında neye güvenirsin?', choices: ['Borsa binasına', 'Şirketin gelecekte para kazanmasına', 'Şansa', 'Arkadaşına'], correctIndex: 1, explain: 'Şirkete ortak oluyorsun.' },
     { id: 'i4', q: 'Risk ve getiri ilişkisi genelde nasıldır?', choices: ['Ters orantılı', 'Risk artarsa potansiyel getiri de artar', 'Hiç ilişki yok', 'Hep sabittir'], correctIndex: 1, explain: 'Yüksek getiri genelde yüksek risk getirir.' },
     { id: 'i5', q: 'Sabırlı yatırımcı ne yapar?', choices: ['Her gün al-sat', 'Planına sadık kalır', 'Tüm parayı tek seferde kullanır', 'Sürekli haber bekler'], correctIndex: 1, explain: 'Uzun vade en büyük avantajdır.' },
+    { id: 'i6', q: 'Hangisi bir varlık sınıfı DEĞİLDİR?', choices: ['Hisse senedi', 'Tahvil', 'Kredi notu', 'Emtia'], correctIndex: 2, explain: 'Kredi notu varlık değil, borç ödeme puanıdır.' },
+    { id: 'i7', q: 'Temettü nedir?', choices: ['Şirket borcu', 'Kârdan hissedarlara dağıtılan pay', 'Hisse artışı', 'Borsa endeksi'], correctIndex: 1, explain: 'Şirket kârından hissedarlara dağıtılan paydır.' },
+    { id: 'i8', q: 'Temettü verimi %5 ne demek?', choices: ['Her yıl %5 zarar', '100 TL\'lik hisseden 5 TL temettü', 'Garanti verim', 'Fiyat değişmez'], correctIndex: 1, explain: 'Hisse başı temettü / hisse fiyatı x 100.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -123,6 +126,11 @@ function generateCreditQuiz(): LearnQuestion[] {
     { id: 'c1', q: 'Asgari ödeme hakkında hangisi doğru?', choices: ['Borcu bitirir', 'Borcu uzatır ve faizi artırır', 'Sadece zenginlere özeldir', 'Hediye kazandırır'], correctIndex: 1, explain: 'Asgari ödeme borcu bitirmez.' },
     { id: 'c2', q: 'Kredi notunu ne yükseltir?', choices: ['Faturaları zamanında ödemek', 'Sürekli kredi başvurusu', 'Limitleri sonuna kadar kullanmak', 'Hesap açmamak'], correctIndex: 0, explain: 'Düzenli ödeme güven demektir.' },
     { id: 'c3', q: 'Kart limiti neye göre olmalı?', choices: ['İstediğin harcama', 'Gelir ve ödeme gücü', 'Arkadaşının limiti', 'Cüzdan boyutu'], correctIndex: 1, explain: 'Ödeyebileceğin kadar limit sağlıklıdır.' },
+    { id: 'c4', q: 'Hangi kredi türünde faiz en düşüktür?', choices: ['İhtiyaç', 'Konut', 'Taşıt', 'Kredi kartı'], correctIndex: 1, explain: 'Konut kredisi ipotekli olduğu için faizi en düşüktür.' },
+    { id: 'c5', q: 'KKDF ve BSMV nedir?', choices: ['Sigorta primi', 'Krediye eklenen vergi/fon', 'Komisyon', 'Havale ücreti'], correctIndex: 1, explain: 'Kredi maliyetine eklenen vergi ve fon kesintileridir.' },
+    { id: 'c6', q: 'Müteselsil kefil ne demek?', choices: ['Referans olmak', 'Banka direkt senden isteyebilir', 'Sorumluluk yok', 'Noter onayı'], correctIndex: 1, explain: 'Banka önce asıl borçluya gitmeden senden tahsil edebilir.' },
+    { id: 'c7', q: 'Kredi toplam maliyeti neyi içerir?', choices: ['Sadece faiz', 'Faiz+masraf+KKDF+BSMV+sigorta', 'Sadece masraf', 'Sadece KKDF'], correctIndex: 1, explain: 'Gerçek maliyet faiz+masraf+vergilerin toplamıdır.' },
+    { id: 'c8', q: 'Kefil olduğun ödemezse ne olur?', choices: ['Hiçbir şey', 'Borç sana kalır', 'Sadece arkadaşlık biter', 'Devlet öder'], correctIndex: 1, explain: 'Kefil borcun yasal sorumlusudur, notun da düşer.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -131,6 +139,12 @@ function generateMacroQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
     { id: 'm1', q: 'Merkez Bankası neden faiz artırabilir?', choices: ['Herkesi zengin etmek için', 'Enflasyonu yavaşlatmak için', 'Harcama artsın diye', 'Dolar bitsin diye'], correctIndex: 1, explain: 'Amaç genelde fiyat artışını yavaşlatmaktır.' },
     { id: 'm2', q: 'Resesyon ne demektir?', choices: ['Ekonomik bayram', 'Ekonomik daralma', 'Herkes işe girer', 'Borsa uçar'], correctIndex: 1, explain: 'Ekonomi küçülür, üretim düşer.' },
+    { id: 'm3', q: 'TCMB enflasyon hedefi yaklaşık yüzde kaçtır?', choices: ['%0', '%5', '%10', '%50'], correctIndex: 1, explain: 'TCMB\'nin resmî hedefi %5\'tir.' },
+    { id: 'm4', q: 'Faiz artışı enflasyonu nasıl yavaşlatır?', choices: ['Krediyi ucuzlatarak', 'Talebi düşürerek', 'Maaşları artırarak', 'Vergi azaltarak'], correctIndex: 1, explain: 'Yüksek faiz borçlanmayı azaltır, talep düşer.' },
+    { id: 'm5', q: 'Okun yasası neyi açıklar?', choices: ['Büyüme-işsizlik ters ilişki', 'Enflasyon-işsizlik doğru ilişki', 'Faiz-döviz ilişkisi', 'Borsa her an yükselebilir'], correctIndex: 0, explain: 'Büyüme hızlanınca işsizlik düşme eğilimindedir.' },
+    { id: 'm6', q: 'Potansiyel büyüme nedir?', choices: ['En hızlı büyüme anı', 'Enflasyonsuz sürdürülebilir büyüme', 'Ulaşılamaz büyüme', 'Teorik kavram'], correctIndex: 1, explain: 'Enflasyonist baskı yaratmayan sürdürülebilir büyüme oranıdır.' },
+    { id: 'm7', q: 'TCMB hedefi kaçırınca ne yapmak zorunda?', choices: ['Hiçbir şey', 'Açıklama yapmak', 'Başkanı değiştirmek', 'Parayı toplatmak'], correctIndex: 1, explain: 'Şeffaflık gereği kamuya açıklama yapılır.' },
+    { id: 'm8', q: 'GSYH açılımı nedir?', choices: ['Gayri Safi Yurtiçi Hasıla', 'Genel Sistem Yönetimi', 'Gelişmiş Sermaye', 'Güncel Satın Alma'], correctIndex: 0, explain: 'Ülkedeki toplam nihai mal ve hizmet değeridir.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -141,6 +155,9 @@ function generatePsychologyQuiz(): LearnQuestion[] {
     { id: 'ps2', q: 'Kayıptan kaçınma hangi davranışta görülür?', choices: ['Zarar kesip plana dönmek', 'Zarardaki pozisyonu “belki döner” diye sonsuza dek tutmak', 'Portföyü çeşitlendirmek', 'Acil fon ayırmak'], correctIndex: 1, explain: 'Zararı kabullenmeyi ertelemek, kayıptan kaçınmadır.' },
     { id: 'ps3', q: 'Yatırımda yoğun heyecan hissediyorsan en sağlıklı kısa aksiyon ne olabilir?', choices: ['Hemen tüm parayla girmek', '24 saat bekleyip planı tekrar okumak', 'Daha fazla borçlanmak', 'Sosyal medyayı referans almak'], correctIndex: 1, explain: 'Kısa bekleme, duygusal kararı filtreler.' },
     { id: 'ps4', q: 'Başkasının kazancını görünce stratejiyi bozmak hangi probleme yakındır?', choices: ['Disiplin', 'Sürü psikolojisi', 'Likidite', 'Bileşik getiri'], correctIndex: 1, explain: 'Başkalarını kör taklit etmek sürü psikolojisidir.' },
+    { id: 'ps5', q: 'Ankraj (çıpalama) nedir?', choices: ['İlk bilgiye aşırı bağlanma', 'Son bilgiye güvenme', 'Hep haklı olma', 'Kaybetme korkusu'], correctIndex: 0, explain: 'İlk karşılaşılan fiyat/sayıya takılıp kalma eğilimi.' },
+    { id: 'ps6', q: 'Aşırı güven yatırımcıya ne yaptırır?', choices: ['Az işlem', 'Tek yatırıma odaklanma', 'Çok araştırma', 'Çeşitlendirme'], correctIndex: 1, explain: '\'Ben biliyorum\' hissiyle çeşitlendirme azalır, risk yoğunlaşır.' },
+    { id: 'ps7', q: 'En sağlıklı yatırım tutumu nedir?', choices: ['Sürekli al-sat', 'Planlı disiplin', 'Herkesi taklit', 'Geçmiş performans'], correctIndex: 1, explain: 'Planlı yaklaşım duygusal kararları filtreler.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -190,6 +207,17 @@ function generateGlobalEconomyQuiz(): LearnQuestion[] {
   return pool.map(shuffleChoices);
 }
 
+function generateSustainabilityQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'su1', q: `ESG kriterleri hangi alanlari kapsar?`, choices: ['Sadece cevre', 'Cevre, sosyal ve yonetisim', 'Sadece karlilik', 'Sadece vergi'], correctIndex: 1, explain: `ESG: Environmental (Cevre), Social (Sosyal), Governance (Yonetisim).` },
+    { id: 'su2', q: `Yesil tahvil hangi amacla kullanilir?`, choices: ['CEO maaslari', 'Cevre projeleri (gunes, ruzgar)', 'Hisse geri alimi', 'Reklam'], correctIndex: 1, explain: `Yesil tahviller cevre odakli projeleri finanse eder.` },
+    { id: 'su3', q: `Greenwashing ne demektir?`, choices: ['Camasi yikamak', 'Urunu oldugundan yesil gostermek', 'Bitki sulamak', 'Geri donusum'], correctIndex: 1, explain: `Greenwashing, cevreye duyarli gozukme pazarlamasidir.` },
+    { id: 'su4', q: `Karbon ayak izini azaltmak icin en etkili yontem?`, choices: ['Daha cok geri donusum', 'Ucak yolculugunu azaltmak', 'Sadece cop toplamak', 'Her seyi cope atmak'], correctIndex: 1, explain: `Ulasim ve gida en buyuk karbon kaynaklaridir.` },
+    { id: 'su5', q: `Dongusel ekonominin temel ilkesi nedir?`, choices: ['Surekli yeni urun almak', 'Kaynaklari dongude tutmak', 'Her seyi cope atmak', 'Sadece geri donusum'], correctIndex: 1, explain: `Dongusel ekonomide atik yoktur, her sey yeniden kullanilir.` },
+  ];
+  return pool.map(shuffleChoices);
+}
+
 function generateSafetyQuiz(): LearnQuestion[] {
   const pool: LearnQuestion[] = [
     { id: 'sf1', q: 'Dijital bankacılıkta en güvenli giriş yolu hangisidir?', choices: ['Mesajla gelen link', 'Bankanın resmî uygulaması veya adresi', 'Sosyal medya DM’si', 'Forumdaki kısayol'], correctIndex: 1, explain: 'Banka işlemleri yalnızca resmî kanal üzerinden yapılmalıdır.' },
@@ -197,17 +225,6 @@ function generateSafetyQuiz(): LearnQuestion[] {
     { id: 'sf3', q: 'FAST/EFT/havale işlemi yaparken en kritik kontrol nedir?', choices: ['Emoji seçmek', 'Alıcı bilgilerini doğrulamak', 'Ekran parlaklığını artırmak', 'Bildirim sesini açmak'], correctIndex: 1, explain: 'Yanlış alıcıya gönderim riskini azaltmak için alıcı bilgileri kontrol edilmelidir.' },
     { id: 'sf4', q: 'Resmî kurumlar mesajla genelde ne istemez?', choices: ['Şifre/OTP kodu', 'Genel duyuru okumanı', 'Randevu teyidi', 'Çalışma saati bilgisi'], correctIndex: 0, explain: 'Şifre ve doğrulama kodu paylaşılmaz.' },
     { id: 'sf5', q: 'Kredi kartı borcunu yönetirken en sağlıklı yaklaşım hangisidir?', choices: ['Sadece minimumu düşünmek', 'Harcamayı takip edip ödeme planı yapmak', 'Şifreyi paylaşmak', 'Sürekli yeni kart açmak'], correctIndex: 1, explain: 'Kart kullanımı ödeme planı ve harcama takibiyle sağlıklı yönetilir.' },
-  ];
-  return pool.map(shuffleChoices);
-}
-
-function generateSustainabilityQuiz(): LearnQuestion[] {
-  const pool: LearnQuestion[] = [
-    { id: 'su1', q: 'ESG kriterleri hangi alanları kapsar?', choices: ['Sadece çevre', 'Çevre, sosyal ve yönetişim', 'Sadece kârlılık', 'Sadece vergi'], correctIndex: 1, explain: 'ESG, Environmental (Çevre), Social (Sosyal) ve Governance (Yönetişim) baş harfleridir.' },
-    { id: 'su2', q: 'Yeşil tahvil ile toplanan para genelde ne için kullanılır?', choices: ['CEO maaşları', 'Çevre projeleri (güneş, rüzgar, enerji verimliliği)', 'Hisse geri alımı', 'Reklam kampanyası'], correctIndex: 1, explain: 'Yeşil tahviller iklim ve çevre odaklı projeleri finanse eder.' },
-    { id: 'su3', q: 'Greenwashing nedir?', choices: ['Çamaşır yıkamak', 'Bir ürünün olduğundan daha yeşil gösterilmesi', 'Bitkileri sulamak', 'Geri dönüşüm yapmak'], correctIndex: 1, explain: 'Greenwashing, bir şirketin çevreye duyarlıymış gibi pazarlama yapmasıdır.' },
-    { id: 'su4', q: 'Karbon ayak izini azaltmak için hangisi en etkilidir?', choices: ['Daha çok geri dönüşüm', 'Uçak yolculuğunu azaltmak ve bitkisel ağırlıklı beslenmek', 'Sadece şişe toplamak', 'Eskileri çöpe atmak'], correctIndex: 1, explain: 'Ulaşım ve gıda, bireysel karbon ayak izinde en büyük paya sahiptir.' },
-    { id: 'su5', q: 'Döngüsel ekonominin temel ilkesi nedir?', choices: ['Sürekli yeni ürün almak', 'Kaynakları sürekli döngüde tutmak, atığı minimize etmek', 'Her şeyi çöpe atmak', 'Sadece geri dönüşüm yapmak'], correctIndex: 1, explain: 'Döngüsel ekonomide atık yoktur; her şey yeniden kullanım veya geri dönüşüm için tasarlanır.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -317,6 +334,23 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           source: 'finansalokuryazarlik.gov.tr',
         },
       },
+      {
+        id: 'finansal-hedef',
+        title: `FINANSAL HEDEF BELIRLEME`,
+        short: `Hedefi olmayan, ruzgarda savrulur.`,
+        body: [
+          `SMART: Spesifik, Olculebilir, Ulasilabilir, Gercekci, Sureli.`,
+          `Kisa vade (0-1 yil): acil fon, kucuk borclari kapat.`,
+          `Orta vade (1-5 yil): araba, ev pesinati.`,
+          `Uzun vade (5+ yil): emeklilik, cocuk egitimi.`,
+        ],
+        scenario: `"5 yilda 100K birikim" SMART degil. "Her ay 1500TL kenara koyarak 5 yilda 90bin TL birikim" SMART.`,
+        qa: [
+          { q: `SMART anlami?`, a: `Spesifik, Measurable, Achievable, Relevant, Time-bound.` },
+          { q: `Kisa vade ornek?`, a: `3 ayda 6000 TL acil fon.` },
+        ],
+        tips: [`Hedeflerini yaz, gerceklesme ihtimali %42 artar.`, `Kucuk basarilari kutla.`],
+      },
     ],
     quiz: generateBudgetQuiz(),
   },
@@ -363,6 +397,42 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           source: 'finansalokuryazarlik.gov.tr',
         },
       },
+      {
+        id: 'kredi-turleri',
+        title: `KREDI TURLERI`,
+        short: `Ihtiyac, konut, tasit hangisi ne ise yarar?`,
+        body: [
+          `Ihtiyac kredisi: en yaygin, amac serbest, faizi en yuksek.`,
+          `Konut kredisi: ev almak icin, vade en uzun (10-20 yil), faiz en dusuk.`,
+          `Tasit kredisi: araba icin, vade 5 yila kadar, arac rehinli.`,
+          `Toplam maliyet: faiz + dosya + KKDF + BSMV + sigorta.`,
+        ],
+        scenario: `30.000 TL ihtiyac kredisi %4 faizle 12 ayda ~36.000 TL odeme. Kartta tasirsan daha pahali.`,
+        qa: [
+          { q: `En ucuz kredi?`, a: `Konut kredisi (ipotekli, dusuk faiz).` },
+          { q: `KKDF ve BSMV?`, a: `Kredi faizine eklenen vergi/fon.` },
+        ],
+        tips: [`Kredi oncesi toplam maliyeti hesapla.`],
+        warning: `Ihtiyac kredisini yatirim icin kullanma, riskli.`,
+      },
+      {
+        id: 'kefillik',
+        title: `KEFILLIK & MUESELSIL BORC`,
+        short: `Kefil olmak borca ortak olmak.`,
+        body: [
+          `Kefil: borc odenmezse ustlenen kisi.`,
+          `Muteselsil kefalet: banka direkt senden tahsil edebilir.`,
+          `Kefil oldugun borc senin kredi notunu da etkiler.`,
+          `Kefillik finansal intihar olabilir.`,
+        ],
+        scenario: `Arkadas 50.000 TL kredi cekti, sen kefil. Isinden cikti, odeyemedi. Banka senden istedi, maastan kesinti basladi.`,
+        qa: [
+          { q: `Muteselsil kefil?`, a: `Banka direkt senden isteyebilir.` },
+          { q: `Kefillik notu etkiler mi?`, a: `Evet, odenmeyen borc notunu dusurur.` },
+        ],
+        tips: [`Kefil olacagin kisinin durumunu bil.`, `Ust limit koy, tamamina kefil olma.`],
+        warning: `Kefil oldugun borc senindir, maasina icra gelebilir.`,
+      },
     ],
     quiz: generateCreditQuiz(),
   },
@@ -406,6 +476,45 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         video: {
           title: 'Yatırım Fonları',
           url: 'https://finansalokuryazarlik.gov.tr/i/yatirim-fonlari',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
+      },
+      {
+        id: 'varlik-siniflari',
+        title: `VARLIK SINIFLARI`,
+        short: `Hisse, tahvil, emtia, nakit hangisi sana gore?`,
+        body: [
+          `Varlik siniflari: hisse, tahvil, emtia, doviz, nakit, kripto.`,
+          `Hisse: yuksek risk/getiri. Tahvil: dusuk risk/getiri.`,
+          `Altin: enflasyon korumasi, guvenli liman.`,
+          `Portfoy dagilimi risk ve getirini belirler.`,
+        ],
+        scenario: `100bin TL nin %50 si hisse, %30 u altin, %20 si nakit. Hisse dusunce altin yukseldi. Cesitlendirme!`,
+        qa: [
+          { q: `En riskli varlik sinifi?`, a: `Hisse senetleri ve kripto.` },
+          { q: `Tahvil neden guvenli?`, a: `Sabit getiri, iflasta oncelikli.` },
+        ],
+        tips: [`Portfoyu yasina gore ayarla: gencken riskli, yaslaninca guvenli.`],
+      },
+      {
+        id: 'temettu',
+        title: `TEMETTU YATIRIMI`,
+        short: `Sirket karindan sana pay.`,
+        body: [
+          `Temettu: sirket karindan hissedarlara dagitilan pay. Nakit/hisse olarak odenir.`,
+          `Temettu verimi: hisse basi temettu / hisse fiyati x 100.`,
+          `Duzenli nakit akisi isteyenler icin ideal.`,
+          `Temettu garantisi yok, sirket zarar ederse odenmez.`,
+        ],
+        scenario: `100 hissen var, her biri 100 TL. Hisse basi 5 TL temettu = 500 TL. Yilda 2 kez pasif gelir.`,
+        qa: [
+          { q: `Temettu garanti mi?`, a: `Hayir, sirket yonetimi kararina bagli.` },
+          { q: `Temettu verimi hesabi?`, a: `Hisse basi temettu / fiyat x 100.` },
+        ],
+        tips: [`Yuksek temettu tek basina yetmez, sirket karliligina da bak.`],
+        video: {
+          title: 'Temettu Nedir?',
+          url: 'https://finansalokuryazarlik.gov.tr/i/temettu-nedir',
           source: 'finansalokuryazarlik.gov.tr',
         },
       },
@@ -535,6 +644,40 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
           source: 'finansalokuryazarlik.gov.tr',
         },
       },
+      {
+        id: 'inflation-targeting',
+        title: `ENFLASYON HEDEFLEMESI`,
+        short: `TCMB nin fiyat istikrari hedefi.`,
+        body: [
+          `Enflasyon hedeflemesi: TCMB belirli bir enflasyon oranini hedefler (%5).`,
+          `Sapma olursa faiz ayarlamasi yaparak fiyat istikrari saglanir.`,
+          `Enflasyon hedefin ustundeyse faiz artar, talep duser, fiyatlar yavaslar.`,
+          `%2 den fazla sapmada TCMB kamuya aciklama yapmak zorundadir.`,
+        ],
+        scenario: `Enflasyon %15, hedef %5. TCMB faizi artirir. Kredi pahalanir, harcamalar yavaslar.`,
+        qa: [
+          { q: `Enflasyon hedefi neden %5?`, a: `TCMB ve hukumet arasinda belirlenen resmi hedef.` },
+          { q: `Hedef kacirilirsa ne olur?`, a: `TCMB aciklama ve duzeltme yapmak zorunda.` },
+        ],
+        tips: [`TCMB faiz kararlarini takip et, enflasyon beklentini yonet.`],
+      },
+      {
+        id: 'unemployment-growth',
+        title: `ISSIZLIK & BUYUME`,
+        short: `Ekonomi buyuyunce herkes is bulur mu?`,
+        body: [
+          `Ekonomik buyume: ulkenin urettigi mal ve hizmetin (GSYH) artmasi.`,
+          `Okun yasasi: buyume yavaslarsa issizlik artar, hizlanirsa azalir.`,
+          `Buyume her zaman herkese is demek degil, sektorel farklar onemli.`,
+          `Potansiyel buyume: enflasyonsuz surdurulebilir en yuksek buyume.`,
+        ],
+        scenario: `Turkiye %5 buyurken issizlik %10 dan %9 a dustu. Ertesi yil %1 e geriledi, issizlik %12 ye cikti.`,
+        qa: [
+          { q: `Neden herkes is bulamiyor?`, a: `Buyumenin niteligi onemli, her sektor istihdam yaratmaz.` },
+          { q: `Okun yasasi nedir?`, a: `Buyume-issizlik arasinda ters iliski.` },
+        ],
+        tips: [`Buyume rakami kadar dagilimi da onemli.`],
+      },
     ],
     quiz: generateMacroQuiz(),
   },
@@ -570,6 +713,38 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
         qa: [
           { q: 'Kayıptan kaçınma neye yol açar?', a: 'Zararı büyütebilir.' },
         ],
+      },
+      {
+        id: 'ankraj',
+        title: `ANKRAJ (CIPALAMA)`,
+        short: `Ilk gordugun fiyat aklinda kalir.`,
+        body: [
+          `Cipalama: ilk duyulan sayiya takilip kalma egilimi.`,
+          `Hisse 200TL den 150 ye dusunce ucuz sanirsin, ama 100 olmali.`,
+          `Indirimler: "1000 den 700 e dustu" diye alirsin ama aslinda 500.`,
+        ],
+        scenario: `Urun once 1000 TL sonra 750. Hemen alirsin. Ama baska yerde 500 TL. Cipaya takildin.`,
+        qa: [
+          { q: `Ankraj neden tehlikeli?`, a: `Ilk fiyati referans alirsin, gercek degeri gormezsin.` },
+          { q: `Nasil onlenir?`, a: `Karsilastir, arastir.` },
+        ],
+        tips: [`En az 3 kaynaktan fiyat al, ilk duyduguna guvenme.`],
+      },
+      {
+        id: 'overconfidence',
+        title: `ASIRI GUVEN`,
+        short: `"Ben hata yapmam" diyenin hatasi buyuk olur.`,
+        body: [
+          `Asiri guven: kendi yeteneklerini oldugundan fazla gorme.`,
+          `Yatirimda: "Ben cozdum" diye tum parayi tek hisseye koymak.`,
+          `Arastirmalar: erkekler kadinlardan %20 fazla islem yapar ama az kazanir.`,
+        ],
+        scenario: `Ali 2 dogru tahmin yapinca "Borsayi cozdum" deyip tum parayi tek hisseye yatirdi. %40 kaybetti.`,
+        qa: [
+          { q: `Asiri guven neden kotu?`, a: `Cesitlendirmeyi azaltir, riski artirir.` },
+          { q: `En cok kim yapar?`, a: `Arastirmalara gore erkek yatirimcilar.` },
+        ],
+        tips: [`Her kazancin ardindan "Sans mi yetenek mi?" sorgula.`, `Portfoyune disaridan bir fikir al.`],
       },
     ],
     quiz: generatePsychologyQuiz(),
