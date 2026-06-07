@@ -20,7 +20,7 @@ export function categoryById(id: string): LearnCategory | undefined {
 export const LEARNING_PATH: LearnCategoryId[] = [
   'basics', 'budget', 'credit', 'investing', 'stock-patterns',
   'macro', 'tax', 'credit-score', 'crypto', 'global-economy',
-  'psychology', 'safety',
+  'sustainability', 'psychology', 'safety',
 ];
 
 export function GlassCard({ children }: { children: React.ReactNode }) {

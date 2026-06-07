@@ -47,4 +47,17 @@ export const LEARNING_SCENARIOS: LearningScenario[] = [
     check: ['Enflasyon/büyüme dengesi', 'Arz şoku ile talep şokunu ayır', 'Kararın kazananı ve kaybedeni kim?'],
     recommendedModule: 'central',
   },
+  {
+    id: 'green-choice',
+    title: 'Yeşil mi Yoksa Kârlı mı?',
+    categoryId: 'sustainability',
+    summary: 'İki yatırım arasında seçim: yüksek getirili kirli enerji vs düşük getirili yeşil fon.',
+    prompt: 'Öğrenci, kısa vadeli yüksek getiri ile uzun vadeli sürdürülebilirlik arasındaki trade-off\'u değerlendirsin. ESG kriterlerini ve greenwashing riskini de tartışsın.',
+    check: [
+      'ESG kriterlerini tanımla',
+      'Yeşil yatırımın risklerini say',
+      'Greenwashing\'den nasıl kaçınılır?',
+    ],
+    recommendedModule: 'month-sim',
+  },
 ];

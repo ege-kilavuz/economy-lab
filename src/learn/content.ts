@@ -11,7 +11,8 @@ export type LearnCategoryId =
   | 'tax'
   | 'crypto'
   | 'credit-score'
-  | 'global-economy';
+  | 'global-economy'
+  | 'sustainability';
 
 export type LearnItem = {
   id: string;
@@ -196,6 +197,17 @@ function generateSafetyQuiz(): LearnQuestion[] {
     { id: 'sf3', q: 'FAST/EFT/havale işlemi yaparken en kritik kontrol nedir?', choices: ['Emoji seçmek', 'Alıcı bilgilerini doğrulamak', 'Ekran parlaklığını artırmak', 'Bildirim sesini açmak'], correctIndex: 1, explain: 'Yanlış alıcıya gönderim riskini azaltmak için alıcı bilgileri kontrol edilmelidir.' },
     { id: 'sf4', q: 'Resmî kurumlar mesajla genelde ne istemez?', choices: ['Şifre/OTP kodu', 'Genel duyuru okumanı', 'Randevu teyidi', 'Çalışma saati bilgisi'], correctIndex: 0, explain: 'Şifre ve doğrulama kodu paylaşılmaz.' },
     { id: 'sf5', q: 'Kredi kartı borcunu yönetirken en sağlıklı yaklaşım hangisidir?', choices: ['Sadece minimumu düşünmek', 'Harcamayı takip edip ödeme planı yapmak', 'Şifreyi paylaşmak', 'Sürekli yeni kart açmak'], correctIndex: 1, explain: 'Kart kullanımı ödeme planı ve harcama takibiyle sağlıklı yönetilir.' },
+  ];
+  return pool.map(shuffleChoices);
+}
+
+function generateSustainabilityQuiz(): LearnQuestion[] {
+  const pool: LearnQuestion[] = [
+    { id: 'su1', q: 'ESG kriterleri hangi alanları kapsar?', choices: ['Sadece çevre', 'Çevre, sosyal ve yönetişim', 'Sadece kârlılık', 'Sadece vergi'], correctIndex: 1, explain: 'ESG, Environmental (Çevre), Social (Sosyal) ve Governance (Yönetişim) baş harfleridir.' },
+    { id: 'su2', q: 'Yeşil tahvil ile toplanan para genelde ne için kullanılır?', choices: ['CEO maaşları', 'Çevre projeleri (güneş, rüzgar, enerji verimliliği)', 'Hisse geri alımı', 'Reklam kampanyası'], correctIndex: 1, explain: 'Yeşil tahviller iklim ve çevre odaklı projeleri finanse eder.' },
+    { id: 'su3', q: 'Greenwashing nedir?', choices: ['Çamaşır yıkamak', 'Bir ürünün olduğundan daha yeşil gösterilmesi', 'Bitkileri sulamak', 'Geri dönüşüm yapmak'], correctIndex: 1, explain: 'Greenwashing, bir şirketin çevreye duyarlıymış gibi pazarlama yapmasıdır.' },
+    { id: 'su4', q: 'Karbon ayak izini azaltmak için hangisi en etkilidir?', choices: ['Daha çok geri dönüşüm', 'Uçak yolculuğunu azaltmak ve bitkisel ağırlıklı beslenmek', 'Sadece şişe toplamak', 'Eskileri çöpe atmak'], correctIndex: 1, explain: 'Ulaşım ve gıda, bireysel karbon ayak izinde en büyük paya sahiptir.' },
+    { id: 'su5', q: 'Döngüsel ekonominin temel ilkesi nedir?', choices: ['Sürekli yeni ürün almak', 'Kaynakları sürekli döngüde tutmak, atığı minimize etmek', 'Her şeyi çöpe atmak', 'Sadece geri dönüşüm yapmak'], correctIndex: 1, explain: 'Döngüsel ekonomide atık yoktur; her şey yeniden kullanım veya geri dönüşüm için tasarlanır.' },
   ];
   return pool.map(shuffleChoices);
 }
@@ -819,5 +831,72 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
       },
     ],
     quiz: generateSafetyQuiz(),
+  },
+  {
+    id: 'sustainability',
+    title: 'SÜRDÜRÜLEBİLİRLİK & YEŞİL EKONOMİ',
+    subtitle: 'Çevre dostu yatırım, etik tüketim ve döngüsel ekonomi.',
+    icon: '🌱',
+    items: [
+      {
+        id: 'green-investing',
+        title: 'YEŞİL YATIRIM',
+        short: 'Çevreye duyarlı yatırım araçları.',
+        body: [
+          'Yeşil yatırım, çevresel ve sosyal fayda gözeten finansal araçlara yapılan yatırımdır.',
+          'ESG (Çevresel, Sosyal, Yönetişim) kriterleri, bir şirketin sürdürülebilirlik performansını ölçer.',
+          'Yeşil tahviller, çevre projelerini finanse etmek için çıkarılır; güneş, rüzgar, enerji verimliliği gibi alanlara yönelir.',
+          'Sürdürülebilir fonlar, hem getiri hem de gezegen için çalışan şirketlere yatırım yapar.',
+        ],
+        scenario: '1.000 TL biriktirdin. Yeşil bir enerji fonu %12 getirirken, kömür şirketi %15 getiriyor. Yeşil fon daha düşük getirili ama gelecekte karbon vergileri kömürü vuracağı için riski de düşük olabilir.',
+        qa: [
+          { q: 'ESG açılımı nedir?', a: 'Çevresel, Sosyal, Yönetişim (Environmental, Social, Governance).' },
+          { q: 'Yeşil tahvil ne işe yarar?', a: 'Çevre projelerini finanse eder; güneş santrali, rüzgar türbini gibi.' },
+        ],
+        tips: ['Yeşil yatırım araştırırken greenwashing\'e dikkat et — bazı fonlar sadece isim olarak yeşildir.', 'Uzun vadede sürdürülebilir şirketler regülasyon riskine karşı daha dayanıklı olabilir.'],
+        warning: 'Yeşil yatırım da risktir. ESG puanı yüksek diye otomatik olarak iyi bir yatırım olduğu anlamına gelmez.',
+        video: {
+          title: 'Yeşil Yatırım ve Sürdürülebilir Finans',
+          url: 'https://finansalokuryazarlik.gov.tr/i/yesil-yatirim-ve-surdurulebilir-finans',
+          source: 'finansalokuryazarlik.gov.tr',
+        },
+      },
+      {
+        id: 'ethical-consumption',
+        title: 'ETİK TÜKETİM',
+        short: 'Paranla oy ver.',
+        body: [
+          'Etik tüketim, satın alırken ürünün çevresel ve sosyal etkisini düşünmektir.',
+          'Karbon ayak izi: bir ürünün üretimden tüketime kadar doğaya saldığı karbondioksit miktarı.',
+          'Yerel üreticiden alışveriş, uzun nakliye zincirini kısaltarak karbon ayak izini azaltır.',
+          'Adil ticaret (fair trade) sertifikalı ürünler, üreticinin emeğinin karşılığını almasını sağlar.',
+        ],
+        scenario: 'Aynı tişörtün ikisi de 300 TL. Biri bilinmeyen bir marka, diğeri adil ticaret sertifikalı ve organik. Etik olanı seçtiğinde hem çevreye hem işçi haklarına katkıda bulunursun.',
+        qa: [
+          { q: 'Karbon ayak izi ne demek?', a: 'Bir ürün veya eylemin atmosfere saldığı toplam karbondioksit miktarı.' },
+          { q: 'Adil ticaret nedir?', a: 'Üreticilerin adil ücret almasını garanti eden sertifika sistemi.' },
+        ],
+        tips: ['İhtiyacın olmayan bir şeyi sırf indirimde diye alma — en yeşil ürün hiç üretilmemiş olandır.', 'İkinci el alışveriş ve takas, etik tüketimin en kolay yollarından.'],
+      },
+      {
+        id: 'circular-economy',
+        title: 'DÖNGÜSEL EKONOMİ',
+        short: 'Atık yok, kaynak var.',
+        body: [
+          'Döngüsel ekonomi: "al-kullan-at" yerine "azalt-yeniden kullan-geri dönüştür" mantığı.',
+          'Lineer ekonomide kaynak tükenir, atık birikir. Döngüselde her şey tekrar kullanılır.',
+          'Tamir etme hakkı (right to repair): ürünleri çöpe atmak yerine tamir ederek kullanmaya devam etmek.',
+          'Paylaşım ekonomisi (araba paylaşma, kiralık alet) da döngüsel ekonominin bir parçasıdır.',
+        ],
+        scenario: 'Telefonun bozuldu. Tamiri 2.000 TL, yenisini almak 15.000 TL. Tamir ettirip 2 yıl daha kullanırsan hem cebin kârlı hem de elektronik atık azalır.',
+        qa: [
+          { q: 'Döngüsel ekonomi lineerden ne farklı?', a: 'Lineer "al-kullan-at"tır; döngüsel kaynakları sürekli döndürür.' },
+          { q: 'Tamir etme hakkı neden önemli?', a: 'Ürünleri çöpe atmak yerine kullanmaya devam edebilmek için.' },
+        ],
+        tips: ['Elektronik atıkların geri dönüşümü için belediyelerin atık merkezlerini kullan.', 'Bir ürünü tamir ettirmenin maliyeti yenisinin %50\'sinden azsa tamir etmek genelde daha mantıklı.'],
+        warning: 'Bazı firmalar "yeşil" görünüp aslında çevreye zarar vermeye devam eder (greenwashing). Sertifikalara ve bağımsız raporlara güven.',
+      },
+    ],
+    quiz: generateSustainabilityQuiz(),
   },
 ];
